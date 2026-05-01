@@ -1,0 +1,34 @@
+{
+  "name": "@common/shared",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "storybook": "storybook dev -p 6006 -c ui-kit/.storybook",
+    "build-storybook": "storybook build -c ui-kit/.storybook",
+    "test": "jest --config ./jest.config.cjs --runInBand",
+    "test:coverage": "jest --config ./jest.config.cjs --coverage"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.9.0",
+    "react": "19.2.0",
+    "react-hook-form": "^7.56.0",
+    "zod": "^3.23.8",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.2.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@types/jest": "^30.0.0",
+    "@storybook/addon-a11y": "^10.3.6",
+    "@storybook/addon-docs": "^10.3.6",
+    "@storybook/addon-links": "^10.3.6",
+    "@storybook/react": "^10.3.6",
+    "@storybook/react-vite": "^10.3.6",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "storybook": "^10.3.6",
+    "ts-jest": "^29.4.5"
+  }
+}

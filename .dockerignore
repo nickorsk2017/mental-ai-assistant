@@ -1,0 +1,44 @@
+# Root .dockerignore — backend, mcp, and global patterns.
+# Per-app ignores: frontend/web/.dockerignore  |  frontend/mobile/.dockerignore
+
+# ─── Version Control ──────────────────────────────────────────────────────────
+.git/
+.gitignore
+
+# ─── Dependencies ─────────────────────────────────────────────────────────────
+**/node_modules/
+
+# ─── Backend Build Outputs ────────────────────────────────────────────────────
+backend/dist/
+mcp/dist/
+
+# ─── Environment ──────────────────────────────────────────────────────────────
+_common/.env
+*.local
+
+# ─── Cache ────────────────────────────────────────────────────────────────────
+.cache/
+.turbo/
+*.tsbuildinfo
+
+# ─── Test & Coverage ──────────────────────────────────────────────────────────
+coverage/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+**/*.stories.tsx
+
+# ─── Docs & CI ────────────────────────────────────────────────────────────────
+*.md
+.github/
+docs/
+
+# ─── OS & Editor ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+*.log

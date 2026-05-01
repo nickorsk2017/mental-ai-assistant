@@ -1,0 +1,30 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "allowJs": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "types": ["jest", "node"],
+    "paths": {
+      "@common/types/*": ["../_common/types/*"],
+      "@common/shared/*": ["../_common/*"]
+    }
+  },
+  "include": [
+    "src/**/*.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "../_common/types/**/*.d.ts",
+    "../_common/hooks/**/*.ts",
+    "../_common/services/**/*.ts",
+    "../_common/stores/**/*.ts",
+    "../_common/utils/**/*.ts",
+    "../_common/schemas/**/*.ts",
+    "../_common/ui-kit/**/*.ts",
+    "../_common/ui-kit/**/*.tsx"
+  ],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"]
+}

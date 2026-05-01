@@ -1,0 +1,50 @@
+# Per-app ignores: frontend/web/.gitignore  |  frontend/mobile/.gitignore
+
+# ─── Environment ──────────────────────────────────────────────────────────────
+_common/.env
+*.local
+.env.*
+!.env.example
+!_common/.env.example
+
+# ─── Dependencies ─────────────────────────────────────────────────────────────
+node_modules/
+
+# ─── pnpm ─────────────────────────────────────────────────────────────────────
+.pnpm-store/
+
+# ─── Backend Build Outputs ────────────────────────────────────────────────────
+backend/dist/
+mcp/dist/
+frontend/_common/ui-kit/storybook-static/
+
+# ─── Cache ────────────────────────────────────────────────────────────────────
+.cache/
+.turbo/
+*.tsbuildinfo
+
+# ─── Testing ──────────────────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ─── OS & Editor ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/settings.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ─── Docker ───────────────────────────────────────────────────────────────────
+docker-compose.override.yml
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+.claude
+tsconfig.tsbuildinfo

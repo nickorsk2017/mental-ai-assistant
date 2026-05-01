@@ -1,0 +1,51 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "baseUrl": ".",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@common/types/*": [
+        "../_common/types/*"
+      ],
+      "@common/shared/*": [
+        "../_common/*"
+      ],
+      "@/*": [
+        "./*"
+      ]
+    },
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "types": [
+      "jest",
+      "node"
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    "jest.setup.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "../_common/types/**/*.d.ts",
+    "../_common/schemas/**/*.ts",
+    "../_common/themes/calm-theme.ts",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.stories.tsx"
+  ]
+}

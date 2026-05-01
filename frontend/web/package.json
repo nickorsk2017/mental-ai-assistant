@@ -1,0 +1,49 @@
+{
+  "name": "web",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@common/shared": "workspace:*",
+    "@hookform/resolvers": "^3.9.0",
+    "@supabase/supabase-js": "^2.0.0",
+    "next": "^16.2.4",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-hook-form": "^7.56.0",
+    "tailwindcss": "^4.2.4",
+    "zod": "^3.23.8",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@types/jest": "^30.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.30.1",
+    "@typescript-eslint/parser": "^8.30.1",
+    "@tailwindcss/postcss": "^4.2.4",
+    "@types/node": "^22.0.0",
+    "@types/react": "~19.2.10",
+    "@types/react-dom": "19.2.3",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^9.26.0",
+    "eslint-config-next": "^16.2.4",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "lightningcss": "^1.32.0",
+    "lightningcss-darwin-arm64": "^1.32.0",
+    "postcss": "^8.4.0",
+    "typescript": "^5.4.0"
+  }
+}

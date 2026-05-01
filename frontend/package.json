@@ -1,0 +1,21 @@
+{
+  "name": "frontend",
+  "private": true,
+  "packageManager": "pnpm@10.33.2",
+  "scripts": {
+    "dev:web": "pnpm --filter web dev",
+    "dev:mobile": "pnpm --filter mobile dev",
+    "storybook": "pnpm --filter @common/shared storybook",
+    "build:storybook": "pnpm --filter @common/shared build-storybook",
+    "typecheck": "tsc --build"
+  },
+  "pnpm": {
+    "overrides": {
+      "glob": "^13.0.6",
+      "uuid": "^11.1.0"
+    }
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}
