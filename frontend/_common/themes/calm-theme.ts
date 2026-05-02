@@ -18,28 +18,28 @@ export type SoftCalmTheme = {
 const calmLightTheme: SoftCalmTheme = {
   colors: {
     surface: '#ffffff',
-    textPrimary: '#3d4255',
-    textSecondary: '#8b90a7',
-    border: '#e5e7f0',
-    primary: '#7c9cf5',
+    textPrimary: '#313a54',
+    textSecondary: '#7f8aa8',
+    border: '#dbe5fb',
+    primary: '#6f8cff',
     primaryText: '#ffffff',
-    mutedSurface: '#f8f9fe',
-    danger: '#f87171',
-    label: '#6b7280',
+    mutedSurface: '#f4f7ff',
+    danger: '#f56f86',
+    label: '#66708a',
   },
 };
 
 const calmDarkTheme: SoftCalmTheme = {
   colors: {
-    surface: '#1c2233',
-    textPrimary: '#e8ecfa',
-    textSecondary: '#a7b1ce',
-    border: '#2f3a57',
-    primary: '#8ea8ff',
-    primaryText: '#0b1020',
-    mutedSurface: '#13192b',
-    danger: '#fca5a5',
-    label: '#8ea8ff',
+    surface: '#1b2338',
+    textPrimary: '#edf2ff',
+    textSecondary: '#b1bcdb',
+    border: '#34405f',
+    primary: '#90a8ff',
+    primaryText: '#0f1630',
+    mutedSurface: '#11182b',
+    danger: '#ff9ab0',
+    label: '#9bb0ff',
   },
 };
 

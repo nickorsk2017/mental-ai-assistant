@@ -27,7 +27,7 @@ async function fetchSessionUser(accessToken: string): Promise<SessionUser | null
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isPublicPath = pathname === '/auth' || pathname.startsWith('/auth/');
+  const isPublicPath = pathname === '/' || pathname === '/auth' || pathname.startsWith('/auth/');
   const accessToken = request.cookies.get('accessToken')?.value;
 
   const requestHeaders = new Headers(request.headers);

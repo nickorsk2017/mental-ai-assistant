@@ -9,7 +9,7 @@ export type ServerUser = {
   createdAt: string;
 };
 
-const PUBLIC_PATHS = ['/auth'];
+const PUBLIC_PATHS = ['/', '/auth'];
 const DEFAULT_BACKEND_URL = 'http://localhost:4000';
 
 function redirectToAuth(): never {

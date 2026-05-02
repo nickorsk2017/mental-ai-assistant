@@ -1,0 +1,40 @@
+import React from 'react';
+
+const decorativeShapes = [
+  {
+    className:
+      'absolute -left-14 top-6 h-20 w-20 rounded-full border border-calm-border bg-calm-surface/80 shadow-soft animate-gentle-float',
+  },
+  {
+    className:
+      'absolute -right-10 top-16 h-14 w-14 rotate-12 rounded-[18px] border border-calm-border bg-calm-primary/15 shadow-subtle animate-slow-spin',
+  },
+  {
+    className:
+      'absolute left-2 top-1/2 h-16 w-16 -translate-y-1/2 rounded-full border-2 border-dashed border-calm-primary/45 bg-transparent animate-gentle-pulse',
+  },
+  {
+    className:
+      'absolute -right-16 bottom-20 h-0 w-0 border-x-[24px] border-b-[40px] border-x-transparent border-b-calm-primary/20 animate-gentle-drift',
+  },
+  {
+    className:
+      'absolute left-1/2 -top-2 h-18 w-18 -translate-x-1/2 -translate-y-1/2 rounded-[22px] border border-calm-border bg-white/70 shadow-subtle animate-gentle-float-delayed',
+  },
+  {
+    className:
+      'absolute right-12 bottom-0 h-24 w-24 rounded-full border border-calm-border bg-[radial-gradient(circle,_rgba(124,156,245,0.2),_rgba(255,255,255,0.08))] blur-[1px] animate-gentle-pulse',
+  },
+] as const;
+
+const HeroOrbitShapes = React.memo(function HeroOrbitShapes() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute -inset-14 hidden lg:block">
+      {decorativeShapes.map((decorativeShape) => (
+        <span key={decorativeShape.className} className={decorativeShape.className} />
+      ))}
+    </div>
+  );
+});
+
+export default HeroOrbitShapes;
