@@ -1,13 +1,13 @@
-'use client';
-
 import React from 'react';
-
+import { IonContent, IonFooter, IonPage, IonToolbar } from '@ionic/react';
 import { patientChatMinimumMessageLength } from '@common/shared/constants';
 import { usePatientChatComposer } from '@common/shared/hooks';
 import { ChatInput } from '@common/shared/ui-kit';
-import MessageList from './components/MessageList/MessageList';
 
-const PatientChatWorkspace = React.memo(function PatientChatWorkspace() {
+import { PageHeader } from '../../features/patient-panel/PageHeader';
+import MessageList from '../../features/patient-panel/assistant/MessageList';
+
+export function AssistantPage(): React.JSX.Element {
   const {
     textareaReference,
     messagesEndReference,
@@ -29,25 +29,17 @@ const PatientChatWorkspace = React.memo(function PatientChatWorkspace() {
   );
 
   return (
-    <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-calm-surface">
-      <header className="flex shrink-0 items-center justify-center border-b border-calm-border/45 px-4 py-3.5 backdrop-blur-sm">
-        <h1 className="text-sm font-semibold text-calm-text">Chat</h1>
-      </header>
-
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        <div className="relative min-h-0 flex-1 overflow-y-auto">
-          <div className="sticky top-0 pl-4 py-4 pointer-events-none text-sm font-semibold text-calm-muted hidden md:block z-21">
-              Today
+    <IonPage>
+      <PageHeader title="Assistant" />
+      <IonContent fullscreen className="bg-calm-background">
+        <div className="flex min-h-full flex-col bg-calm-surface">
+          <div className="pointer-events-none hidden px-4 py-3 text-sm font-semibold text-calm-muted md:block">
+            Today
           </div>
-
-          <div className="mx-auto flex max-w-[48rem] flex-col items-center px-4 pt-8 text-center sm:px-8">
+          <div className="flex flex-col items-center px-4 pt-6 text-center">
             <div className="serene-chat-sphere" aria-hidden />
-          </div>
-
-          <div className="sticky my-6 top-0 z-20 px-4 text-center bg-white/20 sm:px-8 text-lg font-semibold text-calm-text backdrop-blur-xl">How can I help today?</div>
-
-          <div className="mx-auto flex max-w-[48rem] flex-col items-center px-4 pb-10 text-center sm:px-8">
-            <p className="max-w-md text-sm leading-6 text-calm-muted">
+            <h2 className="mt-4 text-lg font-semibold text-calm-text">How can I help today?</h2>
+            <p className="mt-2 max-w-md text-sm leading-6 text-calm-muted">
               Describe your mood or something from your day — replies will stream here. Enter sends; Shift+Enter
               starts a new line.
               {requiresFirstMessageMinimum
@@ -55,18 +47,18 @@ const PatientChatWorkspace = React.memo(function PatientChatWorkspace() {
                 : ''}
             </p>
           </div>
-
           <MessageList
             messages={messages}
             isStreaming={isStreaming}
             messagesEndReference={messagesEndReference}
           />
         </div>
-
-        <div className="shrink-0 border-t border-calm-border/45 bg-calm-surface/85 px-4 py-4 backdrop-blur-md sm:px-6">
+      </IonContent>
+      <IonFooter className="ion-no-border overflow-visible">
+        <IonToolbar className="min-h-0 bg-transparent  py-2 [--background:transparent] overflow-visible">
           <ChatInput
             textareaReference={textareaReference}
-            inputElementId="patient-chat-composer"
+            inputElementId="patient-chat-composer-mobile"
             composerText={composerText}
             setComposerText={setComposerText}
             streamingError={streamingError}
@@ -77,11 +69,10 @@ const PatientChatWorkspace = React.memo(function PatientChatWorkspace() {
             canSend={canSend}
             handleComposerKeyDown={handleComposerKeyDown}
             handleSend={handleSend}
+            className="w-[95%]"
           />
-        </div>
-      </div>
-    </div>
+        </IonToolbar>
+      </IonFooter>
+    </IonPage>
   );
-});
-
-export default PatientChatWorkspace;
+}

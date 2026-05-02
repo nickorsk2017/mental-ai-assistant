@@ -1,7 +1,7 @@
 import React, { useMemo, CSSProperties } from 'react';
 import { softCalmTheme } from '../../../themes/calm-theme';
 
-export type IconName =
+type IconName =
   | 'mail'
   | 'lock'
   | 'eye'
@@ -11,7 +11,7 @@ export type IconName =
   | 'check'
   | 'arrow-left';
 
-export interface IconProps {
+interface IconProps {
   name: IconName;
   size?: number;
   color?: string;

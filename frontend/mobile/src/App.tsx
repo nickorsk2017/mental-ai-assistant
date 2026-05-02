@@ -4,8 +4,8 @@ import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { getActiveSession } from '@common/shared/services';
 import { useAuthenticationStore } from '@common/shared/stores/useAuthStore';
+import { TabsLayout } from './features/patient-panel/TabsLayout';
 import { AuthPage } from './pages/AuthPage';
-import { DashboardPage } from './pages/DashboardPage';
 
 setupIonicReact();
 
@@ -50,9 +50,19 @@ export function App(): React.JSX.Element {
             render={() => {
               if (!isSessionInitialized) {return null;}
 
-              if (currentUser) {return <Redirect to="/dashboard" />;}
+              if (currentUser) {return <Redirect to="/patient-panel/chat" />;}
 
               return <AuthPage />;
+            }}
+          />
+          <Route
+            path="/patient-panel"
+            render={() => {
+              if (!isSessionInitialized) {return null;}
+
+              if (!currentUser) {return <Redirect to="/auth" />;}
+
+              return <TabsLayout />;
             }}
           />
           <Route
@@ -63,7 +73,7 @@ export function App(): React.JSX.Element {
 
               if (!currentUser) {return <Redirect to="/auth" />;}
 
-              return <DashboardPage />;
+              return <Redirect to="/patient-panel/chat" />;
             }}
           />
           <Route
@@ -72,7 +82,7 @@ export function App(): React.JSX.Element {
             render={() => {
               if (!isSessionInitialized) {return null;}
 
-              return <Redirect to={currentUser ? '/dashboard' : '/auth'} />;
+              return <Redirect to={currentUser ? '/patient-panel/chat' : '/auth'} />;
             }}
           />
         </IonRouterOutlet>

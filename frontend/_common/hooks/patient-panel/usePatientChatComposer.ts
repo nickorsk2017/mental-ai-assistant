@@ -13,6 +13,8 @@ const patientChatFirstMessageStorageKey = 'serenePatientChatHasSentFirstMessage'
 export function usePatientChatComposer() {
   const textareaReference = useRef<HTMLTextAreaElement>(null);
   const messagesEndReference = useRef<HTMLDivElement>(null);
+  const hasLoadedInitialMessagesReference = useRef(false);
+  const hasAppliedInitialScrollReference = useRef(false);
 
   const [composerText, setComposerText] = useState('');
   const [messages, setMessages] = useState<Entity.PatientChatMessage[]>([]);
@@ -32,6 +34,7 @@ export function usePatientChatComposer() {
     void loadTodayPatientChatMessages().then((todayMessages) => {
       if (isMounted) {
         setMessages(todayMessages);
+        hasLoadedInitialMessagesReference.current = true;
       }
     });
 
@@ -47,7 +50,15 @@ export function usePatientChatComposer() {
   }, [isStreaming]);
 
   useEffect(() => {
-    messagesEndReference.current?.scrollIntoView({ behavior: 'smooth' });
+    const shouldUseAutoScroll =
+      hasLoadedInitialMessagesReference.current && !hasAppliedInitialScrollReference.current;
+    const scrollBehavior: ScrollBehavior = shouldUseAutoScroll ? 'auto' : 'smooth';
+
+    messagesEndReference.current?.scrollIntoView({ behavior: scrollBehavior });
+
+    if (shouldUseAutoScroll) {
+      hasAppliedInitialScrollReference.current = true;
+    }
   }, [messages]);
 
   const trimmedComposerLength = composerText.trim().length;

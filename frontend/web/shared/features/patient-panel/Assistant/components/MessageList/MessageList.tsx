@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import MessageItem from '../MessageItem/MessageItem';
+import { MessageItem } from '@common/shared/ui-kit';
 
 interface PatientChatMessageListProps {
   messages: Entity.PatientChatMessage[];

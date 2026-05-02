@@ -18,5 +18,8 @@ export default defineConfig(({ mode }) => {
         '@common/shared': resolve(__dirname, '../_common'),
       },
     },
+    build: {
+      chunkSizeWarningLimit: 1300,
+    },
   };
 });

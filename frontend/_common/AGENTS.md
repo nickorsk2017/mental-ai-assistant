@@ -1,7 +1,7 @@
-# CLAUDE.md — Shared Frontend (`frontend/_common/`)
+# AGENTS.md — Shared Frontend (`frontend/_common/`)
 
 Rules for the code shared between `frontend/web/` and `frontend/mobile/`.
-Also read: [`../../CLAUDE.md`](../../CLAUDE.md) (global rules).
+Also read: [`../../AGENTS.md`](../../AGENTS.md) (global rules).
 
 ---
 
@@ -10,7 +10,7 @@ Also read: [`../../CLAUDE.md`](../../CLAUDE.md) (global rules).
 ```
 frontend/_common/
 ├── hooks/      # Business logic hooks (store wiring, derived state, side effects)
-├── services/   # Raw async API/Supabase functions — injected into hooks
+├── services/   # Raw async API/Supabase functions consumed by hooks and apps
 ├── stores/     # Zustand state stores
 ├── types/      # TypeScript declarations (*.d.ts only)
 └── utils/      # Pure helper functions
@@ -70,25 +70,6 @@ Every hook must do at least one of:
 - Derive or transform data from store state
 - Coordinate async side effects (subscriptions, polling, timers)
 
-### Injection pattern
-
-Hooks receive service functions as arguments — they never import services directly.
-This keeps hooks testable and decoupled from Supabase/fetch.
-
-```typescript
-// ✅ Correct — service injected, hook is platform-agnostic
-export function useAuthentication(
-  authClient: {
-    signIn: (email: string, password: string) => Promise<Entity.ApiResponse<...>>;
-    signOut: () => Promise<Entity.ApiResponse<null>>;
-  }
-): AuthenticationHookResult { ... }
-
-// ❌ Wrong — hidden import couples hook to Supabase
-import { signInWithEmailAndPassword } from '@common/services/authentication-service';
-export function useAuthentication() { ... }
-```
-
 ### No platform imports
 
 `hooks/` must never import from `next/*`, `react-native`, or any platform-specific package.
@@ -117,7 +98,7 @@ Hooks run identically in web and mobile.
 
 ## Rule — Types (`types/`)
 
-- Only `*.d.ts` files allowed — no `.ts` or `.tsx`
+- Only kebab-case `*.d.ts` files allowed — no `.ts` or `.tsx`
 - Every type lives inside `declare global { namespace Entity {} }`
 - No type at the module root or inline in any other file
 
@@ -135,7 +116,6 @@ Hooks run identically in web and mobile.
 
 - [ ] All external API/Supabase calls are in `services/` — not in hooks or components
 - [ ] Services return `Entity.ApiResponse<T>` and never throw
-- [ ] No hook imports from `services/` directly — services are injected as arguments
 - [ ] No hook imports from `next/*` or `@ionic/*`
 - [ ] No Zustand store defined outside `stores/`
 - [ ] All types are `*.d.ts` files inside `namespace Entity {}`

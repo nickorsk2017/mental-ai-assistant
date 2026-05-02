@@ -4,7 +4,7 @@ import { ComponentSize } from '../../../themes/calm-theme';
 
 type InputType = 'text' | 'password';
 
-export type TextInputProps = {
+type TextInputProps = {
   value: string;
   onChange: (nextValue: string) => void;
   placeholder?: string;

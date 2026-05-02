@@ -1,7 +1,7 @@
 import React from 'react';
-import { ComponentSize, ThemeName } from '../../..//themes/calm-theme';
+import { ComponentSize, ThemeName } from '../../../themes/calm-theme';
 
-export type LoadingSpinnerProps = {
+type LoadingSpinnerProps = {
   size?: ComponentSize;
   themeName?: ThemeName;
   label?: string;

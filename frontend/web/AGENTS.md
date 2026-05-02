@@ -1,7 +1,7 @@
-# CLAUDE.md — Web App (`frontend/web/`)
+# AGENTS.md — Web App (`frontend/web/`)
 
 Rules specific to the Next.js web application.
-Also read: [`../../CLAUDE.md`](../../CLAUDE.md) (global) and [`../_common/CLAUDE.md`](../_common/CLAUDE.md) (shared frontend).
+Also read: [`../../AGENTS.md`](../../AGENTS.md) (global) and [`../_common/AGENTS.md`](../_common/AGENTS.md) (shared frontend).
 
 ---
 
@@ -103,7 +103,7 @@ Zustand stores are global — React Context is not needed and must not be used.
 
 - Web-only thin components not shared with mobile
 - Read state via `useXxxStore()` from `@common/stores`
-- Trigger actions via hooks from `@common/hooks` — inject the service client at this boundary
+- Trigger actions via hooks from `@common/hooks`
 - May render `@common/ui-kit` components without wrapping
 - Must be wrapped in `React.memo`
 
@@ -111,17 +111,10 @@ Zustand stores are global — React Context is not needed and must not be used.
 // ✅ Correct — store for state, hook for actions
 import { useAuthenticationStore } from '@common/stores';
 import { useAuthentication } from '@common/hooks';
-import { signInWithEmailAndPassword, signOut, getActiveSession } from '@common/services/authentication-service';
-
-const authClient = {
-  signIn: signInWithEmailAndPassword,
-  signOut,
-  getSession: getActiveSession,
-};
 
 const LoginPage = React.memo(function LoginPage() {
   const { currentUser, isAuthenticating, authenticationError } = useAuthenticationStore();
-  const { login, logout } = useAuthentication(authClient);
+  const { login, logout } = useAuthentication();
 
   const handleLogin = useCallback(async () => {
     await login({ email, password });
@@ -166,7 +159,6 @@ Mandatory in every component:
 - [ ] All `useMemo` and `useCallback` applied where required
 - [ ] No component calls `fetch` or imports from `@common/services` directly
 - [ ] No `createContext` or `useContext` — use `@common/stores` instead
-- [ ] Service clients are instantiated in components and injected into hooks
 - [ ] **Zero inline `style` props** — all styling via Tailwind classes
 - [ ] **Zero `softCalmTheme` imports** in `frontend/web/` — use `calm-*` Tailwind classes instead
 - [ ] New custom colors added to `tailwind.config.ts`, not hardcoded with `text-[#hex]`

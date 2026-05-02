@@ -24,7 +24,8 @@ Each subdirectory has its own `AGENTS.md` — read both.
 │   ├── mobile/               # Ionic (latest) + React
 │   └── _common/               # hooks, services, stores, types, ui-kit, utils
 ├── backend/                   # NestJS API
-├── _common/                   # Server-side only: migrations/ + .env
+├── ai-agents/                 # Python AI services
+├── _common/                   # Server-side shared config: migrations/, eslint/, .env*
 ├── docker-compose.yml
 ├── .gitignore
 └── .dockerignore
@@ -34,32 +35,37 @@ Each subdirectory has its own `AGENTS.md` — read both.
 
 ## Rule 1 — Repository Zones
 
-Two permanent zones. Files must never cross zone boundaries.
+Three permanent zones. Files must never cross zone boundaries.
 
 | Zone | Paths | Purpose |
 |---|---|---|
 | **Frontend** | `frontend/` | Client-side: web, mobile, shared frontend logic |
 | **Backend** | `backend/`, `_common/` | Server-side: API, migrations, env |
+| **AI Agents** | `ai-agents/` | Python AI services |
 
 - `backend/` must never import from `frontend/`
 - `frontend/` must never import from `backend/` — only via HTTP calls
-- Root `_common/` is server-only: `migrations/` and `.env*` only
+- `ai-agents/` must communicate with frontend/backend via HTTP, Kafka, or database contracts
+- Root `_common/` is server-side shared config: `migrations/`, `eslint/`, and `.env*` only
 - `frontend/_common/` is client-only: `hooks/`, `services/`, `stores/`, `types/`, `ui-kit/`, `utils/`
 
 ---
 
 ## Rule 2 — File Length
 
-- **Maximum 200 lines per file.** No exceptions.
+- **Maximum 200 lines per file.**
+- `frontend/_common/services/AuthService.test.ts` may be up to 250 lines.
 - Decompose before the limit — extract hooks, utilities, or sub-components.
-- A PR containing a file over 200 lines is rejected without review.
+- A PR containing a file over its limit is rejected without review.
 
 ---
 
 ## Rule 3 — Naming Conventions
 
 - **Zero abbreviations** in any identifier, file name, or folder name.
-- **Frontend files use CamelCase** — no hyphens in file names inside `frontend/`.
+- **Frontend implementation files use CamelCase** — no hyphens in `.ts` / `.tsx` file names inside `frontend/`.
+- Theme token files inside `frontend/_common/themes/` may use kebab-case.
+- **Declaration files use kebab-case** — all `*.d.ts` files inside `frontend/` must use kebab-case.
 
 | ❌ Forbidden | ✅ Required |
 |---|---|
@@ -70,6 +76,7 @@ Two permanent zones. Files must never cross zone boundaries.
 | `use-authentication.ts` | `useAuthentication.ts` |
 | `auth-service.ts` | `AuthService.ts` |
 | `use-auth-store.ts` | `useAuthStore.ts` |
+| `PatientPanel.d.ts` | `patient-panel.d.ts` |
 
 ---
 
@@ -201,20 +208,18 @@ RUN pnpm install --frozen-lockfile
 
 ## Rule 8 — CI/CD
 
-This repository is a **git template**. GitHub Actions and GitLab CI pipelines are intentionally not defined here — they will be configured in each project created from this template according to its specific requirements.
-
-- Do not add `.github/workflows/` or `.gitlab-ci.yml` to this repository.
+CI/CD files are allowed when they validate the template without hardcoding project-specific deployment details.
 
 ---
 
 ## Global Pre-PR Checklist
 
-- [ ] No file exceeds 200 lines
+- [ ] No file exceeds its line limit
 - [ ] No abbreviations in any identifier or file name
 - [ ] All shared types are in `frontend/_common/types/*.d.ts` inside `namespace Entity {}`
 - [ ] `_common/.env` is not committed; `_common/.env.example` is updated if needed
 - [ ] No `frontend/` code imports directly from `backend/`
-- [ ] Root `_common/` contains only `migrations/` and `.env*`
+- [ ] Root `_common/` contains only `migrations/`, `eslint/`, and `.env*`
 - [ ] Dockerfiles use multi-stage builds with `pnpm install --frozen-lockfile`
 - [ ] Workspace deps use `"workspace:*"` protocol
 - [ ] `pnpm-lock.yaml` is committed and up to date

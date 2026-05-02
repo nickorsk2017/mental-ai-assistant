@@ -20,6 +20,7 @@ export class SupabaseAuthenticationGuard implements CanActivate {
         : undefined;
 
     let token = '';
+
     if (authorizationHeader?.startsWith('Bearer ')) {
       token = authorizationHeader.slice(7);
     } else if (cookieAccessToken) {
@@ -29,6 +30,7 @@ export class SupabaseAuthenticationGuard implements CanActivate {
     if (!token) {
       throw new UnauthorizedException('Missing or invalid authorization');
     }
+
     const { data, error } = await this.supabaseService.adminClient.auth.getUser(token);
 
     if (error || !data.user) {

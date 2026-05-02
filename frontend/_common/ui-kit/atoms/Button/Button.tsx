@@ -4,7 +4,7 @@ import { cx } from '../../../utils';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
 
-export type ButtonProps = {
+type ButtonProps = {
   type?: 'button' | 'submit' | 'reset';
   children: React.ReactNode;
   onClick?: () => void;
@@ -14,6 +14,7 @@ export type ButtonProps = {
   isLoading?: boolean;
   className?: string;
   wide?: boolean;
+  rounded?: boolean;
 };
 
 export const Button = React.memo(function Button({
@@ -26,6 +27,7 @@ export const Button = React.memo(function Button({
   isLoading = false,
   className,
   wide,
+  rounded,
 }: ButtonProps) {
   const sizeClassMap: Record<ComponentSize, string> = {
     small: 'min-h-[34px] px-3.5 py-2 text-label rounded-[10px]',
@@ -35,7 +37,7 @@ export const Button = React.memo(function Button({
 
   const variantClassMap: Record<ButtonVariant, string> = {
     primary: 'bg-calm-primary border-calm-primary text-calm-primary-text',
-    secondary: 'bg-calm-background border-calm-background text-calm-text',
+    secondary: 'bg-calm-second border-calm-second text-calm-primary-text',
     outline: 'bg-transparent border-calm-border text-calm-text',
     ghost: 'bg-transparent border-transparent text-calm-muted',
   };
@@ -52,6 +54,7 @@ export const Button = React.memo(function Button({
         className,
         (wide === true || wide === undefined) ? 'w-full' : 'w-auto',
         disabled || isLoading ? 'cursor-not-allowed opacity-50' : '!cursor-pointer hover:brightness-95',
+        rounded ? 'rounded-full' : 'rounded-[12px]',
       )}
     >
       {isLoading ? 'Loading...' : children}

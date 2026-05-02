@@ -1,4 +1,4 @@
-# CLAUDE.md — Backend
+# AGENTS.md — Backend
 
 NestJS monolithic API. Single publicly-exposed service on port 4000 handles all routing, authentication, and business logic.
 
@@ -56,7 +56,7 @@ Never instantiate a Supabase client directly — always inject `SupabaseService`
 
 ## Rule B4 — Response Envelope
 
-Every endpoint must return `ServiceResponse<T>` using the builders in `src/response/response.builder.ts`.
+Every endpoint must return `ServiceResponse<T>` using the builders in `src/utils/response.builder.ts`.
 
 ```typescript
 return buildSuccessResponse(data);      // { success: true, data, error: null }
