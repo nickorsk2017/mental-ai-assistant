@@ -8,6 +8,7 @@ export type SoftCalmTheme = {
     textSecondary: string;
     border: string;
     primary: string;
+    second: string;
     primaryText: string;
     mutedSurface: string;
     danger: string;
@@ -22,6 +23,7 @@ const calmLightTheme: SoftCalmTheme = {
     textSecondary: '#7f8aa8',
     border: '#dbe5fb',
     primary: '#6f8cff',
+    second: '#e48a3a',
     primaryText: '#ffffff',
     mutedSurface: '#f4f7ff',
     danger: '#f56f86',
@@ -36,6 +38,7 @@ const calmDarkTheme: SoftCalmTheme = {
     textSecondary: '#b1bcdb',
     border: '#34405f',
     primary: '#90a8ff',
+    second: '#d9964f',
     primaryText: '#0f1630',
     mutedSurface: '#11182b',
     danger: '#ff9ab0',

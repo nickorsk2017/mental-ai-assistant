@@ -6,7 +6,7 @@
     transform: translate3d(0, 0, 0);
   }
   50% {
-    transform: translate3d(0, -12px, 0);
+    transform: translate3d(0, -18px, 0);
   }
 }
 
@@ -15,18 +15,18 @@
     transform: translate3d(-50%, -50%, 0) rotate(0deg);
   }
   50% {
-    transform: translate3d(-50%, calc(-50% - 10px), 0) rotate(8deg);
+    transform: translate3d(-50%, calc(-50% - 16px), 0) rotate(12deg);
   }
 }
 
 @keyframes gentlePulse {
   0%, 100% {
     transform: scale(1);
-    opacity: 0.55;
+    opacity: 0.5;
   }
   50% {
-    transform: scale(1.08);
-    opacity: 0.9;
+    transform: scale(1.14);
+    opacity: 0.96;
   }
 }
 
@@ -35,7 +35,7 @@
     transform: translate3d(0, 0, 0) rotate(0deg);
   }
   50% {
-    transform: translate3d(-8px, -10px, 0) rotate(-6deg);
+    transform: translate3d(-14px, -16px, 0) rotate(-10deg);
   }
 }
 
@@ -44,28 +44,28 @@
     transform: rotate(12deg);
   }
   100% {
-    transform: rotate(372deg);
+    transform: rotate(392deg);
   }
 }
 
 @layer utilities {
   .animate-gentle-float {
-    animation: gentleFloat 7s ease-in-out infinite;
+    animation: gentleFloat 5.8s ease-in-out infinite;
   }
 
   .animate-gentle-float-delayed {
-    animation: gentleFloatDelayed 8s ease-in-out infinite;
+    animation: gentleFloatDelayed 6.8s ease-in-out infinite;
   }
 
   .animate-gentle-pulse {
-    animation: gentlePulse 6s ease-in-out infinite;
+    animation: gentlePulse 5s ease-in-out infinite;
   }
 
   .animate-gentle-drift {
-    animation: gentleDrift 9s ease-in-out infinite;
+    animation: gentleDrift 6.8s ease-in-out infinite;
   }
 
   .animate-slow-spin {
-    animation: slowSpin 16s linear infinite;
+    animation: slowSpin 11s linear infinite;
   }
 }

@@ -18,7 +18,7 @@ const LandingHeroContent = React.memo(function LandingHeroContent() {
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Link
           href="/auth"
-          className="inline-flex items-center justify-center rounded-full border border-calm-primary bg-calm-primary px-6 py-4 text-base font-semibold text-calm-primary-text shadow-medium transition hover:-translate-y-0.5 hover:brightness-95"
+          className="inline-flex items-center justify-center rounded-full border border-calm-second bg-calm-second px-6 py-4 text-base font-semibold text-calm-primary-text shadow-medium transition hover:-translate-y-0.5 hover:brightness-95"
         >
           Try for free
         </Link>
