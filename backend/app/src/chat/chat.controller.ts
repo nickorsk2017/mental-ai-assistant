@@ -1,0 +1,36 @@
+import { Body, Controller, Headers, Post, Res, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
+import { SupabaseAuthenticationGuard } from '../authentication/supabase-authentication.guard';
+import { buildErrorResponse } from '../utils/response.builder';
+import { ChatService } from './chat.service';
+import type { ChatStreamRequestBody } from './chat.types';
+
+@Controller('chat')
+@UseGuards(SupabaseAuthenticationGuard)
+export class ChatController {
+  constructor(private readonly chatService: ChatService) {}
+
+  /**
+   * Streams a plain-text assistant reply from the AI agents service (REST). The same journal payload
+   * is published to Kafka so the consumer can persist Pinecone vectors and Supabase notes asynchronously.
+   */
+  @Post('messages/stream')
+  async streamJournalMessage(
+    @Body() body: ChatStreamRequestBody,
+    @Headers('x-user-id') userId: string,
+    @Res() response: Response,
+  ): Promise<void> {
+    const trimmed = body.messageText?.trim() ?? '';
+
+    if (!this.chatService.validateJournalMessageLength(trimmed)) {
+      response.status(400).json(buildErrorResponse('Message must be at least 50 characters.'));
+      return;
+    }
+
+    response.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    response.setHeader('Cache-Control', 'no-cache');
+    response.setHeader('X-Accel-Buffering', 'no');
+
+    await this.chatService.streamAssistantReply(response, userId, trimmed);
+  }
+}

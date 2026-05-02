@@ -8,6 +8,6 @@ import { SupabaseAuthenticationGuard } from './supabase-authentication.guard';
   imports: [SupabaseModule],
   controllers: [AuthenticationController],
   providers: [AuthenticationService, SupabaseAuthenticationGuard],
-  exports: [SupabaseAuthenticationGuard],
+  exports: [SupabaseAuthenticationGuard, SupabaseModule],
 })
 export class AuthenticationModule {}

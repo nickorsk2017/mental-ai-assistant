@@ -2,8 +2,10 @@ SHELL := /bin/bash
 ENV_FILE := ./_common/.env
 PNPM_CMD := env -u PNPM_STORE_DIR -u npm_config_store_dir pnpm
 
-.PHONY: help install backend-install frontend-install mobile-install ui-kit-install \
+.PHONY: help install backend-install frontend-install mobile-install ui-kit-install ai-agents-install kafka-install kafka-stop \
+        supabase-migrate \
         backend api frontend web mobile \
+        ai-agents ai \
         lint lint-fix \
         ci \
         pre-commit-check \
@@ -12,23 +14,25 @@ PNPM_CMD := env -u PNPM_STORE_DIR -u npm_config_store_dir pnpm
         mobile-build mobile-capacitor-sync mobile-run-android mobile-run-ios \
         fullstack-web fullstack-mobile \
         docker-build docker-up docker-down docker-restart \
-        kill-backend-ports kill-frontend-ports kill-mobile-ports kill-all-ports
+        kill-backend-ports kill-frontend-ports kill-mobile-ports kill-ai-agents-ports kill-all-ports
 
 help:
 	@echo ""
 	@echo "Setup:"
-	@echo "  make install              - Install all dependencies"
+	@echo "  make install              - Install backend, frontend, ui-kit, mobile, AI agents (pnpm + uv)"
 	@echo "  make backend-install      - Install backend dependencies"
 	@echo "  make frontend-install     - Install frontend workspace dependencies"
 	@echo "  make ui-kit-install       - Install shared ui-kit workspace dependencies"
 	@echo "  make mobile-install       - Install mobile workspace dependencies"
+	@echo "  make ai-agents-install    - Install AI agents app (uv sync in ai-agents/app/)"
 	@echo ""
 	@echo "Local dev:"
 	@echo "  make backend app        - Run backend api (:4000)"
 	@echo "  make web / frontend       - Run web app (:3000)"
 	@echo "  make mobile               - Run mobile shell (:8100)"
-	@echo "  make fullstack-web        - Run backend + web"
-	@echo "  make fullstack-mobile     - Run backend + mobile"
+	@echo "  make fullstack-web        - Kafka (docker) + backend + web + ai-agents"
+	@echo "  make fullstack-mobile     - Kafka (docker) + backend + mobile + ai-agents"
+	@echo "  make ai-agents / ai       - Run AI agents FastAPI (uv), port from AI_AGENTS_PORT (:8080)"
 	@echo "  make mobile-build         - Build mobile web bundle"
 	@echo "  make mobile-capacitor-sync - Sync mobile bundle to native platforms"
 	@echo "  make mobile-run-android   - Build, sync, and run on Android"
@@ -49,17 +53,22 @@ help:
 	@echo "  make docker-up            - Build and start all services"
 	@echo "  make docker-down          - Stop all services"
 	@echo "  make docker-restart       - Stop, rebuild, and start all services"
+	@echo "  make kafka-install        - Pull if needed and start Kafka (apache/kafka, port 9092)"
+	@echo "  make kafka-stop           - Stop the Kafka container only"
+	@echo ""
+	@echo "Supabase:"
+	@echo "  make supabase-migrate     - Run backend/app/scripts/run-supabase-migrations.ts (via pnpm migrate:supabase)"
 	@echo ""
 	@echo "Ports:"
 	@echo "  make kill-backend-ports   - Kill port 4000"
 	@echo "  make kill-frontend-ports  - Kill port 3000"
 	@echo "  make kill-mobile-ports    - Kill port 8100"
-	@echo "  make kill-all-ports       - Kill ports 3000, 4000, 8100"
+	@echo "  make kill-all-ports       - Kill ports 3000, 4000, 8080, 8100"
 	@echo ""
 
 # ─── Install ──────────────────────────────────────────────────────────────────
 
-install: backend-install frontend-install ui-kit-install mobile-install
+install: backend-install frontend-install ui-kit-install mobile-install ai-agents-install
 
 backend-install:
 	$(PNPM_CMD) --dir backend/app install
@@ -73,6 +82,9 @@ mobile-install:
 ui-kit-install:
 	$(PNPM_CMD) --dir frontend --filter @common/shared install
 
+ai-agents-install:
+	cd ai-agents/app && uv sync
+
 # ─── Local dev ────────────────────────────────────────────────────────────────
 
 backend: kill-backend-ports
@@ -84,6 +96,15 @@ web: kill-frontend-ports
 
 mobile: kill-mobile-ports
 	$(PNPM_CMD) --dir frontend/mobile dev --host 0.0.0.0 --port 8100
+
+ai-agents: kill-ai-agents-ports
+	@set -a; source $(ENV_FILE); set +a; \
+	  cd ai-agents/app && uv run uvicorn src.main:application \
+	    --reload \
+	    --host "$${AI_AGENTS_HOST:-0.0.0.0}" \
+	    --port "$${AI_AGENTS_PORT:-8080}"
+
+ai: ai-agents
 
 mobile-build:
 	$(PNPM_CMD) --dir frontend/mobile build
@@ -145,15 +166,25 @@ test-mobile-coverage:
 
 
 fullstack-web: kill-all-ports
+	@$(MAKE) kafka-install
 	@set -a; source $(ENV_FILE); set +a; \
 	  $(PNPM_CMD) --dir backend/app dev & \
 	  $(PNPM_CMD) --dir frontend dev:web & \
+	  ( cd ai-agents/app && uv run uvicorn src.main:application \
+	      --reload \
+	      --host "$${AI_AGENTS_HOST:-0.0.0.0}" \
+	      --port "$${AI_AGENTS_PORT:-8080}" ) & \
 	  wait
 
 fullstack-mobile: kill-all-ports
+	@$(MAKE) kafka-install
 	@set -a; source $(ENV_FILE); set +a; \
 	  $(PNPM_CMD) --dir backend/app dev & \
 	  $(PNPM_CMD) --dir frontend/mobile dev --host 0.0.0.0 --port 8100 & \
+	  ( cd ai-agents/app && uv run uvicorn src.main:application \
+	      --reload \
+	      --host "$${AI_AGENTS_HOST:-0.0.0.0}" \
+	      --port "$${AI_AGENTS_PORT:-8080}" ) & \
 	  wait
 
 # ─── Docker ───────────────────────────────────────────────────────────────────
@@ -168,6 +199,15 @@ docker-down:
 	docker compose down
 
 docker-restart: docker-down docker-up
+
+kafka-install:
+	docker compose up -d kafka
+
+kafka-stop:
+	docker compose stop kafka
+
+supabase-migrate:
+	$(PNPM_CMD) --dir backend/app run migrate:supabase
 
 # ─── Ports ────────────────────────────────────────────────────────────────────
 
@@ -191,7 +231,11 @@ kill-frontend-ports:
 kill-mobile-ports:
 	$(call kill_port,8100)
 
+kill-ai-agents-ports:
+	$(call kill_port,8080)
+
 kill-all-ports:
 	$(call kill_port,3000)
 	$(call kill_port,4000)
+	$(call kill_port,8080)
 	$(call kill_port,8100)

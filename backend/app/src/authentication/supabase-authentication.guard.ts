@@ -14,12 +14,21 @@ export class SupabaseAuthenticationGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     const authorizationHeader = request.headers.authorization;
+    const cookieAccessToken =
+      typeof request.cookies === 'object' && request.cookies !== null
+        ? (request.cookies as Record<string, string>).accessToken
+        : undefined;
 
-    if (!authorizationHeader?.startsWith('Bearer ')) {
-      throw new UnauthorizedException('Missing or invalid authorization header');
+    let token = '';
+    if (authorizationHeader?.startsWith('Bearer ')) {
+      token = authorizationHeader.slice(7);
+    } else if (cookieAccessToken) {
+      token = cookieAccessToken;
     }
 
-    const token = authorizationHeader.slice(7);
+    if (!token) {
+      throw new UnauthorizedException('Missing or invalid authorization');
+    }
     const { data, error } = await this.supabaseService.adminClient.auth.getUser(token);
 
     if (error || !data.user) {

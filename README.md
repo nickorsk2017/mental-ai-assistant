@@ -12,6 +12,8 @@ Monorepo for the Serene web app, Ionic mobile app, NestJS backend API, and share
 │   └── _common/      # Shared hooks / services / stores / ui-kit / themes / types
 ├── backend/
 │   └── app/          # NestJS API (port 4000)
+├── ai-agents/
+│   └── app/          # FastAPI + LangChain (chat stream + Kafka consumer → Pinecone / Supabase)
 ├── _common/
 │   ├── .env          # Environment variables (not committed)
 │   └── .env.example  # Template — copy and fill in
@@ -98,75 +100,9 @@ make docker-restart  # Stop, rebuild, start
 
 ---
 
-## Mobile — Capacitor native builds
+## Tooling
 
-```bash
-make mobile-build           # Build frontend/mobile bundle
-make mobile-capacitor-sync  # Build + sync to native platforms
-make mobile-run-android     # Build + sync + run on Android
-make mobile-run-ios         # Build + sync + run on iOS
-```
-
----
-
-## Build
-
-```bash
-pnpm --dir backend/app build
-pnpm --dir frontend/web build
-pnpm --dir frontend/mobile build
-```
-
----
-
-## Lint
-
-Shared lint rules are centralized in `_common/eslint/base.cjs` and reused by backend, web, and mobile ESLint flat configs.
-
-Run linters for all apps:
-
-```bash
-make lint
-```
-
-Auto-fix lint issues for all apps:
-
-```bash
-make lint-fix
-```
-
-Run linter per app:
-
-```bash
-pnpm --dir backend/app lint
-pnpm --dir frontend/web lint
-pnpm --dir frontend/mobile lint
-```
-
-Pre-commit checks:
-
-```bash
-make pre-commit-check
-```
-
-Git commits also run this automatically through the repository `pre-commit` hook.
-
-CI-equivalent local check:
-
-```bash
-make ci
-```
-
----
-
-## Environment variables
-
-| Prefix | Used by |
-|---|---|
-| `SUPABASE_*` | Backend API (server-side) |
-| `NEXT_PUBLIC_*` | Next.js web (client + server) |
-| `BACKEND_URL` | Server-side fetch in Next.js — use `http://api:4000` inside Docker |
-| `BACKEND_PORT` | API listen port (default `4000`) |
+Capacitor builds, package builds, lint, pre-commit, CI-equivalent commands, and environment prefixes: [`docs/tooling.md`](docs/tooling.md).
 
 ---
 
@@ -178,6 +114,10 @@ The repository is split into two strict runtime zones:
 - **Backend zone**: `backend/app`, root `_common` env and infra files
 
 Frontend code never imports backend source directly. Communication is HTTP-only through the API.
+
+### Chat, Kafka, journaling
+
+The API proxies streaming chat to **AI agents** (`AI_AGENTS_BASE_URL`) and publishes the same journal payload to **Kafka**. The Python service consumes Kafka, writes **Pinecone** embeddings and **Supabase** patient notes asynchronously. Full diagram, SQL, and env keys: [`docs/chat-journaling.md`](docs/chat-journaling.md).
 
 ### Frontend layering model
 
