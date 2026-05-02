@@ -42,7 +42,12 @@ export class ChatService {
     return `http://127.0.0.1:${parsedPort}`;
   }
 
-  async streamAssistantReply(response: Response, userId: string, messageText: string): Promise<void> {
+  async streamAssistantReply(
+    response: Response,
+    userId: string,
+    messageText: string,
+    enforceMinimumLength: boolean,
+  ): Promise<void> {
     const correlationId = randomUUID();
 
     try {
@@ -67,7 +72,7 @@ export class ChatService {
           'Content-Type': 'application/json',
           'x-user-id': userId,
         },
-        body: JSON.stringify({ messageText }),
+        body: JSON.stringify({ messageText, enforceMinimumLength }),
       });
 
       if (!upstreamResponse.ok || !upstreamResponse.body) {

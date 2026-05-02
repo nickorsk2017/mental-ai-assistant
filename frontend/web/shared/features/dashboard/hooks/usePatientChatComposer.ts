@@ -4,6 +4,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { patientChatMinimumMessageLength } from '../constants/PatientChatConstants';
 
+const patientChatFirstMessageStorageKey = 'serenePatientChatHasSentFirstMessage';
+
 export interface PatientChatMessage {
   role: 'user' | 'assistant';
   content: string;
@@ -25,6 +27,13 @@ export function usePatientChatComposer() {
   const [messages, setMessages] = useState<PatientChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingError, setStreamingError] = useState<string | null>(null);
+  const [requiresFirstMessageMinimum, setRequiresFirstMessageMinimum] = useState(true);
+
+  useEffect(() => {
+    setRequiresFirstMessageMinimum(
+      window.localStorage.getItem(patientChatFirstMessageStorageKey) !== 'true',
+    );
+  }, []);
 
   useEffect(() => {
     if (!isStreaming) {
@@ -38,13 +47,19 @@ export function usePatientChatComposer() {
 
   const trimmedComposerLength = composerText.trim().length;
 
-  const canSend =
-    trimmedComposerLength >= patientChatMinimumMessageLength && !isStreaming;
+  const meetsMinimumLength =
+    !requiresFirstMessageMinimum || trimmedComposerLength >= patientChatMinimumMessageLength;
+
+  const canSend = trimmedComposerLength > 0 && meetsMinimumLength && !isStreaming;
 
   const handleSend = useCallback(async () => {
     const trimmed = composerText.trim();
 
-    if (trimmed.length < patientChatMinimumMessageLength || isStreaming) {
+    if (trimmed.length === 0 || isStreaming) {
+      return;
+    }
+
+    if (requiresFirstMessageMinimum && trimmed.length < patientChatMinimumMessageLength) {
       return;
     }
 
@@ -64,7 +79,10 @@ export function usePatientChatComposer() {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messageText: trimmed }),
+        body: JSON.stringify({
+          messageText: trimmed,
+          enforceMinimumLength: requiresFirstMessageMinimum,
+        }),
       });
 
       if (!response.ok) {
@@ -102,6 +120,25 @@ export function usePatientChatComposer() {
           return next;
         });
       }
+
+      const remainingText = decoder.decode();
+
+      if (remainingText) {
+        accumulated += remainingText;
+        setMessages((previous) => {
+          const next = [...previous];
+          const lastIndex = next.length - 1;
+
+          if (lastIndex >= 0 && next[lastIndex].role === 'assistant') {
+            next[lastIndex] = { role: 'assistant', content: accumulated };
+          }
+
+          return next;
+        });
+      }
+
+      window.localStorage.setItem(patientChatFirstMessageStorageKey, 'true');
+      setRequiresFirstMessageMinimum(false);
     } catch (error) {
       const messageText =
         error instanceof Error ? error.message : 'Unable to complete the request.';
@@ -118,7 +155,7 @@ export function usePatientChatComposer() {
     } finally {
       setIsStreaming(false);
     }
-  }, [composerText, isStreaming]);
+  }, [composerText, isStreaming, requiresFirstMessageMinimum]);
 
   const handleComposerKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -139,6 +176,7 @@ export function usePatientChatComposer() {
     isStreaming,
     streamingError,
     trimmedComposerLength,
+    requiresFirstMessageMinimum,
     canSend,
     handleSend,
     handleComposerKeyDown,

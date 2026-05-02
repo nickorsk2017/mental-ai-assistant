@@ -8,7 +8,11 @@
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Client, type ClientConfig } from 'pg';
+import {
+  connectMigrationClient,
+  formatMigrationFailureHint,
+  isConnectionRetryable,
+} from './supabase-migration-connection';
 
 function resolveRepositoryRoot(): string {
   return path.join(__dirname, '../../..');
@@ -27,18 +31,6 @@ function resolveMigrateDatabaseUrl(): string {
   return resolvedUrl;
 }
 
-function resolveSslForConnectionString(connectionString: string): ClientConfig['ssl'] | undefined {
-  if (connectionString.includes('localhost') || connectionString.includes('127.0.0.1')) {
-    return undefined;
-  }
-
-  if (connectionString.includes('sslmode=disable')) {
-    return undefined;
-  }
-
-  return { rejectUnauthorized: false };
-}
-
 async function runMigrations(): Promise<void> {
   const repositoryRoot = resolveRepositoryRoot();
   const environmentPath = path.join(repositoryRoot, '_common', '.env');
@@ -48,7 +40,7 @@ async function runMigrations(): Promise<void> {
     process.exit(1);
   }
 
-  dotenv.config({ path: environmentPath });
+  dotenv.config({ path: environmentPath, quiet: true });
 
   const migrateDatabaseUrl = resolveMigrateDatabaseUrl();
   const migrationsDirectory = path.join(repositoryRoot, '_common', 'migrations');
@@ -69,12 +61,7 @@ async function runMigrations(): Promise<void> {
     return;
   }
 
-  const client = new Client({
-    connectionString: migrateDatabaseUrl,
-    ssl: resolveSslForConnectionString(migrateDatabaseUrl),
-  });
-
-  await client.connect();
+  const client = await connectMigrationClient(migrateDatabaseUrl);
 
   try {
     for (const fileName of migrationFileNames) {
@@ -93,5 +80,15 @@ async function runMigrations(): Promise<void> {
 
 void runMigrations().catch((error: unknown) => {
   console.error(error);
+
+  if (isConnectionRetryable(error)) {
+    const migrateDatabaseUrl =
+      process.env.SUPABASE_MIGRATE_DB_URL?.trim() || process.env.SUPABASE_DB_URL?.trim();
+
+    if (migrateDatabaseUrl) {
+      console.error(formatMigrationFailureHint(migrateDatabaseUrl));
+    }
+  }
+
   process.exit(1);
 });

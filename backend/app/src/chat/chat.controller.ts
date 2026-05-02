@@ -21,9 +21,17 @@ export class ChatController {
     @Res() response: Response,
   ): Promise<void> {
     const trimmed = body.messageText?.trim() ?? '';
+    const enforceMinimumLength = body.enforceMinimumLength ?? true;
 
-    if (!this.chatService.validateJournalMessageLength(trimmed)) {
+    if (trimmed.length === 0) {
+      response.status(400).json(buildErrorResponse('Message is required.'));
+
+      return;
+    }
+
+    if (enforceMinimumLength && !this.chatService.validateJournalMessageLength(trimmed)) {
       response.status(400).json(buildErrorResponse('Message must be at least 50 characters.'));
+
       return;
     }
 
@@ -31,6 +39,6 @@ export class ChatController {
     response.setHeader('Cache-Control', 'no-cache');
     response.setHeader('X-Accel-Buffering', 'no');
 
-    await this.chatService.streamAssistantReply(response, userId, trimmed);
+    await this.chatService.streamAssistantReply(response, userId, trimmed, enforceMinimumLength);
   }
 }

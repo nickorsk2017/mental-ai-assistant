@@ -28,14 +28,14 @@ const PatientAdminShell = React.memo(function PatientAdminShell({
   }, [logout, router]);
 
   return (
-    <div className="flex min-h-screen gap-4 bg-calm-background p-4">
+    <div className="flex h-screen gap-4 overflow-hidden bg-calm-background p-4">
       <PatientAdminSidebar
         userEmail={user.email}
         userDisplayName={user.displayName}
         onSignOut={handleSignOut}
         isSigningOut={isAuthenticating}
       />
-      <main className="flex min-h-[calc(100vh-2rem)] min-w-0 flex-1 flex-col overflow-hidden rounded-[28px] border border-calm-border/50 bg-calm-surface/40 shadow-subtle backdrop-blur-md">
+      <main className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[28px] border border-calm-border/50 bg-calm-surface/40 shadow-subtle backdrop-blur-md">
         {children}
       </main>
     </div>

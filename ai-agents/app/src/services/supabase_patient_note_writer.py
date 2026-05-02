@@ -14,7 +14,12 @@ def insert_patient_note_row(
     user_id: str,
     correlation_id: str,
     message_text: str,
+    mood_key: str | None,
+    mood_label: str | None,
+    mood_score: int | None,
+    activity_tags: list[str],
     summary_text: str,
+    assistant_vibe_check: str,
 ) -> None:
     """Persist a note row when Supabase URL and secret key are configured."""
     if not settings.supabase_url or not settings.supabase_secret_key:
@@ -27,8 +32,13 @@ def insert_patient_note_row(
     payload = {
         "user_id": user_id,
         "correlation_id": correlation_id,
+        "mood_key": mood_key,
+        "mood_label": mood_label,
+        "mood_score": mood_score,
+        "activity_tags": activity_tags,
         "message_text": message_text,
         "summary_text": summary_text,
+        "assistant_vibe_check": assistant_vibe_check,
     }
     headers = {
         "apikey": settings.supabase_secret_key,

@@ -11,7 +11,7 @@
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "test": "jest --runInBand",
     "test:coverage": "jest --coverage",
-    "migrate:supabase": "ts-node --transpile-only scripts/run-supabase-migrations.ts"
+    "migrate:supabase": "DOTENV_CONFIG_QUIET=1 ts-node --transpile-only scripts/run-supabase-migrations.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

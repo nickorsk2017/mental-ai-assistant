@@ -20,7 +20,10 @@ async def stream_journal_chat_response(
     """Stream OpenAI tokens as plain text (proxied by the backend to the browser)."""
     trimmed = body.message_text.strip()
 
-    if len(trimmed) < MINIMUM_JOURNAL_MESSAGE_LENGTH:
+    if len(trimmed) == 0:
+        raise HTTPException(status_code=400, detail="Message is required.")
+
+    if body.enforce_minimum_length and len(trimmed) < MINIMUM_JOURNAL_MESSAGE_LENGTH:
         raise HTTPException(
             status_code=400,
             detail=f"Message must be at least {MINIMUM_JOURNAL_MESSAGE_LENGTH} characters.",

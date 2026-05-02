@@ -16,6 +16,7 @@ const PatientChatWorkspace = React.memo(function PatientChatWorkspace() {
     isStreaming,
     streamingError,
     trimmedComposerLength,
+    requiresFirstMessageMinimum,
     canSend,
     handleSend,
     handleComposerKeyDown,
@@ -42,7 +43,10 @@ const PatientChatWorkspace = React.memo(function PatientChatWorkspace() {
               <p className="max-w-md text-lg font-semibold text-calm-text">How can I help today?</p>
               <p className="mt-2 max-w-md text-sm leading-6 text-calm-muted">
                 Describe your mood or something from your day — replies will stream here. Enter sends; Shift+Enter
-                starts a new line. At least {patientChatMinimumMessageLength} characters are required before sending.
+                starts a new line.
+                {requiresFirstMessageMinimum
+                  ? ` At least ${patientChatMinimumMessageLength} characters are required for the first message.`
+                  : ''}
               </p>
             </div>
           ) : (
@@ -94,9 +98,11 @@ const PatientChatWorkspace = React.memo(function PatientChatWorkspace() {
             </button>
           </div>
 
-          {trimmedComposerLength > 0 && trimmedComposerLength < patientChatMinimumMessageLength && (
+          {requiresFirstMessageMinimum &&
+            trimmedComposerLength > 0 &&
+            trimmedComposerLength < patientChatMinimumMessageLength && (
             <p className="mx-auto mt-2 max-w-[48rem] text-center text-xs text-calm-muted">
-              {charactersRemaining} more characters required (minimum {patientChatMinimumMessageLength}).
+              {charactersRemaining} more characters required for the first message.
             </p>
           )}
         </div>

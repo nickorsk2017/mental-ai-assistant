@@ -2,12 +2,15 @@
 
 import logging
 
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from pydantic import ValidationError
 
 from src.config import ApplicationSettings
+from src.prompts.journal_analysis_system_prompt import JOURNAL_ANALYSIS_SYSTEM_PROMPT
 from src.schemas.journal_message import JournalKafkaPayload
+from src.schemas.journal_note_analysis import JournalNoteAnalysis
+from src.services.journal_analysis_fallback import build_fallback_journal_analysis
 from src.services.pinecone_note_store import upsert_journal_note_vector
 from src.services.supabase_patient_note_writer import insert_patient_note_row
 
@@ -19,45 +22,65 @@ def process_journal_message_from_kafka(
     settings: ApplicationSettings,
 ) -> str:
     """Run analysis, upsert vector metadata, and insert a note row for the journal job."""
-    summary_text = analyze_journal_with_openai(payload.message_text, settings)
-    combined_text = f"{payload.message_text.strip()}\n\nSummary:\n{summary_text}"
+    note_analysis = analyze_journal_with_openai(payload.message_text, settings)
+    combined_text = (
+        f"{payload.message_text.strip()}\n\n"
+        f"Mood: {note_analysis.mood_label or note_analysis.mood_key or 'unknown'}\n"
+        f"Tags: {', '.join(note_analysis.activity_tags)}\n"
+        f"Summary:\n{note_analysis.summary_text}"
+    )
 
     upsert_journal_note_vector(
         settings,
         payload.correlation_id,
         payload.user_id,
         combined_text,
-        summary_text,
+        note_analysis.summary_text,
     )
     insert_patient_note_row(
         settings,
         payload.user_id,
         payload.correlation_id,
         payload.message_text,
-        summary_text,
+        note_analysis.mood_key,
+        note_analysis.mood_label,
+        note_analysis.mood_score,
+        note_analysis.activity_tags,
+        note_analysis.summary_text,
+        note_analysis.assistant_vibe_check,
     )
-    return summary_text
+    return note_analysis.summary_text
 
 
-def analyze_journal_with_openai(message_text: str, settings: ApplicationSettings) -> str:
-    """Invoke OpenAI for a short storage-oriented summary (Kafka path, not the live chat prompt)."""
+def analyze_journal_with_openai(
+    message_text: str,
+    settings: ApplicationSettings,
+) -> JournalNoteAnalysis:
+    """Invoke OpenAI for structured journal fields."""
     if not settings.openai_api_key:
         LOGGER.warning("OPENAI_API_KEY is not set; skipping the model call.")
-        return "Model call skipped: configure OPENAI_API_KEY."
+        return build_fallback_journal_analysis(message_text)
 
     model = ChatOpenAI(
         api_key=settings.openai_api_key,
         model=settings.openai_chat_model,
     )
-    prompt = (
-        "The user described their day and emotional state. "
-        "Reply with a very short, calm summary (2–3 sentences) for storage alongside the journal. "
-        "Do not give medical advice.\n\n"
-        f"User message:\n{message_text}"
-    )
-    response = model.invoke([HumanMessage(content=prompt)])
-    content = response.content if hasattr(response, "content") else str(response)
-    return content if isinstance(content, str) else str(content)
+    structured_model = model.with_structured_output(JournalNoteAnalysis)
+    try:
+        response = structured_model.invoke(
+            [
+                SystemMessage(content=JOURNAL_ANALYSIS_SYSTEM_PROMPT),
+                HumanMessage(content=message_text.strip()),
+            ]
+        )
+    except Exception:
+        LOGGER.exception("OpenAI structured journal analysis failed.")
+        return build_fallback_journal_analysis(message_text)
+
+    if isinstance(response, JournalNoteAnalysis):
+        return response
+
+    return JournalNoteAnalysis.model_validate(response)
 
 
 def safe_parse_kafka_payload(raw_json: str) -> JournalKafkaPayload | None:
