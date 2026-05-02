@@ -9,7 +9,7 @@ const LandingCareCard = React.memo(function LandingCareCard() {
       <div className="max-w-3xl">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-calm-second">Care</p>
         <h2 className="mt-4 text-4xl font-semibold leading-tight text-calm-text sm:text-5xl">
-          Мы заботимся о вас
+          We care about you
         </h2>
         <p className="mt-6 max-w-3xl text-lg leading-8 text-calm-muted">
           Serene is designed to feel calm, private, and supportive so people can return to their thoughts,

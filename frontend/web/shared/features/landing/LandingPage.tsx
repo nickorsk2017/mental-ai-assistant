@@ -4,6 +4,7 @@ import React from 'react';
 
 import Header from './components/Header';
 import LandingCareCard from './components/LandingCareCard';
+import LandingCompanyFooter from './components/LandingCompanyFooter';
 import LandingHeroContent from './components/LandingHeroContent';
 import LandingPricingCard from './components/LandingPricingCard';
 import LandingSupportSection from './components/LandingSupportSection';
@@ -22,7 +23,7 @@ const LandingPage = React.memo(function LandingPage() {
         </div>
       </section>
 
-      <section id="support" className="scroll-mt-28 px-6 pb-20 sm:px-8 lg:px-12">
+      <section id="support" className="scroll-mt-[212px] px-6 pb-20 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-7xl">
           <LandingSupportSection />
         </div>
@@ -39,6 +40,8 @@ const LandingPage = React.memo(function LandingPage() {
           <LandingCareCard />
         </div>
       </section>
+
+      <LandingCompanyFooter />
     </main>
   );
 });
