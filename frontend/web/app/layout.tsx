@@ -10,7 +10,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="bg-calm-background">{children}</body>
     </html>
   );
 }

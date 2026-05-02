@@ -1,15 +1,15 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+export {};
 
-type CookieStore = {
+type SessionCookieStore = {
   get: (name: string) => { value: string } | undefined;
 };
 
-type HeadersStore = {
+type RequestHeadersStore = {
   get: (name: string) => string | null;
 };
 
-const cookiesMock = jest.fn<() => Promise<CookieStore>>();
-const headersMock = jest.fn<() => Promise<HeadersStore>>();
+const cookiesMock = jest.fn<Promise<SessionCookieStore>, []>();
+const headersMock = jest.fn<Promise<RequestHeadersStore>, []>();
 const redirectMock = jest.fn((destination: string) => {
   throw new Error(`REDIRECT:${destination}`);
 });
@@ -23,13 +23,13 @@ jest.mock('next/navigation', () => ({
   redirect: (destination: string) => redirectMock(destination),
 }));
 
-function createCookieStore(accessToken?: string): CookieStore {
+function createCookieStore(accessToken?: string): SessionCookieStore {
   return {
     get: (name: string) => (name === 'accessToken' && accessToken ? { value: accessToken } : undefined),
   };
 }
 
-function createHeadersStore(pathname: string): HeadersStore {
+function createHeadersStore(pathname: string): RequestHeadersStore {
   return {
     get: (name: string) => (name === 'x-pathname' ? pathname : null),
   };
@@ -63,7 +63,7 @@ describe('getServerUser', () => {
 
   it('redirects to auth on private routes when no access token exists', async () => {
     cookiesMock.mockResolvedValue(createCookieStore());
-    headersMock.mockResolvedValue(createHeadersStore('/dashboard'));
+    headersMock.mockResolvedValue(createHeadersStore('/patient-panel'));
 
     const { getServerUser } = await import('./getServerUser');
 
@@ -73,7 +73,7 @@ describe('getServerUser', () => {
 
   it('returns the authenticated user when backend session lookup succeeds', async () => {
     cookiesMock.mockResolvedValue(createCookieStore('access-token'));
-    headersMock.mockResolvedValue(createHeadersStore('/dashboard'));
+    headersMock.mockResolvedValue(createHeadersStore('/patient-panel'));
     global.fetch = jest.fn(async () => ({
       ok: true,
       json: async () => ({
@@ -119,7 +119,7 @@ describe('getServerUser', () => {
 
     const { getServerUser } = await import('./getServerUser');
 
-    await expect(getServerUser()).rejects.toThrow('REDIRECT:/dashboard/chat');
-    expect(redirectMock).toHaveBeenCalledWith('/dashboard/chat');
+    await expect(getServerUser()).rejects.toThrow('REDIRECT:/patient-panel/chat');
+    expect(redirectMock).toHaveBeenCalledWith('/patient-panel/chat');
   });
 });

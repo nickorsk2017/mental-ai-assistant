@@ -19,6 +19,7 @@ const tailwindConfiguration: Config = {
     './app/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './shared/**/*.{ts,tsx}',
+    '../_common/hooks/**/*.{ts,tsx}',
     '../_common/ui-kit/**/*.{ts,tsx}',
   ],
   theme: {

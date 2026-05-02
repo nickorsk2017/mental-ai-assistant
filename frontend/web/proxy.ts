@@ -44,7 +44,7 @@ export async function proxy(request: NextRequest) {
 
   if (!user && !isPublicPath) {return NextResponse.redirect(new URL('/auth', request.url));}
 
-  if (user && isPublicPath) {return NextResponse.redirect(new URL('/dashboard/chat', request.url));}
+  if (user && isPublicPath) {return NextResponse.redirect(new URL('/patient-panel/chat', request.url));}
 
   if (user) {requestHeaders.set('x-user', JSON.stringify(user));}
 

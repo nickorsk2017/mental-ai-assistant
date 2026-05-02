@@ -10,7 +10,7 @@ import AuthPageBackgroundDecorations from './components/AuthPageBackgroundDecora
 
 const authenticationFormGlassContainerClassName =
   'rounded-[28px] border border-calm-border/60 bg-calm-surface/50 shadow-subtle backdrop-blur-xl transition-all duration-300';
-const dashboardUrl = '/dashboard/chat';
+const dashboardUrl = '/patient-panel/chat';
 
 function canUseFullPageNavigation(): boolean {
   return !navigator.userAgent.toLowerCase().includes('jsdom');

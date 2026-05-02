@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 
 interface AuthenticationStoreSnapshot {
   currentUser: { id: string } | null;
@@ -55,6 +54,6 @@ describe('AuthPage', () => {
     render(<AuthPage />);
 
     expect(screen.getByText('Signing you in...')).toBeTruthy();
-    expect(replaceMock).toHaveBeenCalledWith('/dashboard/chat');
+    expect(replaceMock).toHaveBeenCalledWith('/patient-panel/chat');
   });
 });
