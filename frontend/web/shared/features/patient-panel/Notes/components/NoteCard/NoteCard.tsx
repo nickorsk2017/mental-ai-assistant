@@ -3,12 +3,15 @@
 import React from 'react';
 
 import { usePatientMoodPresentation } from '@common/shared/hooks';
+import { Button, Icon } from '@common/shared/ui-kit';
 
 interface NoteCardProps {
   note: Entity.PatientNote;
+  onEdit: (note: Entity.PatientNote) => void;
+  onDelete: (noteId: string) => void;
 }
 
-export default React.memo(function NoteCard({ note }: NoteCardProps) {
+export default React.memo(function NoteCard({ note, onEdit, onDelete }: NoteCardProps) {
   const { resolveMoodCardClasses, resolveMoodScoreBadgeClasses } = usePatientMoodPresentation();
 
   const createdTime = new Intl.DateTimeFormat(undefined, {
@@ -25,13 +28,41 @@ export default React.memo(function NoteCard({ note }: NoteCardProps) {
           </p>
           <p className="mt-1 text-xs text-calm-muted">{createdTime}</p>
         </div>
-        {note.moodScore !== null && (
-          <div
-            className={`rounded-full border px-3 py-1 text-xs font-semibold ${resolveMoodScoreBadgeClasses(note.moodScore)}`}
-          >
-            {note.moodScore}/10
+        <div className="flex items-center gap-2">
+          {note.moodScore !== null && (
+            <div
+              className={`rounded-full border px-3 py-1 text-xs font-semibold ${resolveMoodScoreBadgeClasses(note.moodScore)}`}
+            >
+              {note.moodScore}/10
+            </div>
+          )}
+          <div className="flex items-center gap-1">
+            <Button
+              type="button"
+              onClick={() => onEdit(note)}
+              variant="outline"
+              size="small"
+              wide={false}
+              rounded
+              className="!h-8 !w-8 !min-h-0 !p-0 text-calm-muted hover:text-calm-primary"
+              aria-label="Edit note"
+            >
+              <Icon name="pencil" size={16} color="currentColor" />
+            </Button>
+            <Button
+              type="button"
+              onClick={() => onDelete(note.id)}
+              variant="outline"
+              size="small"
+              wide={false}
+              rounded
+              className="!h-8 !w-8 !min-h-0 !p-0 text-calm-muted hover:text-calm-error"
+              aria-label="Delete note"
+            >
+              <Icon name="trash" size={16} color="currentColor" />
+            </Button>
           </div>
-        )}
+        </div>
       </div>
 
       <p className="mt-4 text-sm leading-6 text-calm-text">

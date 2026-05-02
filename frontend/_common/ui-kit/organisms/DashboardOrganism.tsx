@@ -3,6 +3,7 @@
 import React, { useCallback } from 'react';
 import { useAuthentication } from '../../hooks';
 import { useAuthenticationStore } from '../../stores/useAuthStore';
+import Button from '../atoms/Button/Button';
 
 interface DashboardOrganismProps {
   onSignedOut?: () => void;
@@ -23,9 +24,9 @@ export const DashboardOrganism = React.memo(function DashboardOrganism({ onSigne
         <h1 className="text-3xl font-bold text-calm-text mb-2">Hello, World!</h1>
         <p className="text-base text-calm-primary">{currentUser?.email ?? 'Unknown user'}</p>
         {currentUser?.displayName ? <p className="text-sm text-calm-muted mt-2">{currentUser.displayName}</p> : null}
-        <button className="mt-6 border border-calm-border rounded-xl px-4 py-3 w-full" onClick={() => void handleSignOut()}>
+        <Button className="mt-6" onClick={() => void handleSignOut()} disabled={isAuthenticating}>
           {isAuthenticating ? 'Signing out...' : 'Sign Out'}
-        </button>
+        </Button>
       </div>
     </div>
   );

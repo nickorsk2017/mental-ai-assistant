@@ -7,7 +7,7 @@ const LandingCareCard = React.memo(function LandingCareCard() {
   return (
     <section className="relative rounded-[36px] border border-calm-border bg-[linear-gradient(135deg,rgba(255,255,255,0.98),rgba(244,247,255,0.92)_48%,rgba(255,246,238,0.94))] p-10 shadow-soft sm:p-12">
       <div className="max-w-3xl">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-calm-second">Care</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-calm-primary">Care</p>
         <h2 className="mt-4 text-4xl font-semibold leading-tight text-calm-text sm:text-5xl">
           We care about you
         </h2>

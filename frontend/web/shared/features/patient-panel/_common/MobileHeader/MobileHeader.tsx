@@ -54,14 +54,16 @@ export default function MobileHeader({ user }: { user: ServerUser }) {
       <div className="rounded-[28px] border border-calm-border/70 bg-calm-surface/65 px-5 py-3 shadow-subtle backdrop-blur-xl">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" onClick={() => setIsMenuOpen(false)}>
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-second">Serene</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Serene</p>
             <p className="mt-1 text-sm text-calm-muted">Patient panel</p>
           </Link>
-          <button
+          <Button
             type="button"
             aria-expanded={isMenuOpen}
             aria-label="Toggle navigation menu"
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-calm-second bg-calm-second/10 text-calm-second transition hover:bg-calm-second/15"
+            rounded
+            wide={false}
+            className="flex h-12 min-h-0 w-12 shrink-0 items-center justify-center border-calm-primary bg-calm-primary/10 p-0 text-calm-primary hover:bg-calm-primary/15"
             onClick={() => setIsMenuOpen((currentValue) => !currentValue)}
           >
             <span className="flex w-5 flex-col gap-1.5">
@@ -69,7 +71,7 @@ export default function MobileHeader({ user }: { user: ServerUser }) {
               <span className={`h-0.5 rounded-full bg-current transition ${isMenuOpen ? 'opacity-0' : ''}`} />
               <span className={`h-0.5 rounded-full bg-current transition ${isMenuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
             </span>
-          </button>
+          </Button>
         </div>
       </div>
       {isMenuOpen && (
@@ -78,20 +80,22 @@ export default function MobileHeader({ user }: { user: ServerUser }) {
             <div className="flex h-full flex-col rounded-[28px] border border-calm-border/80 bg-calm-surface/56 px-5 py-3 shadow-medium backdrop-blur-xl">
               <div className="flex items-center justify-between gap-4">
                 <Link href="/" onClick={() => setIsMenuOpen(false)}>
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-second">Serene</p>
+                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Serene</p>
                   <p className="mt-1 text-sm text-calm-muted">Patient panel</p>
                 </Link>
-                <button
+                <Button
                   type="button"
                   aria-label="Close navigation menu"
-                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-calm-second bg-calm-second/10 text-calm-second transition hover:bg-calm-second/15"
+                  rounded
+                  wide={false}
+                  className="flex h-12 min-h-0 w-12 shrink-0 items-center justify-center border-calm-primary bg-calm-primary/10 p-0 text-calm-primary hover:bg-calm-primary/15"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <span className="relative block h-4 w-4">
                     <span className="absolute left-1/2 top-1/2 h-0.5 w-4 -translate-x-1/2 -translate-y-1/2 rotate-45 rounded-full bg-current" />
                     <span className="absolute left-1/2 top-1/2 h-0.5 w-4 -translate-x-1/2 -translate-y-1/2 -rotate-45 rounded-full bg-current" />
                   </span>
-                </button>
+                </Button>
               </div>
               <nav aria-label="Patient navigation" className="mt-5 flex flex-1 flex-col gap-2">
                 {patientAdminNavigationItems.map((navigationItem) => {
@@ -103,7 +107,7 @@ export default function MobileHeader({ user }: { user: ServerUser }) {
                       key={navigationHref}
                       href={navigationHref}
                       className={`rounded-full px-4 py-3 text-sm font-semibold transition ${
-                        isActive ? 'bg-calm-second/18 text-calm-text' : 'text-calm-muted hover:bg-calm-background/70'
+                        isActive ? 'bg-calm-primary/18 text-calm-text' : 'text-calm-muted hover:bg-calm-background/70'
                       }`}
                       onClick={() => setIsMenuOpen(false)}
                     >
@@ -114,7 +118,7 @@ export default function MobileHeader({ user }: { user: ServerUser }) {
               </nav>
               <div className="mt-auto rounded-2xl border border-calm-border/55 bg-calm-surface/70 px-3 py-3">
                 <div className="flex items-start gap-2">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-calm-second/12 text-calm-second">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-calm-primary/12 text-calm-primary">
                     <Icon name="user" size={18} color="currentColor" />
                   </span>
                   <div className="min-w-0 flex-1">

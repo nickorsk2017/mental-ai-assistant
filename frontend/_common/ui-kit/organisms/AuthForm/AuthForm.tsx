@@ -31,11 +31,11 @@ export const AuthForm = React.memo(function AuthForm({
         <div className="mt-4 flex flex-col items-center justify-between gap-3 md:flex-row">
           <span className="w-full text-calm-muted md:w-auto">{isSignInMode ? "Login to your account" : "Create new account"}</span>
           <div className="mt-4 flex items-center gap-3 md:mt-0">
-            <Button variant="ghost" size="small" wide={false} onClick={showSignInForm} className={isSignInMode ? 'text-calm-second underline' : 'text-calm-muted'}>
+            <Button variant="ghost" size="small" wide={false} onClick={showSignInForm} className={isSignInMode ? 'text-calm-primary underline' : 'text-calm-muted'}>
               Sign In
             </Button>
             <span className="text-calm-muted">|</span>
-            <Button variant="ghost" size="small" wide={false} onClick={showSignUpForm} className={!isSignInMode ? 'text-calm-second underline' : 'text-calm-muted'}>
+            <Button variant="ghost" size="small" wide={false} onClick={showSignUpForm} className={!isSignInMode ? 'text-calm-primary underline' : 'text-calm-muted'}>
               Sign Up
             </Button>
           </div>

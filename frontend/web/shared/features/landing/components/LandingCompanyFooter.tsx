@@ -22,7 +22,7 @@ const LandingCompanyFooter = React.memo(function LandingCompanyFooter() {
       <div className="mx-auto w-full max-w-7xl">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-second">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">
               Serene
             </p>
             <p className="mt-3 max-w-md text-base leading-7 text-calm-muted">

@@ -139,7 +139,21 @@ The restriction applies only to shared entity contracts:
 
 ---
 
-## Rule 5 — Package Manager (pnpm)
+## Rule 5 — Frontend Controls
+
+- All clickable button controls in `frontend/` must use `frontend/_common/ui-kit/Button`.
+- Do not render raw `<button>` elements in web, mobile, or shared frontend UI unless you are implementing the `Button` component itself.
+- Icon-only buttons still use `Button`; pass icon children and accessibility attributes such as `aria-label`.
+- All text-like input controls in `frontend/` must use `frontend/_common/ui-kit/TextInput`.
+- Do not render raw `<input>` elements in web, mobile, or shared frontend UI unless you are implementing the `TextInput` component itself.
+- Multi-line form fields in `frontend/` must use `frontend/_common/ui-kit/TextArea`.
+- Raw `<textarea>` is allowed only inside `TextArea` itself or specialized composer components such as `ChatInput`.
+- Modal dialogs in `frontend/` must use `frontend/_common/ui-kit/Modal`.
+- Do not reimplement portal, overlay, body-scroll locking, modal header, or close button behavior in feature components.
+
+---
+
+## Rule 6 — Package Manager (pnpm)
 
 **pnpm `10.33.2`** is the package manager for all services and workspaces.
 
@@ -186,7 +200,7 @@ RUN pnpm install --frozen-lockfile
 
 ---
 
-## Rule 6 — Environment Variables
+## Rule 7 — Environment Variables
 
 - Single source of truth: `_common/.env`
 - All Docker services mount it via `env_file` in `docker-compose.yml`
@@ -195,7 +209,7 @@ RUN pnpm install --frozen-lockfile
 
 ---
 
-## Rule 7 — Docker
+## Rule 8 — Docker
 
 - Each service owns its `Dockerfile`:
   - `frontend/web/Dockerfile` (build context: `./frontend`)
@@ -206,7 +220,7 @@ RUN pnpm install --frozen-lockfile
 
 ---
 
-## Rule 8 — CI/CD
+## Rule 9 — CI/CD
 
 CI/CD files are allowed when they validate the template without hardcoding project-specific deployment details.
 
@@ -217,6 +231,10 @@ CI/CD files are allowed when they validate the template without hardcoding proje
 - [ ] No file exceeds its line limit
 - [ ] No abbreviations in any identifier or file name
 - [ ] All shared types are in `frontend/_common/types/*.d.ts` inside `namespace Entity {}`
+- [ ] Frontend clickable button controls use `frontend/_common/ui-kit/Button`
+- [ ] Frontend text-like input controls use `frontend/_common/ui-kit/TextInput`
+- [ ] Frontend multi-line form fields use `frontend/_common/ui-kit/TextArea`
+- [ ] Frontend modal dialogs use `frontend/_common/ui-kit/Modal`
 - [ ] `_common/.env` is not committed; `_common/.env.example` is updated if needed
 - [ ] No `frontend/` code imports directly from `backend/`
 - [ ] Root `_common/` contains only `migrations/`, `eslint/`, and `.env*`

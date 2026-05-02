@@ -21,7 +21,7 @@ const MessageItem = React.memo(function MessageItem({
         className={`max-w-[85%] rounded-[22px] px-4 py-3 text-left text-sm leading-7 ${
           isAssistantRow
             ? 'border border-calm-border/50 bg-calm-surface/90 text-calm-text shadow-subtle'
-            : 'bg-calm-second/18 text-calm-text'
+            : 'bg-calm-primary/18 text-calm-text'
         }`}
       >
         {isPendingAssistant ? (

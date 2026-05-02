@@ -1,6 +1,7 @@
 import React, { useId, useState } from 'react';
 import { Icon } from '../../atoms/Icon/Icon';
 import { ComponentSize } from '../../../themes/calm-theme';
+import Button from '../../atoms/Button/Button';
 
 type InputType = 'text' | 'password';
 
@@ -54,13 +55,16 @@ export default React.memo(function TextInput({
           className={`w-full rounded-xl border outline-none ${sizeClassMap[size]} ${inputClass}`}
         />
         {type === 'password' ? (
-          <button
+          <Button
             type="button"
             onClick={() => setIsPasswordVisible((current) => !current)}
-            className="cursor-pointer border-none bg-transparent text-calm-muted absolute right-3 top-1/2 -translate-y-1/2"
+            variant="ghost"
+            wide={false}
+            className="absolute right-3 top-1/2 min-h-0 -translate-y-1/2 border-none p-0 text-calm-muted"
+            aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
           >
             <Icon name={isPasswordVisible ? 'eye-off' : 'eye'} size={20} color="#8b90a7" />
-          </button>
+          </Button>
         ) : null}
       </div>
       {errorMessage ? <span className="text-caption text-calm-error">{errorMessage}</span> : null}

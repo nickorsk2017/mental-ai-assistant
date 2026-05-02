@@ -23,6 +23,14 @@ declare global {
       updatedAt: string;
     }
 
+    interface PatientNoteMutationInput {
+      moodLabel: string | null;
+      moodScore: number | null;
+      activityTags: string[];
+      messageText: string;
+      summaryText: string | null;
+    }
+
     interface PatientNoteGroup {
       label: string;
       notes: PatientNote[];

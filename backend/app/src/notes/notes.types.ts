@@ -9,3 +9,11 @@ export interface PatientNoteRecord {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface PatientNoteMutationBody {
+  moodLabel?: string | null;
+  moodScore?: number | null;
+  activityTags?: string[];
+  messageText?: string;
+  summaryText?: string | null;
+}

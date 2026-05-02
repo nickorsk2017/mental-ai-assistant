@@ -10,4 +10,9 @@ export {
   openPatientChatStream,
 } from './PatientChatService';
 
-export { loadPatientNotes } from './PatientNotesService';
+export {
+  loadPatientNotes,
+  createPatientNote,
+  updatePatientNote,
+  deletePatientNote,
+} from './PatientNotesService';

@@ -11,7 +11,7 @@ const meta: Meta<typeof Button> = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'outline', 'ghost'],
+      options: ['primary', 'outline', 'ghost'],
     },
     size: {
       control: 'select',
@@ -28,15 +28,6 @@ export const Primary: ButtonStory = {
     children: 'Sign In',
     onClick: () => undefined,
     variant: 'primary',
-    size: 'medium',
-  },
-};
-
-export const Secondary: ButtonStory = {
-  args: {
-    children: 'Create Account',
-    onClick: () => undefined,
-    variant: 'secondary',
     size: 'medium',
   },
 };

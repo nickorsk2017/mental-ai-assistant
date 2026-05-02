@@ -23,7 +23,7 @@ const tailwindConfiguration: Config = {
     '../_common/hooks/**/*.{ts,tsx}',
     '../_common/ui-kit/**/*.{ts,tsx}',
   ],
-  safelist: ['bg-calm-second/18'],
+  safelist: ['bg-calm-primary/18'],
   theme: {
     extend: {
       colors: {

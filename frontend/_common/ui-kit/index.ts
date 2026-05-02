@@ -5,6 +5,8 @@ export { Icon } from './atoms/Icon/Icon';
 export { default as LoadingSpinner } from './atoms/LoadingSpinner/LoadingSpinner';
 export { default as MessageItem } from './molecules/MessageItem/MessageItem';
 export { default as ChatInput } from './molecules/ChatInput/ChatInput';
+export { default as Modal } from './molecules/Modal/Modal';
+export { default as TextArea } from './molecules/TextArea/TextArea';
 export { default as TextInput } from './molecules/TextInput/TextInput';
 export { softCalmTheme } from '../themes/calm-theme';
 export type { SoftCalmTheme } from '../themes/calm-theme';

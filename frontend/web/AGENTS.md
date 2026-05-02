@@ -52,7 +52,7 @@ Defined in `tailwind.config.ts` under `theme.extend.colors.calm`. Map directly t
 | `bg-calm-surface` | `#FFFFFF` | Card surfaces |
 | `text-calm-text` | `#3D4255` | Primary body text |
 | `text-calm-muted` | `#8B90A7` | Secondary / placeholder text |
-| `text-calm-primary` | `#7C9CF5` | Accent text, active tabs |
+| `text-calm-primary` | `#E48A3A` | Actions, brand marks, active tabs |
 | `border-calm-border` | `#E5E7F0` | Dividers, input borders |
 | `bg-calm-error-light` | `#FEF2F2` | Error backgrounds |
 | `text-calm-error` | `#F87171` | Error text |
@@ -68,11 +68,11 @@ Use inline string expressions — no extra `useMemo` needed for simple class str
 
 ```tsx
 // ✅ Correct
-<button className={`flex-1 py-2 ${isActive ? 'text-calm-primary font-semibold' : 'text-calm-muted font-normal'}`}>
+<Button className={`flex-1 py-2 ${isActive ? 'text-calm-primary font-semibold' : 'text-calm-muted font-normal'}`}>
 
 // ❌ Wrong — no inline styles, no theme imports
 import { softCalmTheme } from '@common/ui-kit/theme';
-<button style={{ color: isActive ? softCalmTheme.colors.primary : softCalmTheme.colors.textSecondary }}>
+<Button style={{ color: isActive ? softCalmTheme.colors.primary : softCalmTheme.colors.textSecondary }}>
 ```
 
 ### ui-kit exception
@@ -152,11 +152,28 @@ Mandatory in every component:
 
 ---
 
+## Rule — Controls
+
+- Use `Button` from `@common/shared/ui-kit` for every clickable button control.
+- Do not render raw `<button>` elements in `frontend/web/`; icon-only controls must also use `Button` with an `aria-label`.
+- Use `TextInput` from `@common/shared/ui-kit` for every text-like input control.
+- Do not render raw `<input>` elements in `frontend/web/` unless you are implementing `TextInput`.
+- Use `TextArea` from `@common/shared/ui-kit` for multi-line form fields.
+- Raw `<textarea>` is allowed only inside `TextArea` itself or specialized composer components such as `ChatInput`.
+- Use `Modal` from `@common/shared/ui-kit` for modal dialogs.
+- Do not reimplement portal, overlay, body-scroll locking, modal header, or close button behavior in web feature components.
+
+---
+
 ## Web Pre-PR Checklist
 
 - [ ] `frontend/web/` has no `contexts/`, `services/`, `hooks/`, `stores/`, `types/`, or `utils/` folders
 - [ ] Every component is wrapped in `React.memo`
 - [ ] All `useMemo` and `useCallback` applied where required
+- [ ] All clickable button controls use `@common/shared/ui-kit/Button`
+- [ ] All text-like input controls use `@common/shared/ui-kit/TextInput`
+- [ ] All multi-line form fields use `@common/shared/ui-kit/TextArea`
+- [ ] All modal dialogs use `@common/shared/ui-kit/Modal`
 - [ ] No component calls `fetch` or imports from `@common/services` directly
 - [ ] No `createContext` or `useContext` — use `@common/stores` instead
 - [ ] **Zero inline `style` props** — all styling via Tailwind classes

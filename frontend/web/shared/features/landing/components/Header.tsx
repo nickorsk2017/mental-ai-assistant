@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { Button } from '@common/shared/ui-kit';
 
 const navigationItems = [
   { href: '#hero', label: 'Home' },
@@ -54,7 +55,7 @@ const Header = React.memo(function Header() {
       <div className={`mx-auto max-w-7xl rounded-[28px] border px-5 py-3 transition-all duration-300 ${headerClassName}`}>
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-second">Serene</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Serene</p>
             <p className="text-sm text-calm-muted">AI-powered mental wellness journal</p>
           </div>
           <nav className="hidden items-center gap-6 lg:flex">
@@ -69,11 +70,13 @@ const Header = React.memo(function Header() {
             ))}
           </nav>
           <div className="flex items-center gap-3">
-            <button
+            <Button
               type="button"
               aria-expanded={isMenuOpen}
               aria-label="Toggle navigation menu"
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-calm-second bg-calm-second/10 text-calm-second transition hover:bg-calm-second/15 lg:hidden"
+              rounded
+              wide={false}
+              className="flex h-12 min-h-0 w-12 items-center justify-center border-calm-primary bg-calm-primary/10 p-0 text-calm-primary hover:bg-calm-primary/15 lg:hidden"
               onClick={() => setIsMenuOpen((currentValue) => !currentValue)}
             >
               <span className="flex w-5 flex-col gap-1.5">
@@ -81,10 +84,10 @@ const Header = React.memo(function Header() {
                 <span className={`h-0.5 rounded-full bg-current transition ${isMenuOpen ? 'opacity-0' : ''}`} />
                 <span className={`h-0.5 rounded-full bg-current transition ${isMenuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
               </span>
-            </button>
+            </Button>
             <Link
               href="/auth"
-              className="hidden rounded-full border border-calm-second bg-calm-second px-5 py-3 text-sm font-semibold text-calm-primary-text transition hover:brightness-95 sm:inline-flex"
+              className="hidden rounded-full border border-calm-primary bg-calm-primary px-5 py-3 text-sm font-semibold text-calm-primary-text transition hover:brightness-95 sm:inline-flex"
             >
               Try for free
             </Link>
@@ -105,7 +108,7 @@ const Header = React.memo(function Header() {
               ))}
               <Link
                 href="/auth"
-                className="mt-2 inline-flex items-center justify-center rounded-full border border-calm-second bg-calm-second px-5 py-3 text-sm font-semibold text-calm-primary-text transition hover:brightness-95 sm:hidden"
+                className="mt-2 inline-flex items-center justify-center rounded-full border border-calm-primary bg-calm-primary px-5 py-3 text-sm font-semibold text-calm-primary-text transition hover:brightness-95 sm:hidden"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Try for free

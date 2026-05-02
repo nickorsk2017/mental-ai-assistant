@@ -2,12 +2,15 @@ import React from 'react';
 import { ComponentSize } from '../../../themes/calm-theme';
 import { cx } from '../../../utils';
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
+type ButtonVariant = 'primary' | 'outline' | 'ghost';
 
-type ButtonProps = {
+type ButtonProps = Omit<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  'children' | 'className' | 'onClick' | 'type'
+> & {
   type?: 'button' | 'submit' | 'reset';
   children: React.ReactNode;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   variant?: ButtonVariant;
   size?: ComponentSize;
   disabled?: boolean;
@@ -28,6 +31,7 @@ export const Button = React.memo(function Button({
   className,
   wide,
   rounded,
+  ...buttonAttributes
 }: ButtonProps) {
   const sizeClassMap: Record<ComponentSize, string> = {
     small: 'min-h-[34px] px-3.5 py-2 text-label rounded-[10px]',
@@ -37,7 +41,6 @@ export const Button = React.memo(function Button({
 
   const variantClassMap: Record<ButtonVariant, string> = {
     primary: 'bg-calm-primary border-calm-primary text-calm-primary-text',
-    secondary: 'bg-calm-second border-calm-second text-calm-primary-text',
     outline: 'bg-transparent border-calm-border text-calm-text',
     ghost: 'bg-transparent border-transparent text-calm-muted',
   };
@@ -47,14 +50,15 @@ export const Button = React.memo(function Button({
       type={type ?? 'button'}
       onClick={onClick}
       disabled={disabled || isLoading}
+      {...buttonAttributes}
       className={cx(
-        'border font-semibold transition-all duration-150',
+        'border font-semibold transition-all duration-150 !flex-none',
         sizeClassMap[size],
         variantClassMap[variant],
-        className,
         (wide === true || wide === undefined) ? 'w-full' : 'w-auto',
         disabled || isLoading ? 'cursor-not-allowed opacity-50' : '!cursor-pointer hover:brightness-95',
         rounded ? 'rounded-full' : 'rounded-[12px]',
+        className,
       )}
     >
       {isLoading ? 'Loading...' : children}

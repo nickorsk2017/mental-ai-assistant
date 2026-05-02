@@ -33,14 +33,14 @@ export function PageHeader({
       <IonToolbar className="mt-[10px] min-h-0 [--background:transparent] [--border-width:0] bg-transparent px-4 pb-3 pt-[calc(1rem+var(--ion-safe-area-top,0px))]">
         <div className={roundedPageHeaderChromeClassNames}>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-second">Serene</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Serene</p>
             <p className="truncate text-sm text-calm-muted">{title}</p>
           </div>
           <Button
             type="button"
             aria-busy={isAuthenticating}
             disabled={isAuthenticating}
-            variant="secondary"
+            variant="primary"
             onClick={() => void handleSignOut()}
             wide={false}
             rounded

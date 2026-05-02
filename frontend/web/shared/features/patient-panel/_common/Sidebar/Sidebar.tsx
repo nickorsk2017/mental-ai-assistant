@@ -25,7 +25,7 @@ const Sidebar = React.memo(function Sidebar({ user }: { user: ServerUser }) {
   return (
     <aside className="hidden h-[calc(100%-2rem)] w-[272px] shrink-0 flex-col rounded-[28px] border border-calm-border/75 bg-calm-surface/50 px-4 py-6 shadow-subtle backdrop-blur-xl lg:flex">
       <Link href="/" className="mb-8 block px-1">
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-second">Serene</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Serene</p>
         <p className="mt-1 text-xs text-calm-muted">Patient panel</p>
       </Link>
 
@@ -40,7 +40,7 @@ const Sidebar = React.memo(function Sidebar({ user }: { user: ServerUser }) {
               href={navigationHref}
               className={`rounded-2xl px-3 py-3 text-sm font-semibold transition ${
                 isActive
-                  ? 'bg-calm-second/18 text-calm-text shadow-subtle'
+                  ? 'bg-calm-primary/18 text-calm-text shadow-subtle'
                   : 'text-calm-muted hover:bg-calm-surface/70 hover:text-calm-text'
               }`}
             >
@@ -52,7 +52,7 @@ const Sidebar = React.memo(function Sidebar({ user }: { user: ServerUser }) {
 
       <div className="mt-auto rounded-2xl border border-calm-border/55 bg-calm-surface/65 px-3 py-3">
         <div className="flex items-start gap-2">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-calm-second/12 text-calm-second">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-calm-primary/12 text-calm-primary">
             <Icon name="user" size={18} color="currentColor" />
           </span>
           <div className="min-w-0 flex-1">
