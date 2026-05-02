@@ -6,7 +6,7 @@ import HeroOrbitShapes from './HeroOrbitShapes';
 
 const PinkElephantShowcase = React.memo(function PinkElephantShowcase() {
   return (
-    <div className="relative mx-auto w-full max-w-[1280px] lg:justify-self-end">
+    <div className="relative mx-auto hidden w-full max-w-[1280px] lg:block lg:justify-self-end">
       <HeroOrbitShapes />
       
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(196,236,255,0.28),transparent_22%),radial-gradient(circle_at_80%_20%,rgba(216,214,255,0.28),transparent_20%),radial-gradient(circle_at_65%_70%,rgba(255,210,222,0.24),transparent_24%)]" />

@@ -5,7 +5,7 @@ import doctorPortrait from '../images/DoctorPortrait.png';
 
 const LandingDoctorSupportCard = React.memo(function LandingDoctorSupportCard() {
   return (
-    <section className="p-1">
+    <section className="hidden p-1 lg:block">
       <div className="overflow-hidden rounded-[28px] border border-calm-border bg-calm-surface shadow-subtle">
         <div className="relative aspect-[4/4.9]">
           <Image

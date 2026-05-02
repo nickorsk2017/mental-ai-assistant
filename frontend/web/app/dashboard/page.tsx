@@ -1,8 +1,5 @@
-import { requireServerUser } from '../../shared/lib/getServerUser';
-import { DashboardView } from '../../shared/features/dashboard/DashboardView';
+import { redirect } from 'next/navigation';
 
-export default async function DashboardPage() {
-  const user = await requireServerUser();
-
-  return <DashboardView user={user} />;
+export default function DashboardIndexPage() {
+  redirect('/dashboard/chat');
 }

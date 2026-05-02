@@ -55,6 +55,6 @@ describe('AuthPage', () => {
     const { container } = render(<AuthPage />);
 
     expect(container.firstChild).toBeNull();
-    expect(replaceMock).toHaveBeenCalledWith('/dashboard');
+    expect(replaceMock).toHaveBeenCalledWith('/dashboard/chat');
   });
 });

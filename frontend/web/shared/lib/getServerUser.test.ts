@@ -119,7 +119,7 @@ describe('getServerUser', () => {
 
     const { getServerUser } = await import('./getServerUser');
 
-    await expect(getServerUser()).rejects.toThrow('REDIRECT:/dashboard');
-    expect(redirectMock).toHaveBeenCalledWith('/dashboard');
+    await expect(getServerUser()).rejects.toThrow('REDIRECT:/dashboard/chat');
+    expect(redirectMock).toHaveBeenCalledWith('/dashboard/chat');
   });
 });

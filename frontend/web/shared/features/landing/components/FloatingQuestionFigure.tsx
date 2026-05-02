@@ -2,7 +2,7 @@ import React from 'react';
 
 const FloatingQuestionFigure = React.memo(function FloatingQuestionFigure() {
   return (
-    <div className="relative flex min-h-[420px] items-center justify-center overflow-hidden p-8">
+    <div className="relative hidden min-h-[420px] items-center justify-center overflow-hidden p-8 lg:flex">
       <div className="absolute left-8 top-8 h-20 w-20 rounded-full bg-calm-primary/10 blur-md animate-gentle-pulse" />
       <div className="absolute bottom-10 right-8 h-24 w-24 rounded-[28px] bg-calm-primary/10 blur-md animate-gentle-drift" />
       <div className="absolute left-1/2 top-10 h-16 w-16 -translate-x-1/2 rounded-full bg-white/70 animate-gentle-float-delayed" />

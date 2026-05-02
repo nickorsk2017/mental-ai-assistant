@@ -1,7 +1,8 @@
 import { useEffect, useRef, type RefObject } from 'react';
 
 export function useParallaxRise<ElementType extends HTMLElement>(
-  parallaxRangePixels: number
+  parallaxRangePixels: number,
+  enableMediaQuery?: string
 ): RefObject<ElementType | null> {
   const elementRef = useRef<ElementType | null>(null);
 
@@ -14,8 +15,13 @@ export function useParallaxRise<ElementType extends HTMLElement>(
     );
     if (reducedMotionMediaQuery.matches) return;
 
+    const enableMatcher = enableMediaQuery
+      ? window.matchMedia(enableMediaQuery)
+      : null;
+
     let animationFrameId = 0;
     let elementTopFromPage = 0;
+    let isParallaxEnabled = enableMatcher ? enableMatcher.matches : true;
 
     function captureElementOrigin() {
       const previousTransform = targetElement!.style.transform;
@@ -26,6 +32,10 @@ export function useParallaxRise<ElementType extends HTMLElement>(
     }
 
     function applyParallaxTransform() {
+      if (!isParallaxEnabled) {
+        targetElement!.style.transform = '';
+        return;
+      }
       const elementHeight = targetElement!.offsetHeight;
       const viewportHeight = window.innerHeight;
       const elementTopRelativeToViewport = elementTopFromPage - window.scrollY;
@@ -42,7 +52,8 @@ export function useParallaxRise<ElementType extends HTMLElement>(
       animationFrameId = requestAnimationFrame(applyParallaxTransform);
     }
 
-    function handleWindowResize() {
+    function handleViewportChange() {
+      isParallaxEnabled = enableMatcher ? enableMatcher.matches : true;
       captureElementOrigin();
       scheduleParallaxFrame();
     }
@@ -50,14 +61,16 @@ export function useParallaxRise<ElementType extends HTMLElement>(
     captureElementOrigin();
     applyParallaxTransform();
     window.addEventListener('scroll', scheduleParallaxFrame, { passive: true });
-    window.addEventListener('resize', handleWindowResize);
+    window.addEventListener('resize', handleViewportChange);
+    enableMatcher?.addEventListener('change', handleViewportChange);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('scroll', scheduleParallaxFrame);
-      window.removeEventListener('resize', handleWindowResize);
+      window.removeEventListener('resize', handleViewportChange);
+      enableMatcher?.removeEventListener('change', handleViewportChange);
     };
-  }, [parallaxRangePixels]);
+  }, [parallaxRangePixels, enableMediaQuery]);
 
   return elementRef;
 }

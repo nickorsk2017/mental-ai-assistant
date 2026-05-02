@@ -48,7 +48,7 @@ export const getServerUser = cache(async (): Promise<ServerUser | null> => {
 
   if (!user && !isPublicPath) {redirectToAuth();}
 
-  if (user && isPublicPath) {redirect('/dashboard');}
+  if (user && isPublicPath) {redirect('/dashboard/chat');}
 
   return user;
 });

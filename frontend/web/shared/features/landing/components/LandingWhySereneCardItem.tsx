@@ -34,7 +34,10 @@ const LandingWhySereneCardItem = React.memo(function LandingWhySereneCardItem({
   textAfter,
   parallaxRangePixels,
 }: LandingWhySereneCardItemProps) {
-  const articleElementRef = useParallaxRise<HTMLElement>(parallaxRangePixels);
+  const articleElementRef = useParallaxRise<HTMLElement>(
+    parallaxRangePixels,
+    '(min-width: 768px)'
+  );
 
   return (
     <article
