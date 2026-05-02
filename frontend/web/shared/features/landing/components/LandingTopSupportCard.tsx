@@ -10,20 +10,24 @@ const LandingTopSupportCard = React.memo(function LandingTopSupportCard() {
 
   useEffect(() => {
     const sectionElement = sectionRef.current;
-    if (!sectionElement) return;
+
+    if (!sectionElement) {return;}
 
     const reducedMotionMediaQuery = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     );
-    if (reducedMotionMediaQuery.matches) return;
+
+    if (reducedMotionMediaQuery.matches) {return;}
 
     let animationFrameId = 0;
     let elementTopFromPage = 0;
 
     function captureElementOrigin() {
       const previousTransform = sectionElement!.style.transform;
+
       sectionElement!.style.transform = '';
       const boundingRect = sectionElement!.getBoundingClientRect();
+
       elementTopFromPage = boundingRect.top + window.scrollY;
       sectionElement!.style.transform = previousTransform;
     }
@@ -37,6 +41,7 @@ const LandingTopSupportCard = React.memo(function LandingTopSupportCard() {
       const rawProgress = traveledDistance / totalTravel;
       const clampedProgress = Math.max(0, Math.min(1, rawProgress));
       const parallaxOffset = -clampedProgress * PARALLAX_RANGE_PIXELS;
+
       sectionElement!.style.transform = `translate3d(0, ${parallaxOffset}px, 0)`;
     }
 

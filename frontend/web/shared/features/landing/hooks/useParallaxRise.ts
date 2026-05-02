@@ -8,12 +8,14 @@ export function useParallaxRise<ElementType extends HTMLElement>(
 
   useEffect(() => {
     const targetElement = elementRef.current;
-    if (!targetElement) return;
+
+    if (!targetElement) {return;}
 
     const reducedMotionMediaQuery = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     );
-    if (reducedMotionMediaQuery.matches) return;
+
+    if (reducedMotionMediaQuery.matches) {return;}
 
     const enableMatcher = enableMediaQuery
       ? window.matchMedia(enableMediaQuery)
@@ -25,8 +27,10 @@ export function useParallaxRise<ElementType extends HTMLElement>(
 
     function captureElementOrigin() {
       const previousTransform = targetElement!.style.transform;
+
       targetElement!.style.transform = '';
       const boundingRect = targetElement!.getBoundingClientRect();
+
       elementTopFromPage = boundingRect.top + window.scrollY;
       targetElement!.style.transform = previousTransform;
     }
@@ -34,8 +38,10 @@ export function useParallaxRise<ElementType extends HTMLElement>(
     function applyParallaxTransform() {
       if (!isParallaxEnabled) {
         targetElement!.style.transform = '';
+
         return;
       }
+
       const elementHeight = targetElement!.offsetHeight;
       const viewportHeight = window.innerHeight;
       const elementTopRelativeToViewport = elementTopFromPage - window.scrollY;
@@ -44,6 +50,7 @@ export function useParallaxRise<ElementType extends HTMLElement>(
       const rawProgress = traveledDistance / totalTravel;
       const clampedProgress = Math.max(0, Math.min(1, rawProgress));
       const parallaxOffset = -clampedProgress * parallaxRangePixels;
+
       targetElement!.style.transform = `translate3d(0, ${parallaxOffset}px, 0)`;
     }
 

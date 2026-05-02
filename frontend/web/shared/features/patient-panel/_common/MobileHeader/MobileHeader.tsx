@@ -41,6 +41,7 @@ export default function MobileHeader({ user }: { user: ServerUser }) {
     }
 
     const originalOverflow = document.body.style.overflow;
+
     document.body.style.overflow = 'hidden';
 
     return () => {

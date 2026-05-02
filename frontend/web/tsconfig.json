@@ -31,7 +31,9 @@
     "isolatedModules": true,
     "types": [
       "jest",
-      "node"
+      "node",
+      "react",
+      "react-dom"
     ]
   },
   "include": [
