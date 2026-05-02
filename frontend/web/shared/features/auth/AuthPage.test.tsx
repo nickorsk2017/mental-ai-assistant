@@ -52,9 +52,9 @@ describe('AuthPage', () => {
         selector({ currentUser: { id: '1' } }),
     );
 
-    const { container } = render(<AuthPage />);
+    render(<AuthPage />);
 
-    expect(container.firstChild).toBeNull();
+    expect(screen.getByText('Signing you in...')).toBeTruthy();
     expect(replaceMock).toHaveBeenCalledWith('/dashboard/chat');
   });
 });

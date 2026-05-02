@@ -3,21 +3,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { patientChatMinimumMessageLength } from '../constants/PatientChatConstants';
+import { loadTodayPatientChatMessages, openPatientChatStream } from '../services/PatientChatApi';
+import type { PatientChatMessage } from '../types/PatientChatTypes';
 
 const patientChatFirstMessageStorageKey = 'serenePatientChatHasSentFirstMessage';
-
-export interface PatientChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-}
-
-function resolveBackendBaseUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_BACKEND_URL ??
-    process.env.BACKEND_URL ??
-    'http://localhost:4000'
-  );
-}
 
 export function usePatientChatComposer() {
   const textareaReference = useRef<HTMLTextAreaElement>(null);
@@ -33,6 +22,20 @@ export function usePatientChatComposer() {
     setRequiresFirstMessageMinimum(
       window.localStorage.getItem(patientChatFirstMessageStorageKey) !== 'true',
     );
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    void loadTodayPatientChatMessages().then((todayMessages) => {
+      if (isMounted) {
+        setMessages(todayMessages);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -75,15 +78,7 @@ export function usePatientChatComposer() {
     setIsStreaming(true);
 
     try {
-      const response = await fetch(`${resolveBackendBaseUrl()}/chat/messages/stream`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messageText: trimmed,
-          enforceMinimumLength: requiresFirstMessageMinimum,
-        }),
-      });
+      const response = await openPatientChatStream(trimmed, requiresFirstMessageMinimum);
 
       if (!response.ok) {
         const errorPayload = (await response.json().catch(() => null)) as { error?: string } | null;

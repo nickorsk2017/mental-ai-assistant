@@ -11,4 +11,5 @@ class JournalKafkaPayload(BaseModel):
     correlation_id: str = Field(alias="correlationId")
     user_id: str = Field(alias="userId")
     message_text: str = Field(alias="messageText")
+    allowed_activity_tags: list[str] = Field(default_factory=list, alias="allowedActivityTags")
     requested_at: str = Field(alias="requestedAt")

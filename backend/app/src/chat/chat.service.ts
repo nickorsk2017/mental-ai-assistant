@@ -2,7 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { randomUUID } from 'crypto';
+import { PATIENT_ACTIVITY_TAGS } from '../constants/patient-activity-tags.constants';
 import { KafkaService } from '../providers';
+import { ChatHistoryService } from './chat-history.service';
+import type { ChatDateContext, ChatMessageRecord } from './chat.types';
 
 const minimumJournalMessageLength = 50;
 
@@ -20,6 +23,7 @@ export class ChatService {
   constructor(
     private readonly kafkaService: KafkaService,
     private readonly configService: ConfigService,
+    private readonly chatHistoryService: ChatHistoryService,
   ) {}
 
   validateJournalMessageLength(messageText: string): boolean {
@@ -42,19 +46,31 @@ export class ChatService {
     return `http://127.0.0.1:${parsedPort}`;
   }
 
+  async listTodayMessages(
+    userId: string,
+    dateContext: ChatDateContext,
+  ): Promise<ChatMessageRecord[]> {
+    return this.chatHistoryService.listTodayMessages(userId, dateContext);
+  }
+
   async streamAssistantReply(
     response: Response,
     userId: string,
     messageText: string,
     enforceMinimumLength: boolean,
+    dateContext: ChatDateContext,
   ): Promise<void> {
     const correlationId = randomUUID();
+
+    await this.chatHistoryService.saveChatMessage(userId, 'user', messageText);
+    const dailyMessages = await this.chatHistoryService.listTodayMessages(userId, dateContext);
 
     try {
       await this.kafkaService.publishJournalChatRequest({
         correlationId,
         userId,
         messageText,
+        allowedActivityTags: PATIENT_ACTIVITY_TAGS,
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -72,20 +88,29 @@ export class ChatService {
           'Content-Type': 'application/json',
           'x-user-id': userId,
         },
-        body: JSON.stringify({ messageText, enforceMinimumLength }),
+        body: JSON.stringify({
+          messageText,
+          enforceMinimumLength,
+          dailyMessages,
+          clientLocalDate: dateContext.clientLocalDate,
+          clientTimeZone: dateContext.clientTimeZone,
+        }),
       });
 
       if (!upstreamResponse.ok || !upstreamResponse.body) {
         this.logger.warn(
           `AI agents HTTP ${upstreamResponse.status}; streaming fallback copy.`,
         );
-        await this.writeFallbackAssistantStream(response);
+        const fallbackReply = await this.writeFallbackAssistantStream(response);
+
+        await this.chatHistoryService.saveChatMessage(userId, 'assistant', fallbackReply);
         response.end();
 
         return;
       }
 
       const reader = upstreamResponse.body.getReader();
+      let assistantReply = '';
 
       try {
         while (true) {
@@ -96,11 +121,18 @@ export class ChatService {
           }
 
           if (value && value.byteLength > 0) {
-            response.write(Buffer.from(value));
+            const chunk = Buffer.from(value);
+
+            assistantReply += chunk.toString('utf8');
+            response.write(chunk);
           }
         }
       } finally {
         reader.releaseLock();
+      }
+
+      if (assistantReply.trim().length > 0) {
+        await this.chatHistoryService.saveChatMessage(userId, 'assistant', assistantReply);
       }
 
       response.end();
@@ -108,17 +140,24 @@ export class ChatService {
       const errorMessage = error instanceof Error ? error.message : String(error);
 
       this.logger.warn(`AI agents stream failed: ${errorMessage}`);
-      await this.writeFallbackAssistantStream(response);
+      const fallbackReply = await this.writeFallbackAssistantStream(response);
+
+      await this.chatHistoryService.saveChatMessage(userId, 'assistant', fallbackReply);
       response.end();
     }
   }
 
-  private async writeFallbackAssistantStream(response: Response): Promise<void> {
+  private async writeFallbackAssistantStream(response: Response): Promise<string> {
+    let fallbackReply = '';
+
     for (const chunk of streamFallbackChunks) {
+      fallbackReply += chunk;
       response.write(chunk);
       await new Promise<void>((resolve) => {
         setTimeout(resolve, 70);
       });
     }
+
+    return fallbackReply;
   }
 }

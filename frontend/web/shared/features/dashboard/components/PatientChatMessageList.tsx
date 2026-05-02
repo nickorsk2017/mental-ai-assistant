@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import type { PatientChatMessage } from '../hooks/usePatientChatComposer';
+import type { PatientChatMessage } from '../types/PatientChatTypes';
 
 interface PatientChatMessageListProps {
   messages: PatientChatMessage[];

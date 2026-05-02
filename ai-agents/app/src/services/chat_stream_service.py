@@ -2,41 +2,45 @@
 
 from collections.abc import AsyncIterator
 
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 
 from src.config import ApplicationSettings
 from src.prompts.serene_chat_system_prompt import SERENE_CHAT_SYSTEM_PROMPT
+from src.schemas.chat_stream_request_body import ChatStreamHistoryMessage
 
 
 def build_unconfigured_chat_reply(message_text: str) -> str:
     """Return a safe patient-facing reply when the model is not configured."""
     lowered_message = message_text.lower()
 
-    if any(marker in lowered_message for marker in ["суицид", "самоуб", "не хочу жить", "убить себя"]):
+    if any(marker in lowered_message for marker in ["suicide", "kill myself", "self harm", "end my life"]):
         return (
-            "Мне очень жаль, что тебе сейчас настолько тяжело. "
-            "Если есть риск навредить себе, пожалуйста, обратись в местную экстренную службу "
-            "или к человеку рядом прямо сейчас. Я рядом, но такую ситуацию важно не держать в одиночку."
+            "I am really sorry it feels this heavy right now. "
+            "If there is any risk of harm, please contact local emergency services "
+            "or someone nearby immediately. You do not have to hold this alone."
         )
 
-    if any(marker in lowered_message for marker in ["депресс", "совсем плохо", "без сил", "не могу"]):
+    if any(marker in lowered_message for marker in ["depressed", "hopeless", "no energy", "cannot cope"]):
         return (
-            "Похоже, тебе сейчас очень тяжело, и это заслуживает бережного внимания. "
-            "Попробуй сегодня сделать самый маленький поддерживающий шаг: вода, еда, сон или сообщение близкому. "
-            "Если такое состояние держится или усиливается, лучше обратиться к врачу или психотерапевту."
+            "It sounds like you are carrying a lot, and this deserves gentle attention. "
+            "Try one small supportive step today: water, food, rest, or messaging someone trusted. "
+            "If this state continues or gets worse, consider contacting a doctor or therapist."
         )
 
     return (
-        "Я слышу, что день дается непросто. "
-        "Попробуй сейчас немного замедлиться и выбрать один маленький следующий шаг. "
-        "Если состояние становится пугающим или резко ухудшается, стоит обратиться к врачу или доверенному человеку."
+        "I hear that today may feel difficult. "
+        "Try slowing down for a moment and choosing one small next step. "
+        "If your state feels frightening or gets worse quickly, contact a clinician or someone trusted."
     )
 
 
 async def stream_serene_chat_tokens(
     message_text: str,
     settings: ApplicationSettings,
+    daily_messages: list[ChatStreamHistoryMessage] | None = None,
+    client_local_date: str | None = None,
+    client_time_zone: str | None = None,
 ) -> AsyncIterator[str]:
     """Yield plain-text chunks for an HTTP streaming response."""
     stripped = message_text.strip()
@@ -50,10 +54,25 @@ async def stream_serene_chat_tokens(
         model=settings.openai_chat_model,
         streaming=True,
     )
-    messages = [
-        SystemMessage(content=SERENE_CHAT_SYSTEM_PROMPT),
-        HumanMessage(content=stripped),
-    ]
+    messages = [SystemMessage(content=SERENE_CHAT_SYSTEM_PROMPT)]
+    if client_local_date and client_time_zone:
+        messages.append(
+            SystemMessage(
+                content=(
+                    f"The user's current local date is {client_local_date} "
+                    f"in the {client_time_zone} time zone. The conversation history "
+                    "included below has been filtered to that exact local date. "
+                    "Use only this today's context. Do not answer from previous days."
+                )
+            )
+        )
+    history_messages = daily_messages or [ChatStreamHistoryMessage(role="user", content=stripped)]
+
+    for history_message in history_messages:
+        if history_message.role == "assistant":
+            messages.append(AIMessage(content=history_message.content))
+        else:
+            messages.append(HumanMessage(content=history_message.content))
 
     async for chunk in model.astream(messages):
         token = chunk.content

@@ -22,7 +22,6 @@ const PatientChatWorkspace = React.memo(function PatientChatWorkspace() {
     handleComposerKeyDown,
   } = usePatientChatComposer();
 
-  const showEmptyHero = messages.length === 0;
   const charactersRemaining = Math.max(0, patientChatMinimumMessageLength - trimmedComposerLength);
 
   return (
@@ -33,29 +32,32 @@ const PatientChatWorkspace = React.memo(function PatientChatWorkspace() {
 
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <div className="min-h-0 flex-1 overflow-y-auto">
-          {showEmptyHero ? (
-            <div className="mx-auto flex max-w-[48rem] flex-col items-center justify-center px-4 py-10 pt-12 text-center sm:px-8">
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-calm-border/60 bg-calm-surface/80 shadow-subtle">
-                <span className="text-2xl font-semibold text-calm-second" aria-hidden>
-                  S
-                </span>
-              </div>
-              <p className="max-w-md text-lg font-semibold text-calm-text">How can I help today?</p>
-              <p className="mt-2 max-w-md text-sm leading-6 text-calm-muted">
-                Describe your mood or something from your day — replies will stream here. Enter sends; Shift+Enter
-                starts a new line.
-                {requiresFirstMessageMinimum
-                  ? ` At least ${patientChatMinimumMessageLength} characters are required for the first message.`
-                  : ''}
-              </p>
+          <div className="mx-auto flex max-w-[48rem] flex-col items-center px-4 pt-8 text-center sm:px-8">
+            <div className="serene-chat-sphere" aria-hidden />
+          </div>
+
+          <div className="sticky my-6 top-0 z-20 px-4 text-center backdrop-blur-xl sm:px-8">
+            <div className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-sm font-semibold text-calm-muted sm:left-8">
+              Today
             </div>
-          ) : (
-            <PatientChatMessageList
-              messages={messages}
-              isStreaming={isStreaming}
-              messagesEndReference={messagesEndReference}
-            />
-          )}
+            <p className="text-lg font-semibold text-calm-text">How can I help today?</p>
+          </div>
+
+          <div className="mx-auto flex max-w-[48rem] flex-col items-center px-4 pb-10 text-center sm:px-8">
+            <p className="max-w-md text-sm leading-6 text-calm-muted">
+              Describe your mood or something from your day — replies will stream here. Enter sends; Shift+Enter
+              starts a new line.
+              {requiresFirstMessageMinimum
+                ? ` At least ${patientChatMinimumMessageLength} characters are required for the first message.`
+                : ''}
+            </p>
+          </div>
+
+          <PatientChatMessageList
+            messages={messages}
+            isStreaming={isStreaming}
+            messagesEndReference={messagesEndReference}
+          />
         </div>
 
         <div className="shrink-0 border-t border-calm-border/45 bg-calm-surface/85 px-4 py-4 backdrop-blur-md sm:px-6">

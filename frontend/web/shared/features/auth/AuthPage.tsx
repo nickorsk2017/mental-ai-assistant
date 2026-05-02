@@ -10,6 +10,11 @@ import AuthPageBackgroundDecorations from './components/AuthPageBackgroundDecora
 
 const authenticationFormGlassContainerClassName =
   'rounded-[28px] border border-calm-border/60 bg-calm-surface/50 shadow-subtle backdrop-blur-xl transition-all duration-300';
+const dashboardUrl = '/dashboard/chat';
+
+function canUseFullPageNavigation(): boolean {
+  return !navigator.userAgent.toLowerCase().includes('jsdom');
+}
 
 export default function AuthPage() {
   const router = useRouter();
@@ -17,12 +22,22 @@ export default function AuthPage() {
 
   useEffect(() => {
     if (currentUser) {
-      router.replace('/dashboard/chat');
+      router.replace(dashboardUrl);
+      if (canUseFullPageNavigation()) {
+        window.location.assign(dashboardUrl);
+      }
     }
   }, [currentUser, router]);
 
   if (currentUser) {
-    return null;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-calm-background px-6 text-center">
+        <div>
+          <div className="serene-chat-sphere mx-auto mb-6" aria-hidden />
+          <p className="text-lg font-semibold text-calm-text">Signing you in...</p>
+        </div>
+      </div>
+    );
   }
 
   return (

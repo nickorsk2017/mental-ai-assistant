@@ -6,6 +6,7 @@ interface JournalChatPublishPayload {
   correlationId: string;
   userId: string;
   messageText: string;
+  allowedActivityTags: readonly string[];
 }
 
 @Injectable()
@@ -54,6 +55,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
       correlationId: payload.correlationId,
       userId: payload.userId,
       messageText: payload.messageText,
+      allowedActivityTags: payload.allowedActivityTags,
       requestedAt: new Date().toISOString(),
     });
 

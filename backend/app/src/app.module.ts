@@ -4,6 +4,7 @@ import { HealthModule } from './health/health.module';
 import { SupabaseModule } from './providers';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { ChatModule } from './chat/chat.module';
+import { NotesModule } from './notes/notes.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ChatModule } from './chat/chat.module';
     SupabaseModule,
     AuthenticationModule,
     ChatModule,
+    NotesModule,
   ],
 })
 export class AppModule {}

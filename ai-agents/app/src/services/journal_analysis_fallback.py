@@ -1,4 +1,4 @@
-"""Deterministic fallback for journal analysis when the model is unavailable."""
+"""Conservative fallback for journal analysis when structured output fails."""
 
 import re
 
@@ -6,13 +6,21 @@ from src.schemas.journal_note_analysis import JournalNoteAnalysis
 from src.services.journal_analysis_rules import ACTIVITY_TAG_TRANSLATIONS
 
 
-def build_fallback_journal_analysis(message_text: str) -> JournalNoteAnalysis:
+def build_fallback_journal_analysis(
+    message_text: str,
+    elevated_mood_signal: bool = False,
+) -> JournalNoteAnalysis:
     """Fill basic note fields when the model is unavailable."""
     lowered_message = message_text.lower()
+    should_create_note = should_create_fallback_note(lowered_message)
     activity_tags = extract_activity_tags(lowered_message)
-    mood_key, mood_label, mood_score, assistant_vibe_check = resolve_fallback_mood(lowered_message)
+    mood_key, mood_label, mood_score, assistant_vibe_check = resolve_fallback_mood(
+        lowered_message,
+        elevated_mood_signal,
+    )
 
     return JournalNoteAnalysis(
+        should_create_note=should_create_note,
         mood_key=mood_key,
         mood_label=mood_label,
         mood_score=mood_score,
@@ -22,42 +30,85 @@ def build_fallback_journal_analysis(message_text: str) -> JournalNoteAnalysis:
     )
 
 
-def resolve_fallback_mood(lowered_message: str) -> tuple[str, str, int, str]:
+def should_create_fallback_note(lowered_message: str) -> bool:
+    """Reject conversational replies that do not describe patient state."""
+    cleaned_message = lowered_message.strip(" .,!?:;")
+    simple_replies = {
+        "okay",
+        "ok",
+        "thanks",
+        "thank you",
+        "got it",
+        "yes",
+    }
+
+    if cleaned_message in simple_replies:
+        return False
+
+    non_note_markers = ["i will try", "i will do it", "i will write later"]
+
+    if any(marker in cleaned_message for marker in non_note_markers) and len(cleaned_message) < 80:
+        return False
+
+    note_markers = [
+        "today",
+        "feel",
+        "mood",
+        "score",
+        "rating",
+        "pain",
+        "tired",
+        "work",
+        "boss",
+        "stress",
+        "sleep",
+        "insomnia",
+        "anxious",
+        "depressed",
+    ]
+
+    return any(marker in cleaned_message for marker in note_markers) or len(cleaned_message) >= 80
+
+
+def resolve_fallback_mood(
+    lowered_message: str,
+    elevated_mood_signal: bool,
+) -> tuple[str, str, int, str]:
     """Resolve obvious mood signals without model access."""
     if has_crisis_signal(lowered_message):
         return (
             "crisis",
-            "Кризис",
+            "Crisis",
             1,
-            "Это звучит очень тяжело. Если есть риск навредить себе, пожалуйста, сразу обратись "
-            "в местную экстренную службу или к человеку рядом.",
+            "This sounds very serious. If there is any risk of harm, contact local emergency "
+            "services or someone nearby right now.",
         )
 
-    if has_elevated_mood_signal(lowered_message):
+    if elevated_mood_signal:
         return (
             "euphoric",
-            "Сильный подъем",
+            "Elevated",
             9,
-            "Заметка сохранена. Если подъем сопровождается бессонницей или импульсивностью, "
-            "стоит замедлиться и обсудить это с доверенным человеком или специалистом.",
+            "Note saved. If this high energy includes little sleep or impulsive behavior, "
+            "slow down and consider contacting a trusted person or clinician.",
         )
 
-    if any(word in lowered_message for word in ["болит", "голова", "устал", "бессонница", "безсонница"]):
-        return ("unwell", "Нездоровится", 4, "Заметка сохранена. Сейчас важно дать себе немного заботы и паузы.")
+    if any(word in lowered_message for word in ["pain", "headache", "tired", "insomnia"]):
+        return ("unwell", "Unwell", 4, "Note saved. A small pause and basic care may help right now.")
 
-    if any(word in lowered_message for word in ["тревога", "тревожно", "anxious"]):
-        return ("anxious", "Тревожно", 4, "Заметка сохранена. Можно снизить темп и сделать один маленький шаг.")
+    if any(word in lowered_message for word in ["anxiety", "anxious"]):
+        return ("anxious", "Anxious", 4, "Note saved. Try slowing down and taking one small step.")
 
-    return ("neutral", "Нейтрально", 6, "Заметка сохранена. Похоже, состояние сейчас ближе к устойчивому.")
+    return ("neutral", "Neutral", 6, "Note saved. This sounds closer to a stable state right now.")
 
 
 def extract_activity_tags(lowered_message: str) -> list[str]:
     """Extract explicit tags and obvious contextual tags from a message."""
     tag_values: list[str] = []
-    tag_match = re.search(r"(?:теги|tags)\s*[:：-]?\s*(.+)$", lowered_message)
+    tag_match = re.search(r"tags\s*[:：-]?\s*(.+)$", lowered_message)
 
     if tag_match:
-        raw_tag_values = re.split(r"[,;]+|\s+и\s+", tag_match.group(1))
+        raw_tag_values = re.split(r"[,;]+|\s+and\s+", tag_match.group(1))
         tag_values.extend(filter(None, [normalize_activity_tag(value) for value in raw_tag_values]))
 
     for source_value, normalized_tag in ACTIVITY_TAG_TRANSLATIONS.items():
@@ -69,31 +120,23 @@ def extract_activity_tags(lowered_message: str) -> list[str]:
 
 def has_crisis_signal(lowered_message: str) -> bool:
     """Detect obvious crisis wording for a conservative fallback score."""
-    crisis_markers = ["суицид", "самоуб", "не хочу жить", "убить себя", "kill myself", "suicide"]
+    crisis_markers = ["kill myself", "suicide", "self harm", "end my life"]
 
     return any(marker in lowered_message for marker in crisis_markers)
 
 
-def has_elevated_mood_signal(lowered_message: str) -> bool:
-    """Detect obvious high-energy mood wording for a conservative fallback score."""
-    sleepless_markers = ["не спал", "не спала", "без сна", "no sleep", "sleepless"]
-    elevated_markers = ["эйфория", "идей миллион", "могу все", "неуязвим", "euphoria", "unstoppable"]
-
-    return any(marker in lowered_message for marker in elevated_markers) or (
-        any(marker in lowered_message for marker in sleepless_markers)
-        and any(word in lowered_message for word in ["энерг", "супер", "идей", "могу", "great"])
-    )
-
-
 def build_fallback_summary_text(message_text: str) -> str:
     """Build a concise first-person journal note without model access."""
-    cleaned_message = re.sub(r"(?:теги|tags)\s*[:：-]?\s*.+$", "", message_text, flags=re.IGNORECASE).strip()
+    cleaned_message = re.sub(r"tags\s*[:：-]?\s*.+$", "", message_text, flags=re.IGNORECASE).strip()
     cleaned_message = cleaned_message.strip(" .,!?:;")
 
     if not cleaned_message:
-        return "Сегодня оставил короткую заметку о своем состоянии."
+        return "Today I left a short note about my state."
 
-    return f"Сегодня {cleaned_message[:1].lower()}{cleaned_message[1:]}."
+    if cleaned_message.lower().startswith("today"):
+        return f"{cleaned_message[:1].upper()}{cleaned_message[1:]}."
+
+    return f"Today I noted: {cleaned_message[:1].lower()}{cleaned_message[1:]}."
 
 
 def normalize_activity_tag(raw_tag_value: str) -> str | None:

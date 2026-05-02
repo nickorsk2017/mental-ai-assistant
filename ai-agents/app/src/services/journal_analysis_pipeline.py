@@ -7,14 +7,27 @@ from langchain_openai import ChatOpenAI
 from pydantic import ValidationError
 
 from src.config import ApplicationSettings
-from src.prompts.journal_analysis_system_prompt import JOURNAL_ANALYSIS_SYSTEM_PROMPT
+from src.prompts.journal_analysis_system_prompt import build_journal_analysis_system_prompt
 from src.schemas.journal_message import JournalKafkaPayload
 from src.schemas.journal_note_analysis import JournalNoteAnalysis
+from src.services.elevated_mood_classifier import has_elevated_mood_signal
 from src.services.journal_analysis_fallback import build_fallback_journal_analysis
 from src.services.pinecone_note_store import upsert_journal_note_vector
 from src.services.supabase_patient_note_writer import insert_patient_note_row
 
 LOGGER = logging.getLogger(__name__)
+DEFAULT_ACTIVITY_TAGS = [
+    "work",
+    "sleep",
+    "stress",
+    "relationships",
+    "fitness",
+    "hobbies",
+    "health",
+    "family",
+    "study",
+    "finances",
+]
 
 
 def process_journal_message_from_kafka(
@@ -22,7 +35,18 @@ def process_journal_message_from_kafka(
     settings: ApplicationSettings,
 ) -> str:
     """Run analysis, upsert vector metadata, and insert a note row for the journal job."""
-    note_analysis = analyze_journal_with_openai(payload.message_text, settings)
+    allowed_activity_tags = resolve_allowed_activity_tags(payload.allowed_activity_tags)
+    note_analysis = analyze_journal_with_openai(
+        payload.message_text,
+        settings,
+        allowed_activity_tags,
+    )
+
+    if not note_analysis.should_create_note:
+        LOGGER.info("Skipped non-journal chat reply correlation=%s", payload.correlation_id)
+
+        return "Skipped non-journal chat reply."
+
     combined_text = (
         f"{payload.message_text.strip()}\n\n"
         f"Mood: {note_analysis.mood_label or note_analysis.mood_key or 'unknown'}\n"
@@ -47,7 +71,6 @@ def process_journal_message_from_kafka(
         note_analysis.mood_score,
         note_analysis.activity_tags,
         note_analysis.summary_text,
-        note_analysis.assistant_vibe_check,
     )
     return note_analysis.summary_text
 
@@ -55,11 +78,15 @@ def process_journal_message_from_kafka(
 def analyze_journal_with_openai(
     message_text: str,
     settings: ApplicationSettings,
+    allowed_activity_tags: list[str],
 ) -> JournalNoteAnalysis:
     """Invoke OpenAI for structured journal fields."""
     if not settings.openai_api_key:
         LOGGER.warning("OPENAI_API_KEY is not set; skipping the model call.")
-        return build_fallback_journal_analysis(message_text)
+        return sanitize_note_analysis_tags(
+            build_fallback_journal_analysis(message_text),
+            allowed_activity_tags,
+        )
 
     model = ChatOpenAI(
         api_key=settings.openai_api_key,
@@ -69,18 +96,50 @@ def analyze_journal_with_openai(
     try:
         response = structured_model.invoke(
             [
-                SystemMessage(content=JOURNAL_ANALYSIS_SYSTEM_PROMPT),
+                SystemMessage(content=build_journal_analysis_system_prompt(allowed_activity_tags)),
                 HumanMessage(content=message_text.strip()),
             ]
         )
     except Exception:
         LOGGER.exception("OpenAI structured journal analysis failed.")
-        return build_fallback_journal_analysis(message_text)
+        return sanitize_note_analysis_tags(
+            build_fallback_journal_analysis(
+                message_text,
+                has_elevated_mood_signal(message_text, settings),
+            ),
+            allowed_activity_tags,
+        )
 
     if isinstance(response, JournalNoteAnalysis):
-        return response
+        return sanitize_note_analysis_tags(response, allowed_activity_tags)
 
-    return JournalNoteAnalysis.model_validate(response)
+    return sanitize_note_analysis_tags(
+        JournalNoteAnalysis.model_validate(response),
+        allowed_activity_tags,
+    )
+
+
+def resolve_allowed_activity_tags(incoming_tags: list[str]) -> list[str]:
+    """Use backend-provided tags, falling back to the local copy for older messages."""
+    normalized_tags = [tag.strip().lower() for tag in incoming_tags if tag.strip()]
+
+    return list(dict.fromkeys(normalized_tags)) or DEFAULT_ACTIVITY_TAGS
+
+
+def sanitize_note_analysis_tags(
+    note_analysis: JournalNoteAnalysis,
+    allowed_activity_tags: list[str],
+) -> JournalNoteAnalysis:
+    """Drop any model-created tags outside the backend allowlist."""
+    allowed_tag_set = set(allowed_activity_tags)
+    filtered_tags = [
+        tag.strip().lower()
+        for tag in note_analysis.activity_tags
+        if tag.strip().lower() in allowed_tag_set
+    ]
+    note_analysis.activity_tags = list(dict.fromkeys(filtered_tags))
+
+    return note_analysis
 
 
 def safe_parse_kafka_payload(raw_json: str) -> JournalKafkaPayload | None:

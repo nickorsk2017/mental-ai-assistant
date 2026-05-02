@@ -1,14 +1,35 @@
-import { Body, Controller, Headers, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Post, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { SupabaseAuthenticationGuard } from '../authentication/supabase-authentication.guard';
-import { buildErrorResponse } from '../utils/response.builder';
+import { buildErrorResponse, buildSuccessResponse } from '../utils/response.builder';
 import { ChatService } from './chat.service';
-import type { ChatStreamRequestBody } from './chat.types';
+import type { ChatDateContext, ChatStreamRequestBody } from './chat.types';
+
+function buildChatDateContext(
+  clientLocalDate?: string,
+  clientTimeZone?: string,
+): ChatDateContext {
+  return { clientLocalDate, clientTimeZone };
+}
 
 @Controller('chat')
 @UseGuards(SupabaseAuthenticationGuard)
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
+
+  @Get('messages/today')
+  async listTodayMessages(
+    @Headers('x-user-id') userId: string,
+    @Headers('x-client-local-date') clientLocalDate?: string,
+    @Headers('x-client-time-zone') clientTimeZone?: string,
+  ) {
+    const messages = await this.chatService.listTodayMessages(
+      userId,
+      buildChatDateContext(clientLocalDate, clientTimeZone),
+    );
+
+    return buildSuccessResponse(messages);
+  }
 
   /**
    * Streams a plain-text assistant reply from the AI agents service (REST). The same journal payload
@@ -39,6 +60,9 @@ export class ChatController {
     response.setHeader('Cache-Control', 'no-cache');
     response.setHeader('X-Accel-Buffering', 'no');
 
-    await this.chatService.streamAssistantReply(response, userId, trimmed, enforceMinimumLength);
+    await this.chatService.streamAssistantReply(response, userId, trimmed, enforceMinimumLength, {
+      clientLocalDate: body.clientLocalDate,
+      clientTimeZone: body.clientTimeZone,
+    });
   }
 }

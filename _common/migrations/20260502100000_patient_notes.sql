@@ -11,7 +11,6 @@ create table if not exists public.patient_notes (
   activity_tags text[] not null default '{}',
   message_text text not null,
   summary_text text,
-  assistant_vibe_check text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   deleted_at timestamptz,
@@ -26,9 +25,11 @@ alter table public.patient_notes
   add column if not exists mood_label text,
   add column if not exists mood_score smallint,
   add column if not exists activity_tags text[] not null default '{}',
-  add column if not exists assistant_vibe_check text,
   add column if not exists updated_at timestamptz not null default now(),
   add column if not exists deleted_at timestamptz;
+
+alter table public.patient_notes
+  drop column if exists assistant_vibe_check;
 
 do $$
 begin
@@ -52,6 +53,7 @@ begin
   end if;
 end
 $$;
+
 
 create index if not exists patient_notes_user_id_created_at_idx
   on public.patient_notes (user_id, created_at desc);

@@ -6,11 +6,27 @@ The product supports people tracking bipolar disorder, depression, anxiety, and 
 health conditions. Be supportive and non-clinical. Do not diagnose, do not suggest medication
 changes, and do not present mood scores as medical assessment.
 
-Return structured fields only.
+Return structured fields only. All returned text fields must be in English.
+
+First decide if the message is a real journal note.
+
+Set should_create_note=true only when the message reflects the patient's current state,
+day, mood, body symptoms, stressor, sleep, relationships, work event, activity context,
+or a 1-10 mood rating.
+
+Set should_create_note=false for conversational acknowledgements, short confirmations,
+thanks, promises, or replies that do not describe the patient's state. Examples:
+- "Yes"
+- "Ok"
+- "Fine"
+- "Thanks"
+- "I will try to sleep"
+- "Got it"
 
 Field rules:
+- should_create_note: whether this should be saved as a journal note.
 - mood_key: one of euphoric, happy, calm, neutral, anxious, overwhelmed, sad, tired, unwell, angry, depressed, crisis.
-- mood_label: a short human label in the same language as the user when possible.
+- mood_label: a short English human label.
 - mood_score: integer 1-10.
   1 means severe depression or near-suicidal crisis.
   2-3 means very low, depressed, unsafe, or barely functioning.
@@ -20,14 +36,31 @@ Field rules:
   9 means highly elevated, unusually energized, racing, impulsive, or possibly hypomanic.
   10 means euphoric, extreme high, grandiose, sleepless with high energy, or risky manic-like intensity.
 - activity_tags: canonical English lowercase tags from explicit user tags and clear context.
-  Prefer: work, sleep, relationships, fitness, hobbies, health, family, study, finances.
-  If the user writes "теги работа, бессонница", return ["work", "sleep"].
-- summary_text: 1 short first-person journal note in the user's language.
+  Prefer: work, sleep, stress, relationships, fitness, hobbies, health, family, study, finances.
+  If the user writes "tags work, insomnia", return ["work", "sleep"].
+- summary_text: 1 short first-person journal note in English.
   Write it as if the user wrote a concise diary entry. Do not write about the user
   in third person. Avoid names and phrases like "the user says" or "Nikolai feels".
-  Example: "Сегодня много работаю, уже поздно, надо искать работу."
+  Example: "Today I worked late and need to look for a job."
 - assistant_vibe_check: 1-2 warm, non-medical sentences of encouragement.
+
+Positive examples that should create notes:
+- "Today I feel great. I woke up energized. Mood rating 6."
+- "I worked today and my boss yelled at me." Use work and stress tags.
+- "I have a headache, tags work, insomnia."
 
 If there are self-harm, suicide, psychosis, mania-risk, or crisis signals, keep fields filled and
 make assistant_vibe_check a brief safety disclaimer suggesting local emergency help, a crisis line,
 or a trusted person."""
+
+
+def build_journal_analysis_system_prompt(allowed_activity_tags: list[str]) -> str:
+    """Append the backend-owned activity tag allowlist to the journal prompt."""
+    allowed_tags_text = ", ".join(allowed_activity_tags)
+
+    return (
+        JOURNAL_ANALYSIS_SYSTEM_PROMPT
+        + "\n\nAllowed activity_tags are exactly: "
+        + allowed_tags_text
+        + ". Return only tags from this list. If no tag clearly applies, return an empty list."
+    )

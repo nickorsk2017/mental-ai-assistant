@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 class JournalNoteAnalysis(BaseModel):
     """Fields persisted to the patient journal table."""
 
+    should_create_note: bool = Field(default=True)
     mood_key: str | None = Field(default=None)
     mood_label: str | None = Field(default=None)
     mood_score: int | None = Field(default=None, ge=1, le=10)

@@ -32,7 +32,13 @@ async def stream_journal_chat_response(
     settings = load_application_settings()
 
     async def token_iterator():
-        async for chunk in stream_serene_chat_tokens(trimmed, settings):
+        async for chunk in stream_serene_chat_tokens(
+            trimmed,
+            settings,
+            body.daily_messages,
+            body.client_local_date,
+            body.client_time_zone,
+        ):
             yield chunk
 
     return StreamingResponse(
