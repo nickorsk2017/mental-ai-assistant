@@ -6,6 +6,7 @@ const calmColorPalette = {
   second: softCalmTheme.colors.second,
   black: softCalmTheme.colors.black,
   'black-soft': softCalmTheme.colors.blackSoft,
+  'black-soft-deep': softCalmTheme.colors.blackSoftDeep,
   'primary-text': softCalmTheme.colors.primaryText,
   background: softCalmTheme.colors.mutedSurface,
   surface: softCalmTheme.colors.surface,

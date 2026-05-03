@@ -3,6 +3,9 @@
 import React from 'react';
 
 import { Button } from '../../atoms/Button/Button';
+import DayPicker from '../../molecules/DayPicker/DayPicker';
+import MonthPicker from '../../molecules/MonthPicker/MonthPicker';
+import YearPicker from '../../molecules/YearPicker/YearPicker';
 
 export type MoodAnalysisRangeKind = 'month' | 'year' | 'hours';
 
@@ -74,45 +77,29 @@ export default React.memo(function MoodAnalysisRangeControls({
 
       <div className="flex flex-wrap items-center gap-4">
         {analysisRangeKind === 'month' ? (
-          <label className="flex flex-col gap-1 text-sm text-calm-muted">
-            Calendar month
-            <input
-              type="month"
-              value={selectedCalendarMonthInput}
-              onChange={(changeEvent) =>
-                onSelectedCalendarMonthInputChange(changeEvent.target.value)
-              }
-              className="rounded-xl border border-calm-border bg-calm-surface px-3 py-2 text-sm text-calm-text"
-            />
-          </label>
+          <MonthPicker
+            label="Calendar month"
+            value={selectedCalendarMonthInput}
+            onChange={onSelectedCalendarMonthInputChange}
+            minimumCalendarYear={2000}
+            maximumCalendarYear={2100}
+          />
         ) : null}
         {analysisRangeKind === 'year' ? (
-          <label className="flex flex-col gap-1 text-sm text-calm-muted">
-            Calendar year
-            <input
-              type="number"
-              min={2000}
-              max={2100}
-              value={selectedCalendarYear}
-              onChange={(changeEvent) =>
-                onSelectedCalendarYearChange(Number(changeEvent.target.value))
-              }
-              className="w-32 rounded-xl border border-calm-border bg-calm-surface px-3 py-2 text-sm text-calm-text"
-            />
-          </label>
+          <YearPicker
+            label="Calendar year"
+            value={selectedCalendarYear}
+            onChange={onSelectedCalendarYearChange}
+            minimumCalendarYear={2000}
+            maximumCalendarYear={2100}
+          />
         ) : null}
         {analysisRangeKind === 'hours' ? (
-          <label className="flex flex-col gap-1 text-sm text-calm-muted">
-            Calendar day
-            <input
-              type="date"
-              value={selectedCalendarDateInput}
-              onChange={(changeEvent) =>
-                onSelectedCalendarDateInputChange(changeEvent.target.value)
-              }
-              className="rounded-xl border border-calm-border bg-calm-surface px-3 py-2 text-sm text-calm-text"
-            />
-          </label>
+          <DayPicker
+            label="Calendar day"
+            value={selectedCalendarDateInput}
+            onChange={onSelectedCalendarDateInputChange}
+          />
         ) : null}
       </div>
     </>

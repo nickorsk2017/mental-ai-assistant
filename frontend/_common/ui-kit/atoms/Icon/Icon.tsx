@@ -13,7 +13,8 @@ type IconName =
   | 'pencil'
   | 'trash'
   | 'x'
-  | 'arrow-left';
+  | 'arrow-left'
+  | 'calendar';
 
 interface IconProps {
   name: IconName;
@@ -81,6 +82,13 @@ const iconPathMap: Record<IconName, React.ReactElement> = {
   ),
   'arrow-left': (
     <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+  ),
+  calendar: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M6.75 3v2.25M17.25 3v2.25M3 18.75V8.25a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 8.25v10.5m-18 0A2.25 2.25 0 005.25 21h13.5a2.25 2.25 0 002.25-2.25m-18 0V12.75M3 12.75h18"
+    />
   ),
 };
 

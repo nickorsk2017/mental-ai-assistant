@@ -32,7 +32,7 @@ export function parseCalendarDateInput(calendarDateInput: string): {
   };
 }
 
-const calendarMonthLabelsShort = [
+export const calendarMonthLabelsShort = [
   'Jan',
   'Feb',
   'Mar',

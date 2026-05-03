@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Button, Icon } from '@common/shared/ui-kit';
 import { useAuthentication } from '@common/shared/hooks';
 
+import { patientPanelNavigationLinkActiveClassName } from '../NavigationActiveClassName';
 import { patientAdminNavigationItems } from '../constants';
 import { ServerUser } from '@/shared/lib/getServerUser';
 
@@ -40,7 +41,7 @@ const Sidebar = React.memo(function Sidebar({ user }: { user: ServerUser }) {
               href={navigationHref}
               className={`rounded-2xl px-3 py-3 text-sm font-semibold transition ${
                 isActive
-                  ? 'bg-calm-black-soft text-calm-primary-text shadow-subtle'
+                  ? patientPanelNavigationLinkActiveClassName
                   : 'text-calm-muted hover:bg-calm-surface/70 hover:text-calm-text'
               }`}
             >

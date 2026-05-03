@@ -6,6 +6,9 @@ export { default as LoadingSpinner } from './atoms/LoadingSpinner/LoadingSpinner
 export { default as MessageItem } from './molecules/MessageItem/MessageItem';
 export { default as PanelPageHeader } from './molecules/PanelPageHeader/PanelPageHeader';
 export { default as ChatInput } from './molecules/ChatInput/ChatInput';
+export { default as DayPicker } from './molecules/DayPicker/DayPicker';
+export { default as MonthPicker } from './molecules/MonthPicker/MonthPicker';
+export { default as YearPicker } from './molecules/YearPicker/YearPicker';
 export { default as MoodAnalysisWorkspace } from './organisms/MoodAnalysisWorkspace/MoodAnalysisWorkspace';
 export { default as MoodScoreSlider } from './molecules/MoodScoreSlider/MoodScoreSlider';
 export { default as Modal } from './molecules/Modal/Modal';
