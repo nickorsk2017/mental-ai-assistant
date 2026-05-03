@@ -12,7 +12,7 @@ PNPM_CMD := env -u PNPM_STORE_DIR -u npm_config_store_dir pnpm
         test test-backend test-web test-common test-mobile \
         test-coverage test-backend-coverage test-web-coverage test-common-coverage test-mobile-coverage \
         mobile-build mobile-capacitor-sync mobile-run-android mobile-run-ios \
-        fullstack-web fullstack-mobile \
+        fullstack-web fullstack-mobile start-all \
         docker-build docker-up docker-down docker-restart \
         kill-backend-ports kill-frontend-ports kill-mobile-ports kill-ai-agents-ports kill-all-ports
 
@@ -32,6 +32,7 @@ help:
 	@echo "  make mobile               - Run mobile shell (:8100)"
 	@echo "  make fullstack-web        - Kafka (docker) + backend + web + ai-agents"
 	@echo "  make fullstack-mobile     - Kafka (docker) + backend + mobile + ai-agents"
+	@echo "  make start-all            - Kafka (docker) + backend + web + mobile + ai-agents"
 	@echo "  make ai-agents / ai       - Run AI agents FastAPI (uv), port from AI_AGENTS_PORT (:8080)"
 	@echo "  make mobile-build         - Build mobile web bundle"
 	@echo "  make mobile-capacitor-sync - Sync mobile bundle to native platforms"
@@ -183,6 +184,17 @@ fullstack-mobile: kill-all-ports
 	@$(MAKE) kafka-install
 	@set -a; source $(ENV_FILE); set +a; \
 	  $(PNPM_CMD) --dir backend/app dev & \
+	  $(PNPM_CMD) --dir frontend/mobile dev --host 0.0.0.0 --port 8100 & \
+	  ( cd ai-agents/app && uv run uvicorn src.main:application \
+	      --reload \
+	      --host "$${AI_AGENTS_HOST:-0.0.0.0}" \
+	      --port "$${AI_AGENTS_PORT:-8080}" ) & \
+	  wait
+
+start-all: kill-all-ports
+	@set -a; source $(ENV_FILE); set +a; \
+	  $(PNPM_CMD) --dir backend/app dev & \
+	  $(PNPM_CMD) --dir frontend dev:web & \
 	  $(PNPM_CMD) --dir frontend/mobile dev --host 0.0.0.0 --port 8100 & \
 	  ( cd ai-agents/app && uv run uvicorn src.main:application \
 	      --reload \

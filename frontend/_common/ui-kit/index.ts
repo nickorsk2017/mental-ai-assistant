@@ -1,6 +1,5 @@
 export * from './organisms/AuthForm/AuthForm';
 export { default as AuthorWelcomeModal } from './organisms/AuthorWelcomeModal';
-export * from './organisms/DashboardOrganism';
 export { default as Button } from './atoms/Button/Button';
 export { Icon } from './atoms/Icon/Icon';
 export { default as LoadingSpinner } from './atoms/LoadingSpinner/LoadingSpinner';

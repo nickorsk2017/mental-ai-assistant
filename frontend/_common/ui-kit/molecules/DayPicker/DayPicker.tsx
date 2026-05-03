@@ -166,7 +166,7 @@ export default React.memo(function DayPicker({ value, onChange, label }: DayPick
     ) : null;
 
   return (
-    <div ref={wrapperReference} className="flex w-full max-w-xs flex-col gap-1.5">
+    <div ref={wrapperReference} className="flex w-full md:max-w-xs flex-col gap-1.5">
       {label ? (
         <label className="text-sm text-calm-muted" htmlFor={inputIdentifier}>
           {label}
@@ -184,7 +184,7 @@ export default React.memo(function DayPicker({ value, onChange, label }: DayPick
             setIsOpen(false);
           }
         }}
-        className={`flex min-h-[42px] w-full cursor-pointer items-center justify-between gap-3 rounded-xl border bg-calm-surface px-3 py-2 text-left text-sm text-calm-text outline-none transition ${isOpen ? 'border-calm-primary ring-2 ring-calm-primary/20' : 'border-calm-border focus-visible:border-calm-primary focus-visible:ring-2 focus-visible:ring-calm-primary/20'}`}
+        className={`flex min-h-[42px] w-full cursor-pointer items-center justify-between gap-3 rounded-xl border border-solid bg-calm-surface px-3 py-2 text-left text-sm text-calm-text outline-none transition ${isOpen ? 'border-calm-primary ring-2 ring-calm-primary/20' : 'border-calm-border focus-visible:border-calm-primary focus-visible:ring-2 focus-visible:ring-calm-primary/20'}`}
       >
         <span className="truncate">{formattedTriggerLabel}</span>
         <span className="shrink-0 text-calm-muted" aria-hidden>
