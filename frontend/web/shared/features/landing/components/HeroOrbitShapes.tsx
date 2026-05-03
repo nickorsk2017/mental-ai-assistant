@@ -7,15 +7,15 @@ const decorativeShapes = [
   },
   {
     className:
-      'absolute -right-12 top-14 h-14 w-14 rotate-12 rounded-[18px] border border-calm-border bg-calm-primary/15 shadow-subtle animate-slow-spin',
+      'absolute -right-12 top-14 h-14 w-14 rotate-12 rounded-[18px] border border-calm-border bg-calm-second/15 shadow-subtle animate-slow-spin',
   },
   {
     className:
-      'absolute -left-1 top-1/2 h-16 w-16 -translate-y-1/2 rounded-full border-2 border-dashed border-calm-primary/45 bg-transparent animate-gentle-pulse',
+      'absolute -left-1 top-1/2 h-16 w-16 -translate-y-1/2 rounded-full border-2 border-dashed border-calm-second/45 bg-transparent animate-gentle-pulse',
   },
   {
     className:
-      'absolute -right-18 bottom-18 h-0 w-0 border-x-[24px] border-b-[40px] border-x-transparent border-b-calm-primary/20 animate-gentle-drift',
+      'absolute -right-18 bottom-18 h-0 w-0 border-x-[24px] border-b-[40px] border-x-transparent border-b-calm-second/20 animate-gentle-drift',
   },
   {
     className:

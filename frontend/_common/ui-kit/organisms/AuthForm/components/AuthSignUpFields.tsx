@@ -75,7 +75,7 @@ export const AuthSignUpFields = React.memo(function AuthSignUpFields({ onSignedU
         </div>
       ))}
       <div className="absolute bottom-0 left-0 right-0 md:static py-4 px-10 md:px-0">
-        <Button type="submit">
+        <Button type="submit" variant="black">
           Create Account
         </Button>
       </div>

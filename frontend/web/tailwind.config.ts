@@ -4,6 +4,8 @@ import { softCalmTheme, tailwindBoxShadowTokens, tailwindFontSizeTokens } from '
 const calmColorPalette = {
   primary: softCalmTheme.colors.primary,
   second: softCalmTheme.colors.second,
+  black: softCalmTheme.colors.black,
+  'black-soft': softCalmTheme.colors.blackSoft,
   'primary-text': softCalmTheme.colors.primaryText,
   background: softCalmTheme.colors.mutedSurface,
   surface: softCalmTheme.colors.surface,
@@ -12,6 +14,14 @@ const calmColorPalette = {
   border: softCalmTheme.colors.border,
   error: softCalmTheme.colors.danger,
   label: softCalmTheme.colors.label,
+  mood: {
+    depression: softCalmTheme.colors.moodDepression,
+    'depression-surface': softCalmTheme.colors.moodDepressionSurface,
+    normal: softCalmTheme.colors.moodNormal,
+    'normal-surface': softCalmTheme.colors.moodNormalSurface,
+    euphoria: softCalmTheme.colors.moodEuphoria,
+    'euphoria-surface': softCalmTheme.colors.moodEuphoriaSurface,
+  },
 } as const;
 
 const tailwindConfiguration: Config = {

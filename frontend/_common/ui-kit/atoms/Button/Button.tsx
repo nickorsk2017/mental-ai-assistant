@@ -2,7 +2,7 @@ import React from 'react';
 import { ComponentSize } from '../../../themes/calm-theme';
 import { cx } from '../../../utils';
 
-type ButtonVariant = 'primary' | 'outline' | 'ghost';
+type ButtonVariant = 'primary' | 'black' | 'outline' | 'ghost';
 
 type ButtonProps = Omit<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -41,6 +41,7 @@ export const Button = React.memo(function Button({
 
   const variantClassMap: Record<ButtonVariant, string> = {
     primary: 'bg-calm-primary border-calm-primary text-calm-primary-text',
+    black: 'bg-calm-black border-calm-black text-calm-primary-text',
     outline: 'bg-transparent border-calm-border text-calm-text',
     ghost: 'bg-transparent border-transparent text-calm-muted',
   };
@@ -52,7 +53,7 @@ export const Button = React.memo(function Button({
       disabled={disabled || isLoading}
       {...buttonAttributes}
       className={cx(
-        'border font-semibold transition-all duration-150 !flex-none',
+        'border font-semibold outline-none transition-all duration-150 focus-visible:ring-2 focus-visible:ring-calm-primary/20 !flex-none',
         sizeClassMap[size],
         variantClassMap[variant],
         (wide === true || wide === undefined) ? 'w-full' : 'w-auto',

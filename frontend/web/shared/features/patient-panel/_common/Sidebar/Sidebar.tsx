@@ -40,7 +40,7 @@ const Sidebar = React.memo(function Sidebar({ user }: { user: ServerUser }) {
               href={navigationHref}
               className={`rounded-2xl px-3 py-3 text-sm font-semibold transition ${
                 isActive
-                  ? 'bg-calm-primary/18 text-calm-text shadow-subtle'
+                  ? 'bg-calm-black-soft text-calm-primary-text shadow-subtle'
                   : 'text-calm-muted hover:bg-calm-surface/70 hover:text-calm-text'
               }`}
             >

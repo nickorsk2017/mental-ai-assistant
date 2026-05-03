@@ -65,7 +65,6 @@ def process_journal_message_from_kafka(
         settings,
         payload.user_id,
         payload.correlation_id,
-        payload.message_text,
         note_analysis.mood_key,
         note_analysis.mood_label,
         note_analysis.mood_score,

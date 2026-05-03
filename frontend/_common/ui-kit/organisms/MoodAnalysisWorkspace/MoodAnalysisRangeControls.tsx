@@ -1,7 +1,8 @@
 'use client';
 
-import { Button } from '../../atoms/Button/Button';
 import React from 'react';
+
+import { Button } from '../../atoms/Button/Button';
 
 export type MoodAnalysisRangeKind = 'month' | 'year' | 'hours';
 
@@ -15,11 +16,6 @@ interface MoodAnalysisRangeControlsProperties {
   selectedCalendarDateInput: string;
   onSelectedCalendarDateInputChange: (nextValue: string) => void;
 }
-
-const rangeToggleInactiveClassNames =
-  'rounded-full border border-calm-border px-4 py-2 text-sm font-medium text-calm-muted transition hover:border-calm-second/40';
-const rangeToggleActiveClassNames =
-  'rounded-full border border-calm-second bg-calm-second/15 px-4 py-2 text-sm font-semibold text-calm-second';
 
 export default React.memo(function MoodAnalysisRangeControls({
   analysisRangeKind,
@@ -38,7 +34,7 @@ export default React.memo(function MoodAnalysisRangeControls({
         <Button
           variant={
             analysisRangeKind === 'month'
-              ? "primary"
+              ? "black"
               : "outline"
           }
           rounded
@@ -51,7 +47,7 @@ export default React.memo(function MoodAnalysisRangeControls({
         <Button
           variant={
             analysisRangeKind === 'year'
-              ? "primary"
+              ? "black"
               : "outline"
           }
           size="small"
@@ -64,7 +60,7 @@ export default React.memo(function MoodAnalysisRangeControls({
         <Button
           variant={
             analysisRangeKind === 'hours'
-              ? "primary"
+              ? "black"
               : "outline"
           }
           size="small"

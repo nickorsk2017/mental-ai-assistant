@@ -148,6 +148,8 @@ The restriction applies only to shared entity contracts:
 - Do not render raw `<input>` elements in web, mobile, or shared frontend UI unless you are implementing the `TextInput` component itself.
 - Multi-line form fields in `frontend/` must use `frontend/_common/ui-kit/TextArea`.
 - Raw `<textarea>` is allowed only inside `TextArea` itself or specialized composer components such as `ChatInput`.
+- Select/dropdown controls in `frontend/` must use `frontend/_common/ui-kit/Select`.
+- Do not render raw `<select>` elements unless you are implementing the `Select` component itself.
 - Modal dialogs in `frontend/` must use `frontend/_common/ui-kit/Modal`.
 - Do not reimplement portal, overlay, body-scroll locking, modal header, or close button behavior in feature components.
 
@@ -234,6 +236,7 @@ CI/CD files are allowed when they validate the template without hardcoding proje
 - [ ] Frontend clickable button controls use `frontend/_common/ui-kit/Button`
 - [ ] Frontend text-like input controls use `frontend/_common/ui-kit/TextInput`
 - [ ] Frontend multi-line form fields use `frontend/_common/ui-kit/TextArea`
+- [ ] Frontend select/dropdown controls use `frontend/_common/ui-kit/Select`
 - [ ] Frontend modal dialogs use `frontend/_common/ui-kit/Modal`
 - [ ] `_common/.env` is not committed; `_common/.env.example` is updated if needed
 - [ ] No `frontend/` code imports directly from `backend/`

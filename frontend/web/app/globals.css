@@ -67,6 +67,17 @@ html {
   }
 }
 
+@keyframes chatMessagesAppear {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 @layer utilities {
   .animate-gentle-float {
     animation: gentleFloat 5.8s ease-in-out infinite;
@@ -96,5 +107,9 @@ html {
       radial-gradient(circle at 32% 26%, rgba(255, 244, 228, 0.98) 0 13%, transparent 14%),
       radial-gradient(circle at 36% 30%, #f8bd72 0 18%, #e48a3a 46%, #b95f20 100%);
     animation: sereneSphereGlow 4.8s ease-in-out infinite;
+  }
+
+  .animate-chat-messages-appear {
+    animation: chatMessagesAppear 260ms ease-out both;
   }
 }

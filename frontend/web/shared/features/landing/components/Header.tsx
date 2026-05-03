@@ -110,7 +110,7 @@ const Header = React.memo(function Header() {
               ))}
               <Link
                 href="/auth"
-                className="mt-2 inline-flex items-center justify-center rounded-full border border-calm-primary bg-calm-primary px-5 py-3 text-sm font-semibold text-calm-primary-text transition hover:brightness-95 sm:hidden"
+                className="mt-2 inline-flex items-center justify-center rounded-full border border-calm-black bg-calm-black px-5 py-3 text-sm font-semibold text-calm-primary-text transition hover:brightness-95 sm:hidden"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Try for free

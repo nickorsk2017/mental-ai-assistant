@@ -17,8 +17,7 @@ declare global {
       moodLabel: string | null;
       moodScore: number | null;
       activityTags: string[];
-      messageText: string;
-      summaryText: string | null;
+      summaryText: string;
       createdAt: string;
       updatedAt: string;
     }
@@ -27,8 +26,7 @@ declare global {
       moodLabel: string | null;
       moodScore: number | null;
       activityTags: string[];
-      messageText: string;
-      summaryText: string | null;
+      summaryText: string;
     }
 
     interface PatientNoteGroup {

@@ -107,7 +107,9 @@ export default function MobileHeader({ user }: { user: ServerUser }) {
                       key={navigationHref}
                       href={navigationHref}
                       className={`rounded-full px-4 py-3 text-sm font-semibold transition ${
-                        isActive ? 'bg-calm-primary/18 text-calm-text' : 'text-calm-muted hover:bg-calm-background/70'
+                        isActive
+                          ? 'bg-calm-black-soft text-calm-primary-text'
+                          : 'text-calm-muted hover:bg-calm-background/70'
                       }`}
                       onClick={() => setIsMenuOpen(false)}
                     >

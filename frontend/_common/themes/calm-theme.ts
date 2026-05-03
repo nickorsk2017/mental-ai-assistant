@@ -9,10 +9,18 @@ export type SoftCalmTheme = {
     border: string;
     primary: string;
     second: string;
+    black: string;
+    blackSoft: string;
     primaryText: string;
     mutedSurface: string;
     danger: string;
     label: string;
+    moodDepression: string;
+    moodDepressionSurface: string;
+    moodNormal: string;
+    moodNormalSurface: string;
+    moodEuphoria: string;
+    moodEuphoriaSurface: string;
   };
 };
 
@@ -24,10 +32,18 @@ const calmLightTheme: SoftCalmTheme = {
     border: '#dbe5fb',
     primary: '#e48a3a',
     second: '#6f8cff',
+    black: '#313a54',
+    blackSoft: '#6d758c',
     primaryText: '#ffffff',
     mutedSurface: '#f4f7ff',
     danger: '#f56f86',
     label: '#66708a',
+    moodDepression: '#9aa4bf',
+    moodDepressionSurface: '#eef1f7',
+    moodNormal: '#b5ead7',
+    moodNormalSurface: '#eefaf5',
+    moodEuphoria: '#fac4cf',
+    moodEuphoriaSurface: '#fff3f6',
   },
 };
 
@@ -39,10 +55,18 @@ const calmDarkTheme: SoftCalmTheme = {
     border: '#34405f',
     primary: '#d9964f',
     second: '#90a8ff',
+    black: '#edf2ff',
+    blackSoft: '#f4f6fc',
     primaryText: '#0f1630',
     mutedSurface: '#11182b',
     danger: '#ff9ab0',
     label: '#9bb0ff',
+    moodDepression: '#8d98b5',
+    moodDepressionSurface: '#242b3d',
+    moodNormal: '#a8e7d3',
+    moodNormalSurface: '#18302a',
+    moodEuphoria: '#f5bdc9',
+    moodEuphoriaSurface: '#34242c',
   },
 };
 

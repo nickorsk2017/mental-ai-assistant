@@ -10,14 +10,28 @@ import {
 
 const patientChatFirstMessageStorageKey = 'serenePatientChatHasSentFirstMessage';
 
+function replaceLastAssistantMessage(
+  previousMessages: Entity.PatientChatMessage[],
+  content: string,
+) {
+  const nextMessages = [...previousMessages];
+  const lastMessageIndex = nextMessages.length - 1;
+
+  if (lastMessageIndex >= 0 && nextMessages[lastMessageIndex].role === 'assistant') {
+    nextMessages[lastMessageIndex] = { role: 'assistant', content };
+  }
+
+  return nextMessages;
+}
+
 export function usePatientChatComposer() {
   const textareaReference = useRef<HTMLTextAreaElement>(null);
   const messagesEndReference = useRef<HTMLDivElement>(null);
-  const hasLoadedInitialMessagesReference = useRef(false);
   const hasAppliedInitialScrollReference = useRef(false);
 
   const [composerText, setComposerText] = useState('');
   const [messages, setMessages] = useState<Entity.PatientChatMessage[]>([]);
+  const [isLoadingInitialMessages, setIsLoadingInitialMessages] = useState(true);
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingError, setStreamingError] = useState<string | null>(null);
   const [requiresFirstMessageMinimum, setRequiresFirstMessageMinimum] = useState(true);
@@ -31,12 +45,17 @@ export function usePatientChatComposer() {
   useEffect(() => {
     let isMounted = true;
 
-    void loadTodayPatientChatMessages().then((todayMessages) => {
-      if (isMounted) {
-        setMessages(todayMessages);
-        hasLoadedInitialMessagesReference.current = true;
-      }
-    });
+    void loadTodayPatientChatMessages()
+      .then((todayMessages) => {
+        if (isMounted) {
+          setMessages(todayMessages);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoadingInitialMessages(false);
+        }
+      });
 
     return () => {
       isMounted = false;
@@ -50,16 +69,21 @@ export function usePatientChatComposer() {
   }, [isStreaming]);
 
   useEffect(() => {
-    const shouldUseAutoScroll =
-      hasLoadedInitialMessagesReference.current && !hasAppliedInitialScrollReference.current;
-    const scrollBehavior: ScrollBehavior = shouldUseAutoScroll ? 'auto' : 'smooth';
-
-    messagesEndReference.current?.scrollIntoView({ behavior: scrollBehavior });
-
-    if (shouldUseAutoScroll) {
-      hasAppliedInitialScrollReference.current = true;
+    if (isLoadingInitialMessages) {
+      return undefined;
     }
-  }, [messages]);
+
+    const shouldApplyInitialScroll = !hasAppliedInitialScrollReference.current;
+    const animationFrameId = window.requestAnimationFrame(() => {
+      messagesEndReference.current?.scrollIntoView({ behavior: 'smooth' });
+
+      if (shouldApplyInitialScroll) {
+        hasAppliedInitialScrollReference.current = true;
+      }
+    });
+
+    return () => window.cancelAnimationFrame(animationFrameId);
+  }, [isLoadingInitialMessages, messages]);
 
   const trimmedComposerLength = composerText.trim().length;
 
@@ -72,9 +96,7 @@ export function usePatientChatComposer() {
   const handleSend = useCallback(async () => {
     const trimmed = composerText.trim();
 
-    if (trimmed.length === 0 || isStreaming) {
-      return;
-    }
+    if (trimmed.length === 0 || isStreaming) return;
 
     if (
       requiresFirstMessageMinimum &&
@@ -105,9 +127,7 @@ export function usePatientChatComposer() {
 
       const reader = response.body?.getReader();
 
-      if (!reader) {
-        throw new Error('Streaming body is not available.');
-      }
+      if (!reader) throw new Error('Streaming body is not available.');
 
       const decoder = new TextDecoder();
       let accumulated = '';
@@ -115,38 +135,22 @@ export function usePatientChatComposer() {
       while (true) {
         const { done, value } = await reader.read();
 
-        if (done) {
-          break;
-        }
+        if (done) break;
 
         accumulated += decoder.decode(value, { stream: true });
 
-        setMessages((previousMessages: Entity.PatientChatMessage[]) => {
-          const next = [...previousMessages];
-          const lastIndex = next.length - 1;
-
-          if (lastIndex >= 0 && next[lastIndex].role === 'assistant') {
-            next[lastIndex] = { role: 'assistant', content: accumulated };
-          }
-
-          return next;
-        });
+        setMessages((previousMessages: Entity.PatientChatMessage[]) =>
+          replaceLastAssistantMessage(previousMessages, accumulated),
+        );
       }
 
       const remainingText = decoder.decode();
 
       if (remainingText) {
         accumulated += remainingText;
-        setMessages((previousMessages: Entity.PatientChatMessage[]) => {
-          const next = [...previousMessages];
-          const lastIndex = next.length - 1;
-
-          if (lastIndex >= 0 && next[lastIndex].role === 'assistant') {
-            next[lastIndex] = { role: 'assistant', content: accumulated };
-          }
-
-          return next;
-        });
+        setMessages((previousMessages: Entity.PatientChatMessage[]) =>
+          replaceLastAssistantMessage(previousMessages, accumulated),
+        );
       }
 
       window.localStorage.setItem(patientChatFirstMessageStorageKey, 'true');
@@ -158,9 +162,7 @@ export function usePatientChatComposer() {
       setStreamingError(messageText);
       setComposerText(trimmed);
       setMessages((previousMessages: Entity.PatientChatMessage[]) => {
-        if (previousMessages.length < 2) {
-          return previousMessages;
-        }
+        if (previousMessages.length < 2) return previousMessages;
 
         return previousMessages.slice(0, -2);
       });
@@ -185,6 +187,7 @@ export function usePatientChatComposer() {
     composerText,
     setComposerText,
     messages,
+    isLoadingInitialMessages,
     isStreaming,
     streamingError,
     trimmedComposerLength,

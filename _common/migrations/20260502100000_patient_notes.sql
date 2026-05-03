@@ -9,8 +9,7 @@ create table if not exists public.patient_notes (
   mood_label text,
   mood_score smallint,
   activity_tags text[] not null default '{}',
-  message_text text not null,
-  summary_text text,
+  summary_text text not null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   deleted_at timestamptz,
@@ -25,10 +24,12 @@ alter table public.patient_notes
   add column if not exists mood_label text,
   add column if not exists mood_score smallint,
   add column if not exists activity_tags text[] not null default '{}',
+  add column if not exists summary_text text,
   add column if not exists updated_at timestamptz not null default now(),
   add column if not exists deleted_at timestamptz;
 
 alter table public.patient_notes
+  drop column if exists message_text,
   drop column if exists assistant_vibe_check;
 
 do $$

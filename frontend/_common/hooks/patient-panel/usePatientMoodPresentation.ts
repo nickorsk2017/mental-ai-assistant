@@ -22,15 +22,15 @@ function resolveMoodCardClassesValue(moodScore: number | null): string {
   const moodBand = resolveMoodBandValue(moodScore);
 
   if (moodBand === 'euphoria') {
-    return 'border-calm-error/45 bg-calm-error/10';
+    return 'border-calm-mood-euphoria/20 bg-calm-mood-euphoria-surface';
   }
 
   if (moodBand === 'depression') {
-    return 'border-calm-muted/30 bg-calm-muted/10';
+    return 'border-calm-mood-depression/15 bg-calm-mood-depression-surface';
   }
 
   if (moodBand === 'normal') {
-    return 'border-emerald-300/70 bg-emerald-50/80';
+    return 'border-calm-mood-normal/20 bg-calm-mood-normal-surface';
   }
 
   return 'border-calm-border/55 bg-calm-surface/90';
@@ -40,15 +40,15 @@ function resolveMoodScoreBadgeClassesValue(moodScore: number | null): string {
   const moodBand = resolveMoodBandValue(moodScore);
 
   if (moodBand === 'euphoria') {
-    return 'border-calm-error/50 bg-calm-error/18 text-calm-text';
+    return 'border-calm-mood-euphoria bg-calm-mood-euphoria-surface text-calm-text';
   }
 
   if (moodBand === 'depression') {
-    return 'border-calm-muted/45 bg-calm-muted/14 text-calm-text';
+    return 'border-calm-mood-depression bg-calm-mood-depression-surface text-calm-text';
   }
 
   if (moodBand === 'normal') {
-    return 'border-emerald-400/65 bg-emerald-100 text-calm-text';
+    return 'border-calm-mood-normal bg-calm-mood-normal-surface text-calm-text';
   }
 
   return 'border-calm-border/60 bg-calm-surface text-calm-text';
@@ -56,15 +56,15 @@ function resolveMoodScoreBadgeClassesValue(moodScore: number | null): string {
 
 function resolveMoodDotClassesValue(moodBand: Entity.PatientNoteMoodBand): string {
   if (moodBand === 'euphoria') {
-    return 'bg-calm-error';
+    return 'bg-calm-mood-euphoria';
   }
 
   if (moodBand === 'depression') {
-    return 'bg-calm-muted';
+    return 'bg-calm-mood-depression';
   }
 
   if (moodBand === 'normal') {
-    return 'bg-emerald-500';
+    return 'bg-calm-mood-normal';
   }
 
   return 'bg-calm-muted';

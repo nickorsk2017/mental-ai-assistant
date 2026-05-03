@@ -160,6 +160,8 @@ Mandatory in every component:
 - Do not render raw `<input>` elements in `frontend/web/` unless you are implementing `TextInput`.
 - Use `TextArea` from `@common/shared/ui-kit` for multi-line form fields.
 - Raw `<textarea>` is allowed only inside `TextArea` itself or specialized composer components such as `ChatInput`.
+- Use `Select` from `@common/shared/ui-kit` for select/dropdown controls.
+- Do not render raw `<select>` elements in `frontend/web/` unless you are implementing `Select`.
 - Use `Modal` from `@common/shared/ui-kit` for modal dialogs.
 - Do not reimplement portal, overlay, body-scroll locking, modal header, or close button behavior in web feature components.
 
@@ -173,6 +175,7 @@ Mandatory in every component:
 - [ ] All clickable button controls use `@common/shared/ui-kit/Button`
 - [ ] All text-like input controls use `@common/shared/ui-kit/TextInput`
 - [ ] All multi-line form fields use `@common/shared/ui-kit/TextArea`
+- [ ] All select/dropdown controls use `@common/shared/ui-kit/Select`
 - [ ] All modal dialogs use `@common/shared/ui-kit/Modal`
 - [ ] No component calls `fetch` or imports from `@common/services` directly
 - [ ] No `createContext` or `useContext` — use `@common/stores` instead

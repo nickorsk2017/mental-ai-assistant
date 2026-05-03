@@ -142,14 +142,14 @@ export default React.memo(function MoodTrendChart({
         .attr('fill', 'none')
         .attr('stroke-width', 2.25)
         .attr('d', moodLineBuilder)
-        .attr('class', 'stroke-calm-second');
+        .attr('class', 'stroke-calm-black');
     }
 
     chartGroup
       .selectAll('circle.data-point')
       .data(moodTrendDataWithScores)
       .join('circle')
-      .attr('class', 'data-point fill-calm-second stroke-calm-surface')
+      .attr('class', 'data-point fill-calm-black stroke-calm-surface')
       .attr('r', 4)
       .attr('cx', (datum) => horizontalScale(datum.domainPosition))
       .attr('cy', (datum) => verticalScale(datum.averageMoodScore!))

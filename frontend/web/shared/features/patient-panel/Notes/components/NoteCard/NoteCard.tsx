@@ -20,7 +20,7 @@ export default React.memo(function NoteCard({ note, onEdit, onDelete }: NoteCard
   }).format(new Date(note.createdAt));
 
   return (
-    <article className={`rounded-lg border px-5 py-4 shadow-subtle ${resolveMoodCardClasses(note.moodScore)}`}>
+    <article className={`rounded-lg border px-5 py-4 shadow-[0_8px_18px_rgba(49,58,84,0.08)] ${resolveMoodCardClasses(note.moodScore)}`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-sm font-semibold text-calm-text">
@@ -66,7 +66,7 @@ export default React.memo(function NoteCard({ note, onEdit, onDelete }: NoteCard
       </div>
 
       <p className="mt-4 text-sm leading-6 text-calm-text">
-        {note.summaryText ?? note.messageText}
+        {note.summaryText}
       </p>
 
       {note.activityTags.length > 0 && (

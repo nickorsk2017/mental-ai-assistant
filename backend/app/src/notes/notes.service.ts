@@ -9,8 +9,7 @@ interface PatientNoteRow {
   mood_label: string | null;
   mood_score: number | null;
   activity_tags: string[] | null;
-  message_text: string;
-  summary_text: string | null;
+  summary_text: string;
   created_at: string;
   updated_at: string;
 }
@@ -21,7 +20,6 @@ const patientNoteSelectColumns = [
   'mood_label',
   'mood_score',
   'activity_tags',
-  'message_text',
   'summary_text',
   'created_at',
   'updated_at',
@@ -40,7 +38,6 @@ function mapPatientNoteRow(note: PatientNoteRow): PatientNoteRecord {
     moodLabel: note.mood_label,
     moodScore: note.mood_score,
     activityTags: note.activity_tags ?? [],
-    messageText: note.message_text,
     summaryText: note.summary_text,
     createdAt: note.created_at,
     updatedAt: note.updated_at,
@@ -74,9 +71,9 @@ export class NotesService {
     userId: string,
     body: PatientNoteMutationBody,
   ): Promise<PatientNoteRecord | null> {
-    const messageText = body.messageText?.trim() || body.summaryText?.trim() || '';
+    const summaryText = body.summaryText?.trim() ?? '';
 
-    if (!messageText) {
+    if (!summaryText) {
       return null;
     }
 
@@ -89,8 +86,7 @@ export class NotesService {
         mood_label: body.moodLabel?.trim() || null,
         mood_score: body.moodScore ?? null,
         activity_tags: normalizeActivityTags(body.activityTags),
-        message_text: messageText,
-        summary_text: body.summaryText?.trim() || null,
+        summary_text: summaryText,
       })
       .select(patientNoteSelectColumns)
       .single();
@@ -109,9 +105,9 @@ export class NotesService {
     noteId: string,
     body: PatientNoteMutationBody,
   ): Promise<PatientNoteRecord | null> {
-    const messageText = body.messageText?.trim() || body.summaryText?.trim() || '';
+    const summaryText = body.summaryText?.trim() ?? '';
 
-    if (!messageText) {
+    if (!summaryText) {
       return null;
     }
 
@@ -121,8 +117,7 @@ export class NotesService {
         mood_label: body.moodLabel?.trim() || null,
         mood_score: body.moodScore ?? null,
         activity_tags: normalizeActivityTags(body.activityTags),
-        message_text: messageText,
-        summary_text: body.summaryText?.trim() || null,
+        summary_text: summaryText,
       })
       .eq('id', noteId)
       .eq('user_id', userId)

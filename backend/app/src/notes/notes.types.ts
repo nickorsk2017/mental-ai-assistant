@@ -4,8 +4,7 @@ export interface PatientNoteRecord {
   moodLabel: string | null;
   moodScore: number | null;
   activityTags: string[];
-  messageText: string;
-  summaryText: string | null;
+  summaryText: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -14,6 +13,5 @@ export interface PatientNoteMutationBody {
   moodLabel?: string | null;
   moodScore?: number | null;
   activityTags?: string[];
-  messageText?: string;
-  summaryText?: string | null;
+  summaryText?: string;
 }

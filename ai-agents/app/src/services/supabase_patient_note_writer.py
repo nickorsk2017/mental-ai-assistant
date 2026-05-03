@@ -13,7 +13,6 @@ def insert_patient_note_row(
     settings: ApplicationSettings,
     user_id: str,
     correlation_id: str,
-    message_text: str,
     mood_key: str | None,
     mood_label: str | None,
     mood_score: int | None,
@@ -35,7 +34,6 @@ def insert_patient_note_row(
         "mood_label": mood_label,
         "mood_score": mood_score,
         "activity_tags": activity_tags,
-        "message_text": message_text,
         "summary_text": summary_text,
     }
     headers = {

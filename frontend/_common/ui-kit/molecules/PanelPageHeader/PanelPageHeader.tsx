@@ -22,6 +22,7 @@ export default React.memo(function PanelPageHeader(properties: PanelPageHeaderPr
       {'onPrimaryAction' in properties ? (
         <Button
           type="button"
+          variant="black"
           onClick={properties.onPrimaryAction}
           wide={false}
           rounded

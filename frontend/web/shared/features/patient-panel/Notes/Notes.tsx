@@ -69,7 +69,7 @@ const Notes = React.memo(function Notes() {
                 wide={false}
                 size="small"
                 rounded
-                variant={selectedTag === tag ? 'primary' : 'outline'}
+                variant={selectedTag === tag ? 'black' : 'outline'}
                 onClick={() => setSelectedTag(tag)}
               >
                 {tag === allTagsValue ? 'All' : tag}
@@ -85,19 +85,21 @@ const Notes = React.memo(function Notes() {
             </p>
           )}
 
-          {groupedNotes.map((group) => (
-            <section key={group.label} className="flex flex-col gap-3">
-              <h2 className="text-sm font-semibold text-calm-muted">{group.label}</h2>
-              {group.notes.map((note) => (
-                <NoteCard
-                  key={note.id}
-                  note={note}
-                  onEdit={openEditEditor}
-                  onDelete={handleDeleteNote}
-                />
-              ))}
-            </section>
-          ))}
+          <div className="flex flex-col gap-10">
+            {groupedNotes.map((group) => (
+              <section key={group.label} className="flex flex-col gap-6">
+                <h2 className="text-sm font-semibold text-calm-muted">{group.label}</h2>
+                {group.notes.map((note) => (
+                  <NoteCard
+                    key={note.id}
+                    note={note}
+                    onEdit={openEditEditor}
+                    onDelete={handleDeleteNote}
+                  />
+                ))}
+              </section>
+            ))}
+          </div>
         </div>
       </div>
       <NoteEditorModal

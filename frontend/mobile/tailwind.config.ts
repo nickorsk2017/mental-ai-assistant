@@ -3,6 +3,8 @@ import { softCalmTheme, tailwindBoxShadowTokens, tailwindFontSizeTokens } from '
 
 const calmColorPalette = {
   primary: softCalmTheme.colors.primary,
+  black: softCalmTheme.colors.black,
+  'black-soft': softCalmTheme.colors.blackSoft,
   second: "rgb(228 138 58 / <alpha-value>)",
   "second/18": "rgb(228 138 58 / 0.18)",
   'primary-text': softCalmTheme.colors.primaryText,

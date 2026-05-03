@@ -52,7 +52,7 @@ export default React.memo(function TextInput({
           autoFocus={autoFocus}
           autoComplete={autoComplete}
           onChange={(event) => onChange(event.target.value)}
-          className={`w-full rounded-xl border outline-none ${sizeClassMap[size]} ${inputClass}`}
+          className={`w-full rounded-xl border outline-none transition-all duration-150 focus:border-calm-primary focus:ring-2 focus:ring-calm-primary/20 ${sizeClassMap[size]} ${inputClass}`}
         />
         {type === 'password' ? (
           <Button
