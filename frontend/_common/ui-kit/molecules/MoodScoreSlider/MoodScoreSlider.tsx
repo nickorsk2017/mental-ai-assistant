@@ -52,9 +52,9 @@ export default React.memo(function MoodScoreSlider({
             'relative z-10 h-11 w-full cursor-pointer appearance-none bg-transparent outline-none',
             'focus-visible:ring-2 focus-visible:ring-calm-primary/20',
             '[&::-moz-range-track]:h-3 [&::-moz-range-track]:bg-transparent',
-            '[&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-4 [&::-moz-range-thumb]:border-calm-surface [&::-moz-range-thumb]:bg-calm-primary [&::-moz-range-thumb]:shadow-subtle',
+            '[&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-4 [&::-moz-range-thumb]:border-calm-surface [&::-moz-range-thumb]:bg-calm-black [&::-moz-range-thumb]:shadow-subtle',
             '[&::-webkit-slider-runnable-track]:h-3 [&::-webkit-slider-runnable-track]:bg-transparent',
-            '[&::-webkit-slider-thumb]:mt-[-6px] [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-4 [&::-webkit-slider-thumb]:border-calm-surface [&::-webkit-slider-thumb]:bg-calm-primary [&::-webkit-slider-thumb]:shadow-subtle',
+            '[&::-webkit-slider-thumb]:mt-[-6px] [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-4 [&::-webkit-slider-thumb]:border-calm-surface [&::-webkit-slider-thumb]:bg-calm-black [&::-webkit-slider-thumb]:shadow-subtle',
           )}
         />
       </div>

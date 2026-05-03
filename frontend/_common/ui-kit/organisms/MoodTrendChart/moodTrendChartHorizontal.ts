@@ -4,13 +4,52 @@ import type { MoodTrendDatum } from '../../../utils';
 
 import type { MoodTrendChartRangeKind } from './moodTrendChartTypes';
 
+/** Patient notes store mood as integers 1–10; axis matches that domain (not 0–10). */
+export const moodTrendScoreDomainMinimum = 1;
+export const moodTrendScoreDomainMaximum = 10;
+
+export function clampMoodScoreToChartDomain(rawMoodScore: number): number {
+  return Math.min(
+    moodTrendScoreDomainMaximum,
+    Math.max(moodTrendScoreDomainMinimum, rawMoodScore),
+  );
+}
+
+/** Prepends (firstTime, mood 1) so the stroke shares the area’s bottom-left corner before the first sample. */
+export function buildMoodLineStrokeSeries(moodTrendDataWithScores: MoodTrendDatum[]): MoodTrendDatum[] {
+  if (moodTrendDataWithScores.length === 0) {
+    return [];
+  }
+
+  const firstDatum = moodTrendDataWithScores[0];
+  const firstMoodScore = clampMoodScoreToChartDomain(firstDatum.averageMoodScore!);
+
+  if (firstMoodScore <= moodTrendScoreDomainMinimum) {
+    return moodTrendDataWithScores;
+  }
+
+  const floorAnchorDatum: MoodTrendDatum = {
+    domainPosition: firstDatum.domainPosition,
+    tickLabel: firstDatum.tickLabel,
+    averageMoodScore: moodTrendScoreDomainMinimum,
+  };
+
+  return [floorAnchorDatum, ...moodTrendDataWithScores];
+}
+
+/**
+ * Five reference levels on the 1–10 score line: endpoints 1 and 10, three equal steps between
+ * (same geometry as a 0–10 scale linearly mapped to 1–10).
+ */
 export const moodTrendVerticalAnnotations = [
   { moodScore: 10, label: 'Mania' },
-  { moodScore: 7.5, label: 'Hypo-Mania' },
-  { moodScore: 5, label: '' },
-  { moodScore: 2.5, label: 'Minor Depression' },
-  { moodScore: 0, label: 'Major Depression' },
+  { moodScore: 7.75, label: 'Hypo-Mania' },
+  { moodScore: 5.5, label: '' },
+  { moodScore: 3.25, label: 'Minor Depression' },
+  { moodScore: 1, label: 'Major Depression' },
 ] as const;
+
+export const moodTrendNeutralMoodScore = 5.5;
 
 export function resolveHorizontalDomain(
   rangeKind: MoodTrendChartRangeKind,

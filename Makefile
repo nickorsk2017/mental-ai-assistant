@@ -19,7 +19,7 @@ PNPM_CMD := env -u PNPM_STORE_DIR -u npm_config_store_dir pnpm
 help:
 	@echo ""
 	@echo "Setup:"
-	@echo "  make install              - Install backend, frontend, ui-kit, mobile, AI agents (pnpm + uv)"
+	@echo "  make install              - Install root git hooks (husky), backend, frontend, ui-kit, mobile, AI agents"
 	@echo "  make backend-install      - Install backend dependencies"
 	@echo "  make frontend-install     - Install frontend workspace dependencies"
 	@echo "  make ui-kit-install       - Install shared ui-kit workspace dependencies"
@@ -68,7 +68,10 @@ help:
 
 # ─── Install ──────────────────────────────────────────────────────────────────
 
-install: backend-install frontend-install ui-kit-install mobile-install ai-agents-install
+install: root-install backend-install frontend-install ui-kit-install mobile-install ai-agents-install
+
+root-install:
+	$(PNPM_CMD) install
 
 backend-install:
 	$(PNPM_CMD) --dir backend/app install

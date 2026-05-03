@@ -5,6 +5,7 @@ export { Icon } from './atoms/Icon/Icon';
 export { default as LoadingSpinner } from './atoms/LoadingSpinner/LoadingSpinner';
 export { default as MessageItem } from './molecules/MessageItem/MessageItem';
 export { default as PanelPageHeader } from './molecules/PanelPageHeader/PanelPageHeader';
+export { default as Collapse } from './molecules/Collapse/Collapse';
 export { default as ChatInput } from './molecules/ChatInput/ChatInput';
 export { default as DayPicker } from './molecules/DayPicker/DayPicker';
 export { default as MonthPicker } from './molecules/MonthPicker/MonthPicker';

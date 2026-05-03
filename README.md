@@ -102,7 +102,19 @@ make docker-restart  # Stop, rebuild, start
 
 ## Tooling
 
-Capacitor builds, package builds, lint, pre-commit, CI-equivalent commands, and environment prefixes: [`docs/tooling.md`](docs/tooling.md).
+Capacitor builds, package builds, lint, pre-commit, CI-equivalent commands, and environment prefixes: [`docs/tooling.md`](docs/tooling.md) (if present in your fork).
+
+### Git hooks (local commits)
+
+After `make install` or `pnpm install` at the **repository root**, [Husky](https://typicode.github.io/husky/) registers a pre-commit hook that runs `make pre-commit-check` (lint + unit tests in backend, web, mobile). A commit is rejected if that command fails.
+
+To bypass the hook in emergencies (avoid habitually): `HUSKY=0 git commit …`.
+
+### GitHub (remote checks)
+
+Workflow [`.github/workflows/validate.yml`](.github/workflows/validate.yml) runs `make ci` on pushes and pull requests to `master` / `main` (lint, tests, backend TypeScript build, frontend workspace typecheck).
+
+In GitHub: **Settings → Rules → Rulesets** for the default branch (or **Branches → Branch protection**), enable **Require status checks to pass** and select the **Validate** workflow job so merges are blocked when CI fails.
 
 ---
 

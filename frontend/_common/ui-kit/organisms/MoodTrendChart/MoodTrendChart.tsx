@@ -6,6 +6,11 @@ import React, { useEffect, useId, useRef } from 'react';
 import type { MoodTrendDatum } from '../../../utils';
 
 import {
+  buildMoodLineStrokeSeries,
+  clampMoodScoreToChartDomain,
+  moodTrendNeutralMoodScore,
+  moodTrendScoreDomainMaximum,
+  moodTrendScoreDomainMinimum,
   moodTrendVerticalAnnotations,
   resolveHorizontalDomain,
   resolveHorizontalTickValues,
@@ -13,16 +18,12 @@ import {
 import type { MoodTrendChartRangeKind } from './moodTrendChartTypes';
 
 export type { MoodTrendChartRangeKind };
-
 interface MoodTrendChartProperties {
   chartHeightPixels: number;
   chartWidthPixels: number;
   moodTrendData: MoodTrendDatum[];
   rangeKind: MoodTrendChartRangeKind;
 }
-
-const moodScoreMinimum = 0;
-const moodScoreMaximum = 10;
 
 export default React.memo(function MoodTrendChart({
   chartHeightPixels,
@@ -40,9 +41,11 @@ export default React.memo(function MoodTrendChart({
       return;
     }
 
-    const margin = { top: 20, right: 28, bottom: 44, left: 96 };
+    const margin = { top: 20, right: 28, bottom: 52, left: 96 };
     const innerWidth = chartWidthPixels - margin.left - margin.right;
     const innerHeight = chartHeightPixels - margin.top - margin.bottom;
+    const timeAxisReservedHeightPixels = 22;
+    const plotAreaBottomCoordinate = innerHeight - timeAxisReservedHeightPixels;
 
     const svgSelection = d3.select(svgElement);
 
@@ -60,25 +63,58 @@ export default React.memo(function MoodTrendChart({
 
     const verticalScale = d3
       .scaleLinear()
-      .domain([moodScoreMinimum, moodScoreMaximum])
-      .range([innerHeight, 0]);
+      .domain([moodTrendScoreDomainMinimum, moodTrendScoreDomainMaximum])
+      .range([plotAreaBottomCoordinate, 0]);
+
+    const moodTrendDataWithScores = moodTrendData.filter(
+      (datum) => datum.averageMoodScore !== null,
+    );
+    const moodLineStrokeSeries = buildMoodLineStrokeSeries(moodTrendDataWithScores);
+
+    const moodScoreToPlotY = (rawMoodScore: number) =>
+      verticalScale(clampMoodScoreToChartDomain(rawMoodScore));
+
+    const moodScoreFloorYCoordinate = moodScoreToPlotY(moodTrendScoreDomainMinimum);
+
+    const moodLineBuilder = d3
+      .line<MoodTrendDatum>()
+      .curve(d3.curveLinear)
+      .x((datum) => horizontalScale(datum.domainPosition))
+      .y((datum) => moodScoreToPlotY(datum.averageMoodScore!));
+
+    const moodAreaBuilder = d3
+      .area<MoodTrendDatum>()
+      .curve(d3.curveLinear)
+      .x((datum) => horizontalScale(datum.domainPosition))
+      .y0(() => moodScoreFloorYCoordinate)
+      .y1((datum) => moodScoreToPlotY(datum.averageMoodScore!));
 
     const chartGroup = svgSelection
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
+    if (moodTrendDataWithScores.length >= 2) {
+      chartGroup
+        .append('path')
+        .datum(moodTrendDataWithScores)
+        .attr('fill', 'currentColor')
+        .attr('fill-opacity', 0.07)
+        .attr('d', moodAreaBuilder)
+        .attr('class', 'text-calm-black');
+    }
+
     chartGroup
       .append('line')
       .attr('x1', 0)
       .attr('x2', innerWidth)
-      .attr('y1', verticalScale(5))
-      .attr('y2', verticalScale(5))
+      .attr('y1', verticalScale(moodTrendNeutralMoodScore))
+      .attr('y2', verticalScale(moodTrendNeutralMoodScore))
       .attr('stroke', 'currentColor')
       .attr('stroke-width', 1.25)
       .attr('class', 'text-calm-text opacity-90');
 
     moodTrendVerticalAnnotations.forEach((annotation) => {
-      if (annotation.moodScore === 5) {
+      if (annotation.moodScore === moodTrendNeutralMoodScore) {
         return;
       }
 
@@ -125,20 +161,10 @@ export default React.memo(function MoodTrendChart({
       .selectAll('text')
       .attr('class', 'text-[11px]');
 
-    const moodTrendDataWithScores = moodTrendData.filter(
-      (datum) => datum.averageMoodScore !== null,
-    );
-
-    const moodLineBuilder = d3
-      .line<MoodTrendDatum>()
-      .curve(d3.curveMonotoneX)
-      .x((datum) => horizontalScale(datum.domainPosition))
-      .y((datum) => verticalScale(datum.averageMoodScore!));
-
-    if (moodTrendDataWithScores.length >= 2) {
+    if (moodLineStrokeSeries.length >= 2) {
       chartGroup
         .append('path')
-        .datum(moodTrendDataWithScores)
+        .datum(moodLineStrokeSeries)
         .attr('fill', 'none')
         .attr('stroke-width', 2.25)
         .attr('d', moodLineBuilder)
@@ -152,7 +178,7 @@ export default React.memo(function MoodTrendChart({
       .attr('class', 'data-point fill-calm-black stroke-calm-surface')
       .attr('r', 4)
       .attr('cx', (datum) => horizontalScale(datum.domainPosition))
-      .attr('cy', (datum) => verticalScale(datum.averageMoodScore!))
+      .attr('cy', (datum) => moodScoreToPlotY(datum.averageMoodScore!))
       .attr('stroke-width', 1.5);
   }, [chartHeightPixels, chartWidthPixels, moodTrendData, rangeKind]);
 

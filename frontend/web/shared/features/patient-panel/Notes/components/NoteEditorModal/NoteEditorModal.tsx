@@ -38,7 +38,7 @@ export default React.memo(function NoteEditorModal({
           <Button type="button" onClick={onClose} variant="outline" wide={false} className="px-4 py-2 text-sm text-calm-muted">
             Cancel
           </Button>
-          <Button type="submit" form={formId} disabled={isSaving} wide={false} className="px-4 py-2 text-sm">
+          <Button type="submit" form={formId} disabled={isSaving} variant="black" wide={false} className="px-4 py-2 text-sm">
             {isSaving ? 'Saving...' : 'Save note'}
           </Button>
         </div>

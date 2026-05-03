@@ -56,11 +56,9 @@ export const AuthSignInFields = React.memo(function AuthSignInFields() {
         autoComplete="current-password"
         errorMessage={errors.password?.message as string}
       />
-      <div className="absolute bottom-0 left-0 right-0 md:static py-4 px-10 md:px-0">
-        <Button variant="black" onClick={() => handleSignInSubmit()} isLoading={isAuthenticating}>
-          {isAuthenticating ? 'Loading...' : 'Login'}
-        </Button>
-      </div>
+      <Button type="submit" variant="black" isLoading={isAuthenticating}>
+        {isAuthenticating ? 'Loading...' : 'Login'}
+      </Button>
     </form>
   );
 });

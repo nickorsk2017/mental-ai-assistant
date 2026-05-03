@@ -122,7 +122,7 @@ export default React.memo(function MoodAnalysisWorkspace({
         <header className="shrink-0 border-b border-calm-border/45 pb-4">
           <h1 className="text-base font-semibold text-calm-text">Analysis</h1>
           <p className="mt-1 text-sm text-calm-muted">
-            Average mood score from your notes (0–10 scale).
+            Average mood score from your notes (1–10 scale).
           </p>
         </header>
       ) : null}
