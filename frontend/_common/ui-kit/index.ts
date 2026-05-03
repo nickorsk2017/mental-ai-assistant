@@ -14,6 +14,7 @@ export { default as MoodAnalysisWorkspace } from './organisms/MoodAnalysisWorksp
 export { default as MoodScoreSlider } from './molecules/MoodScoreSlider/MoodScoreSlider';
 export { default as Modal } from './molecules/Modal/Modal';
 export { default as PatientNoteForm } from './organisms/PatientNoteForm/PatientNoteForm';
+export { default as PatientNotesWorkspace } from './organisms/PatientNotesWorkspace/PatientNotesWorkspace';
 export { default as Select } from './molecules/Select/Select';
 export { default as TextArea } from './molecules/TextArea/TextArea';
 export { default as TextInput } from './molecules/TextInput/TextInput';

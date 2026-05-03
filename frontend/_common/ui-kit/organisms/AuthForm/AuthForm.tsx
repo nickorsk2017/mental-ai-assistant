@@ -4,15 +4,15 @@ import React, { useCallback, useState } from 'react';
 import { AuthSignInFields } from './components/AuthSignInFields';
 import { AuthSignUpFields } from './components/AuthSignUpFields';
 import { Button } from '../../atoms/Button/Button';
-
+import { cx } from '@common/shared/utils';
 type AuthMode = 'sign-in' | 'sign-up';
 
 interface AuthFormProps {
-  containerClassName?: string;
+  className?: string;
 }
 
 export const AuthForm = React.memo(function AuthForm({
-  containerClassName,
+  className,
 }: AuthFormProps) {
   const [currentMode, setCurrentMode] = useState<AuthMode>('sign-in');
   const isSignInMode = currentMode === 'sign-in';
@@ -20,13 +20,10 @@ export const AuthForm = React.memo(function AuthForm({
   const showSignInForm = useCallback(() => setCurrentMode('sign-in'), []);
   const showSignUpForm = useCallback(() => setCurrentMode('sign-up'), []);
 
-  const rootClassName = containerClassName
-    ? `relative flex flex-col w-full max-w-[640px] overflow-hidden h-full md:h-auto ${containerClassName}`
-    : 'relative flex flex-col bg-calm-surface rounded-lg w-full max-w-[640px] overflow-hidden h-full md:h-auto';
 
   return (
-    <div className={rootClassName}>
-      <div className="border-b border-calm-border/45 px-10 pb-4 pt-10 backdrop-blur-[2px]">
+    <div className={cx("relative flex flex-col w-full max-w-[640px] overflow-hidden h-full md:h-auto", className)}>
+      <div className="border-b border-calm-border/45 backdrop-blur-[2px]">
         <h1 className="text-3xl font-bold text-calm-text">{isSignInMode ? 'SIGN IN' : 'SIGN UP'}</h1>
         <div className="mt-4 flex flex-col items-center justify-between gap-3 md:flex-row">
           <span className="w-full text-calm-muted md:w-auto">{isSignInMode ? "Login to your account" : "Create new account"}</span>
@@ -41,7 +38,7 @@ export const AuthForm = React.memo(function AuthForm({
           </div>
         </div>
       </div>
-      <div className="flex flex-1 flex-col px-10 pb-10 pt-8">
+      <div className="flex flex-1 flex-col">
         {currentMode === 'sign-in' ? <AuthSignInFields /> : <AuthSignUpFields onSignedUp={showSignInForm} />}
       </div>
     </div>

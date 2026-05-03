@@ -4,6 +4,11 @@ declare global {
   namespace Entity {
     type PatientNoteMoodBand = 'euphoria' | 'depression' | 'normal' | 'unknown';
 
+    interface ChatDateContext {
+      clientLocalDate?: string;
+      clientTimeZone?: string;
+    }
+
     interface PatientChatMessage {
       id?: string;
       role: 'user' | 'assistant';

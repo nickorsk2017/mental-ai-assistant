@@ -1,11 +1,6 @@
 import { requestBackend } from '@common/shared/utils';
 
-interface PatientChatClientDateContext {
-  clientLocalDate: string;
-  clientTimeZone: string;
-}
-
-function resolvePatientChatClientDateContext(): PatientChatClientDateContext {
+function resolvePatientChatClientDateContext(): Entity.ChatDateContext {
   const currentDate = new Date();
   const clientLocalDate = [
     currentDate.getFullYear(),

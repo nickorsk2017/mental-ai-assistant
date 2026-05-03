@@ -59,8 +59,8 @@ Never instantiate a Supabase client directly — always inject `SupabaseService`
 Every endpoint must return `ServiceResponse<T>` using the builders in `src/utils/response.builder.ts`.
 
 ```typescript
-return buildSuccessResponse(data);      // { success: true, data, error: null }
-return buildErrorResponse('message');   // { success: false, data: null, error: 'message' }
+{ success: true, data, error: null }
+{ success: false, data: null, error: 'message' }
 ```
 
 Never return raw objects. Never throw HTTP exceptions from services — return an error response instead.

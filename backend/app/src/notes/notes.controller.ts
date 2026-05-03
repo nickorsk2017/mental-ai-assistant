@@ -1,8 +1,6 @@
 import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { SupabaseAuthenticationGuard } from '../authentication/supabase-authentication.guard';
-import { buildErrorResponse, buildSuccessResponse } from '../utils/response.builder';
 import { NotesService } from './notes.service';
-import type { PatientNoteMutationBody } from './notes.types';
 
 @Controller('notes')
 @UseGuards(SupabaseAuthenticationGuard)
@@ -13,32 +11,32 @@ export class NotesController {
   async listPatientNotes(@Headers('x-user-id') userId: string) {
     const notes = await this.notesService.listPatientNotes(userId);
 
-    return buildSuccessResponse(notes);
+    return { success: true, data: notes, error: null };
   }
 
   @Post()
   async createPatientNote(
     @Headers('x-user-id') userId: string,
-    @Body() body: PatientNoteMutationBody,
+    @Body() body: Entity.PatientNoteMutationBody,
   ) {
     const note = await this.notesService.createPatientNote(userId, body);
 
     return note
-      ? buildSuccessResponse(note)
-      : buildErrorResponse('Unable to create note.');
+      ? { success: true, data: note, error: null }
+      : { success: false, data: null, error: 'Unable to create note.' };
   }
 
   @Patch(':noteId')
   async updatePatientNote(
     @Headers('x-user-id') userId: string,
     @Param('noteId') noteId: string,
-    @Body() body: PatientNoteMutationBody,
+    @Body() body: Entity.PatientNoteMutationBody,
   ) {
     const note = await this.notesService.updatePatientNote(userId, noteId, body);
 
     return note
-      ? buildSuccessResponse(note)
-      : buildErrorResponse('Unable to update note.');
+      ? { success: true, data: note, error: null }
+      : { success: false, data: null, error: 'Unable to update note.' };
   }
 
   @Delete(':noteId')
@@ -49,7 +47,7 @@ export class NotesController {
     const wasDeleted = await this.notesService.deletePatientNote(userId, noteId);
 
     return wasDeleted
-      ? buildSuccessResponse(null)
-      : buildErrorResponse('Unable to delete note.');
+      ? { success: true, data: null, error: null }
+      : { success: false, data: null as null, error: 'Unable to delete note.' };
   }
 }

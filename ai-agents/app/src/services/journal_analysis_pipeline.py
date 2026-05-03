@@ -55,7 +55,6 @@ def process_journal_message_from_kafka(
         note_analysis.mood_label,
         note_analysis.mood_score,
         note_analysis.activity_tags,
-        payload.message_text,
         note_analysis.summary_text,
     )
     upsert_journal_note_vector_safely(

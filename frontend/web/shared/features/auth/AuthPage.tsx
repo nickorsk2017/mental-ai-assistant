@@ -8,8 +8,6 @@ import { AuthForm } from '@common/shared/ui-kit';
 
 import AuthPageBackgroundDecorations from './components/AuthPageBackgroundDecorations';
 
-const authenticationFormGlassContainerClassName =
-  'rounded-[28px] border border-calm-border/60 bg-calm-surface/50 shadow-subtle backdrop-blur-xl transition-all duration-300';
 const dashboardUrl = '/patient-panel/chat';
 
 function canUseFullPageNavigation(): boolean {
@@ -23,6 +21,7 @@ export default function AuthPage() {
   useEffect(() => {
     if (currentUser) {
       router.replace(dashboardUrl);
+      
       if (canUseFullPageNavigation()) {
         window.location.assign(dashboardUrl);
       }
@@ -55,7 +54,7 @@ export default function AuthPage() {
       </header>
 
       <div className="relative z-10 flex min-h-[calc(100dvh-7rem)] items-center justify-center px-4 pb-12 pt-6 sm:px-6">
-        <AuthForm containerClassName={authenticationFormGlassContainerClassName} />
+        <AuthForm className="px-8 pb-10 pt-8 rounded-[28px] border border-calm-border/60 bg-calm-surface/50 shadow-subtle backdrop-blur-xl transition-all duration-300" />
       </div>
     </div>
   );

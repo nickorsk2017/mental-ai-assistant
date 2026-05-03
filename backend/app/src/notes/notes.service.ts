@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { SupabaseService } from '../providers';
-import type { PatientNoteMutationBody, PatientNoteRecord } from './notes.types';
 
 interface PatientNoteRow {
   id: string;
@@ -31,7 +30,7 @@ function normalizeActivityTags(activityTags: string[] | undefined): string[] {
   );
 }
 
-function mapPatientNoteRow(note: PatientNoteRow): PatientNoteRecord {
+function mapPatientNoteRow(note: PatientNoteRow): Entity.PatientNoteRecord {
   return {
     id: note.id,
     moodKey: note.mood_key,
@@ -50,7 +49,7 @@ export class NotesService {
 
   constructor(private readonly supabaseService: SupabaseService) {}
 
-  async listPatientNotes(userId: string): Promise<PatientNoteRecord[]> {
+  async listPatientNotes(userId: string): Promise<Entity.PatientNoteRecord[]> {
     const { data, error } = await this.supabaseService.adminClient
       .from('patient_notes')
       .select(patientNoteSelectColumns)
@@ -69,8 +68,8 @@ export class NotesService {
 
   async createPatientNote(
     userId: string,
-    body: PatientNoteMutationBody,
-  ): Promise<PatientNoteRecord | null> {
+    body: Entity.PatientNoteMutationBody,
+  ): Promise<Entity.PatientNoteRecord | null> {
     const summaryText = body.summaryText?.trim() ?? '';
 
     if (!summaryText) {
@@ -103,8 +102,8 @@ export class NotesService {
   async updatePatientNote(
     userId: string,
     noteId: string,
-    body: PatientNoteMutationBody,
-  ): Promise<PatientNoteRecord | null> {
+    body: Entity.PatientNoteMutationBody,
+  ): Promise<Entity.PatientNoteRecord | null> {
     const summaryText = body.summaryText?.trim() ?? '';
 
     if (!summaryText) {

@@ -1,14 +1,12 @@
 import { Body, Controller, Get, Headers, Post, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { SupabaseAuthenticationGuard } from '../authentication/supabase-authentication.guard';
-import { buildErrorResponse, buildSuccessResponse } from '../utils/response.builder';
 import { ChatService } from './chat.service';
-import type { ChatDateContext, ChatStreamRequestBody } from './chat.types';
 
 function buildChatDateContext(
   clientLocalDate?: string,
   clientTimeZone?: string,
-): ChatDateContext {
+): Entity.ChatDateContext {
   return { clientLocalDate, clientTimeZone };
 }
 
@@ -28,7 +26,7 @@ export class ChatController {
       buildChatDateContext(clientLocalDate, clientTimeZone),
     );
 
-    return buildSuccessResponse(messages);
+    return { success: true, data: messages, error: null };
   }
 
   /**
@@ -37,7 +35,7 @@ export class ChatController {
    */
   @Post('messages/stream')
   async streamJournalMessage(
-    @Body() body: ChatStreamRequestBody,
+    @Body() body: Entity.ChatStreamRequestBody,
     @Headers('x-user-id') userId: string,
     @Res() response: Response,
   ): Promise<void> {
@@ -45,13 +43,21 @@ export class ChatController {
     const enforceMinimumLength = body.enforceMinimumLength ?? true;
 
     if (trimmed.length === 0) {
-      response.status(400).json(buildErrorResponse('Message is required.'));
+      response.status(400).json({
+        success: false,
+        data: null as null,
+        error: 'Message is required.',
+      });
 
       return;
     }
 
     if (enforceMinimumLength && !this.chatService.validateJournalMessageLength(trimmed)) {
-      response.status(400).json(buildErrorResponse('Message must be at least 50 characters.'));
+      response.status(400).json({
+        success: false,
+        data: null as null,
+        error: 'Message must be at least 50 characters.',
+      });
 
       return;
     }

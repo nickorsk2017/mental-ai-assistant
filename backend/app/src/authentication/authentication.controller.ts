@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Headers, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthenticationService } from './authentication.service';
-import { buildSuccessResponse } from '../utils/response.builder';
 
 const ACCESS_TOKEN_COOKIE = 'accessToken';
 const REFRESH_TOKEN_COOKIE = 'refreshToken';
@@ -56,12 +55,10 @@ function buildAuthenticationResponse(
   clientPlatform: 'web' | 'mobile',
 ) {
   if (clientPlatform === 'mobile') {
-    return buildSuccessResponse(session);
+    return { success: true, data: session, error: null };
   }
 
-  return buildSuccessResponse({
-    user: session.user,
-  });
+  return { success: true, data: { user: session.user }, error: null };
 }
 
 @Controller('auth')

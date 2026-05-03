@@ -5,7 +5,6 @@ import { randomUUID } from 'crypto';
 import { PATIENT_ACTIVITY_TAGS } from '../constants/patient-activity-tags.constants';
 import { KafkaService } from '../providers';
 import { ChatHistoryService } from './chat-history.service';
-import type { ChatDateContext, ChatMessageRecord } from './chat.types';
 
 const minimumJournalMessageLength = 50;
 
@@ -48,8 +47,8 @@ export class ChatService {
 
   async listTodayMessages(
     userId: string,
-    dateContext: ChatDateContext,
-  ): Promise<ChatMessageRecord[]> {
+    dateContext: Entity.ChatDateContext,
+  ): Promise<Entity.ChatMessageRecord[]> {
     return this.chatHistoryService.listTodayMessages(userId, dateContext);
   }
 
@@ -58,7 +57,7 @@ export class ChatService {
     userId: string,
     messageText: string,
     enforceMinimumLength: boolean,
-    dateContext: ChatDateContext,
+    dateContext: Entity.ChatDateContext,
   ): Promise<void> {
     const correlationId = randomUUID();
 

@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SupabaseService } from '../providers';
-import type { ChatDateContext, ChatMessageRecord } from './chat.types';
 
 const firstChatMessageContent =
   'I am your mental health assistant. Describe how you feel today and rate your mood from 1 to 10. I will create notes about your health and track your state in your journal.';
@@ -72,7 +71,7 @@ export class ChatHistoryService {
   }
 
   private resolveClientTodayBounds(
-    dateContext: ChatDateContext,
+    dateContext: Entity.ChatDateContext,
   ): { start: string; end: string } | null {
     const { clientLocalDate, clientTimeZone } = dateContext;
 
@@ -92,14 +91,14 @@ export class ChatHistoryService {
     }
   }
 
-  private resolveTodayBounds(dateContext: ChatDateContext): { start: string; end: string } {
+  private resolveTodayBounds(dateContext: Entity.ChatDateContext): { start: string; end: string } {
     return this.resolveClientTodayBounds(dateContext) ?? this.resolveServerTodayBounds();
   }
 
   async listTodayMessages(
     userId: string,
-    dateContext: ChatDateContext,
-  ): Promise<ChatMessageRecord[]> {
+    dateContext: Entity.ChatDateContext,
+  ): Promise<Entity.ChatMessageRecord[]> {
     const { start, end } = this.resolveTodayBounds(dateContext);
     const { data, error } = await this.supabaseService.adminClient
       .from('patient_chat_messages')
@@ -115,8 +114,8 @@ export class ChatHistoryService {
       return [await this.buildEmptyTodayMessage(userId)];
     }
 
-    const todayMessages: ChatMessageRecord[] = (data ?? []).map((message) => {
-      const role: ChatMessageRecord['role'] = message.role === 'assistant' ? 'assistant' : 'user';
+    const todayMessages: Entity.ChatMessageRecord[] = (data ?? []).map((message) => {
+      const role: Entity.ChatMessageRecord['role'] = message.role === 'assistant' ? 'assistant' : 'user';
 
       return {
         id: String(message.id),
@@ -143,7 +142,7 @@ export class ChatHistoryService {
     }
   }
 
-  private async buildEmptyTodayMessage(userId: string): Promise<ChatMessageRecord> {
+  private async buildEmptyTodayMessage(userId: string): Promise<Entity.ChatMessageRecord> {
     const { count, error } = await this.supabaseService.adminClient
       .from('patient_chat_messages')
       .select('id', { count: 'exact', head: true })
