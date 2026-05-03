@@ -10,7 +10,7 @@ interface ChatInputProperties {
   textareaReference: React.RefObject<HTMLTextAreaElement | null>;
   inputElementId: string;
   composerText: string;
-  setComposerText: React.Dispatch<React.SetStateAction<string>>;
+  setComposerText: (nextComposerText: string) => void;
   streamingError: string | null;
   trimmedComposerLength: number;
   requiresFirstMessageMinimum: boolean;

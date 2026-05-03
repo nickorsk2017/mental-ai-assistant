@@ -74,9 +74,11 @@ const Header = React.memo(function Header() {
               type="button"
               aria-expanded={isMenuOpen}
               aria-label="Toggle navigation menu"
+              variant="ghost"
               rounded
               wide={false}
-              className="flex h-12 min-h-0 w-12 items-center justify-center border-calm-primary bg-calm-primary/10 p-0 text-calm-primary hover:bg-calm-primary/15 lg:hidden"
+              size="small"
+              className="!h-12 !w-12 !min-h-0 !p-0 flex items-center justify-center md:hidden"
               onClick={() => setIsMenuOpen((currentValue) => !currentValue)}
             >
               <span className="flex w-5 flex-col gap-1.5">

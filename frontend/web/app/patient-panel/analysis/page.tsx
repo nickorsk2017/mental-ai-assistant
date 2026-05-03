@@ -1,10 +1,7 @@
-import Placeholder from '@/shared/features/patient-panel/_common/Placeholder/Placeholder';
+'use client';
 
-export default function DashboardAnalysisPage() {
-  return (
-    <Placeholder
-      sectionHeading="Analysis"
-      sectionDescription="Mood summaries and trends based on your data will appear here. Only the shell is available for now."
-    />
-  );
+import { MoodAnalysisWorkspace } from '@common/shared/ui-kit';
+
+export default function PatientPanelAnalysisPage() {
+  return <MoodAnalysisWorkspace />;
 }

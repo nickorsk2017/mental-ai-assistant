@@ -1,27 +1,32 @@
 import React from 'react';
 import { IonContent, IonFooter, IonPage, IonToolbar } from '@ionic/react';
 import { patientChatMinimumMessageLength } from '@common/shared/constants';
-import { usePatientChatComposer } from '@common/shared/hooks';
+import {
+  chatComposerTextareaReference as textareaReference,
+  chatMessagesEndReference as messagesEndReference,
+  selectChatCanSend,
+  selectChatTrimmedComposerLength,
+  useChatComposerLifecycle,
+  useChatStore,
+} from '@common/shared/stores';
 import { ChatInput } from '@common/shared/ui-kit';
 
 import { PageHeader } from '../../features/patient-panel/PageHeader';
 import MessageList from '../../features/patient-panel/assistant/MessageList';
 
 export function AssistantPage(): React.JSX.Element {
-  const {
-    textareaReference,
-    messagesEndReference,
-    composerText,
-    setComposerText,
-    messages,
-    isStreaming,
-    streamingError,
-    trimmedComposerLength,
-    requiresFirstMessageMinimum,
-    canSend,
-    handleSend,
-    handleComposerKeyDown,
-  } = usePatientChatComposer();
+  useChatComposerLifecycle();
+
+  const composerText = useChatStore((state) => state.composerText);
+  const setComposerText = useChatStore((state) => state.setComposerText);
+  const messages = useChatStore((state) => state.messages);
+  const isStreaming = useChatStore((state) => state.isStreaming);
+  const streamingError = useChatStore((state) => state.streamingError);
+  const requiresFirstMessageMinimum = useChatStore((state) => state.requiresFirstMessageMinimum);
+  const handleSend = useChatStore((state) => state.sendComposerMessage);
+  const handleComposerKeyDown = useChatStore((state) => state.handleComposerKeyDown);
+  const trimmedComposerLength = useChatStore(selectChatTrimmedComposerLength);
+  const canSend = useChatStore(selectChatCanSend);
 
   const charactersRemaining = Math.max(
     0,

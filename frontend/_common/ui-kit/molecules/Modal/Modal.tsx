@@ -7,7 +7,7 @@ import Button from '../../atoms/Button/Button';
 import { Icon } from '../../atoms/Icon/Icon';
 import { cx } from '../../../utils';
 
-type ModalProps = {
+type ModalProperties = {
   isOpen: boolean;
   title: string;
   children: React.ReactNode;
@@ -29,7 +29,7 @@ export default React.memo(function Modal({
   className,
   bodyClassName,
   closeLabel = 'Close modal',
-}: ModalProps) {
+}: ModalProperties) {
   const [portalElement, setPortalElement] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -50,12 +50,38 @@ export default React.memo(function Modal({
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const handleEscapeKey = (keyboardEvent: KeyboardEvent) => {
+      if (keyboardEvent.key === 'Escape') {
+        keyboardEvent.preventDefault();
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscapeKey);
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen || !portalElement) {
     return null;
   }
 
   return createPortal(
-    <div className="fixed inset-0 z-[1000] flex h-dvh w-screen items-center justify-center bg-calm-text/25 px-4 py-6 backdrop-blur-sm">
+    <div
+      className="fixed inset-0 z-[1000] flex h-dvh w-screen items-center justify-center bg-calm-text/25 px-4 py-6 backdrop-blur-sm"
+      onClick={(pointerEvent) => {
+        if (pointerEvent.target === pointerEvent.currentTarget) {
+          onClose();
+        }
+      }}
+    >
       <section
         aria-modal="true"
         role="dialog"

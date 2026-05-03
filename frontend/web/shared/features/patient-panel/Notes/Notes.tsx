@@ -3,7 +3,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { usePatientNotesCrud, usePatientNotesGrouping } from '@common/shared/hooks';
-import { Button, Icon } from '@common/shared/ui-kit';
+import { Button, PanelPageHeader } from '@common/shared/ui-kit';
 
 import Legends from './components/Legends/Legends';
 import NoteCard from './components/NoteCard/NoteCard';
@@ -51,19 +51,11 @@ const Notes = React.memo(function Notes() {
 
   return (
     <div className="flex h-full min-h-0 flex-1 flex-col bg-calm-surface">
-      <header className="flex shrink-0 items-center justify-between border-b border-calm-border/45 px-6 py-4 backdrop-blur-sm">
-        <h1 className="text-base font-semibold text-calm-text">My notes</h1>
-        <Button
-          type="button"
-          onClick={openCreateEditor}
-          wide={false}
-          rounded
-          className="!h-10 !w-10 !min-h-0 !p-0 shadow-subtle hover:shadow-medium"
-          aria-label="Create note"
-        >
-          <Icon name="plus" size={18} color="currentColor" />
-        </Button>
-      </header>
+      <PanelPageHeader
+        title="My notes"
+        onPrimaryAction={openCreateEditor}
+        primaryActionAriaLabel="Create note"
+      />
 
       <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6">
         <div className="mx-auto flex w-full max-w-[56rem] flex-col gap-5">
@@ -75,10 +67,10 @@ const Notes = React.memo(function Notes() {
                 key={tag}
                 type="button"
                 wide={false}
+                size="small"
                 rounded
                 variant={selectedTag === tag ? 'primary' : 'outline'}
                 onClick={() => setSelectedTag(tag)}
-                className="min-h-0 px-4 py-2 text-sm"
               >
                 {tag === allTagsValue ? 'All' : tag}
               </Button>

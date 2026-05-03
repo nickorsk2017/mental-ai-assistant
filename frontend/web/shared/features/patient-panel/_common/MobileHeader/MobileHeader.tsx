@@ -63,7 +63,7 @@ export default function MobileHeader({ user }: { user: ServerUser }) {
             aria-label="Toggle navigation menu"
             rounded
             wide={false}
-            className="flex h-12 min-h-0 w-12 shrink-0 items-center justify-center border-calm-primary bg-calm-primary/10 p-0 text-calm-primary hover:bg-calm-primary/15"
+            variant="ghost"
             onClick={() => setIsMenuOpen((currentValue) => !currentValue)}
           >
             <span className="flex w-5 flex-col gap-1.5">
@@ -88,7 +88,7 @@ export default function MobileHeader({ user }: { user: ServerUser }) {
                   aria-label="Close navigation menu"
                   rounded
                   wide={false}
-                  className="flex h-12 min-h-0 w-12 shrink-0 items-center justify-center border-calm-primary bg-calm-primary/10 p-0 text-calm-primary hover:bg-calm-primary/15"
+                  variant="ghost"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <span className="relative block h-4 w-4">
