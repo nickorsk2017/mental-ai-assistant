@@ -6,15 +6,16 @@ PNPM_CMD := env -u PNPM_STORE_DIR -u npm_config_store_dir pnpm
         supabase-migrate \
         backend api frontend web mobile \
         ai-agents ai \
+        storybook storybook-build \
         lint lint-fix \
         ci \
         pre-commit-check \
-        test test-backend test-web test-common test-mobile \
+        test test-backend test-web test-common test-mobile test-ai \
         test-coverage test-backend-coverage test-web-coverage test-common-coverage test-mobile-coverage \
         mobile-build mobile-capacitor-sync mobile-run-android mobile-run-ios \
         fullstack-web fullstack-mobile start-all \
         docker-build docker-up docker-down docker-restart \
-        kill-backend-ports kill-frontend-ports kill-mobile-ports kill-ai-agents-ports kill-all-ports
+        kill-backend-ports kill-frontend-ports kill-mobile-ports kill-ai-agents-ports kill-storybook-ports kill-all-ports
 
 help:
 	@echo ""
@@ -34,6 +35,8 @@ help:
 	@echo "  make fullstack-mobile     - Kafka (docker) + backend + mobile + ai-agents"
 	@echo "  make start-all            - Kafka (docker) + backend + web + mobile + ai-agents"
 	@echo "  make ai-agents / ai       - Run AI agents FastAPI (uv), port from AI_AGENTS_PORT (:8080)"
+	@echo "  make storybook            - Run Storybook for @common/shared ui-kit (:6006)"
+	@echo "  make storybook-build      - Build static Storybook into frontend/_common/storybook-static"
 	@echo "  make mobile-build         - Build mobile web bundle"
 	@echo "  make mobile-capacitor-sync - Sync mobile bundle to native platforms"
 	@echo "  make mobile-run-android   - Build, sync, and run on Android"
@@ -42,11 +45,12 @@ help:
 	@echo "  make lint-fix             - Run backend + web + mobile linters with --fix"
 	@echo "  make ci                   - Run lint + tests + backend build + frontend typecheck"
 	@echo "  make pre-commit-check     - Run lint + tests used by the git pre-commit hook"
-	@echo "  make test                 - Run all unit tests (backend, web, _common, mobile)"
+	@echo "  make test                 - Run all unit tests (backend, web, _common, mobile, ai-agents)"
 	@echo "  make test-backend         - Run backend api Jest tests"
 	@echo "  make test-web             - Run web Jest tests"
 	@echo "  make test-common          - Run frontend/_common (@common/shared) Jest tests"
 	@echo "  make test-mobile          - Run mobile Jest tests"
+	@echo "  make test-ai              - Run AI agents pytest suite"
 	@echo "  make test-coverage        - Run test:coverage in all packages above"
 	@echo ""
 	@echo "Docker:"
@@ -64,7 +68,8 @@ help:
 	@echo "  make kill-backend-ports   - Kill port 4000"
 	@echo "  make kill-frontend-ports  - Kill port 3000"
 	@echo "  make kill-mobile-ports    - Kill port 8100"
-	@echo "  make kill-all-ports       - Kill ports 3000, 4000, 8080, 8100"
+	@echo "  make kill-storybook-ports - Kill port 6006"
+	@echo "  make kill-all-ports       - Kill ports 3000, 4000, 6006, 8080, 8100"
 	@echo ""
 
 # ─── Install ──────────────────────────────────────────────────────────────────
@@ -87,7 +92,7 @@ ui-kit-install:
 	$(PNPM_CMD) --dir frontend --filter @common/shared install
 
 ai-agents-install:
-	cd ai-agents/app && uv sync
+	uv sync --directory ai-agents/app --group dev
 
 # ─── Local dev ────────────────────────────────────────────────────────────────
 
@@ -109,6 +114,12 @@ ai-agents: kill-ai-agents-ports
 	    --port "$${AI_AGENTS_PORT:-8080}"
 
 ai: ai-agents
+
+storybook: kill-storybook-ports
+	$(PNPM_CMD) --dir frontend storybook
+
+storybook-build:
+	$(PNPM_CMD) --dir frontend run build:storybook
 
 mobile-build:
 	$(PNPM_CMD) --dir frontend/mobile build
@@ -140,10 +151,13 @@ pre-commit-check: lint test
 
 # ─── Tests (Jest + React Testing Library) ─────────────────────────────────────
 
-test: test-backend test-web test-common test-mobile
+test: test-backend test-web test-common test-mobile test-ai
 
 test-backend:
 	$(PNPM_CMD) --dir backend/app test
+
+test-ai:
+	uv run --directory ai-agents/app --group dev pytest
 
 test-web:
 	$(PNPM_CMD) --dir frontend --filter web test
@@ -249,8 +263,12 @@ kill-mobile-ports:
 kill-ai-agents-ports:
 	$(call kill_port,8080)
 
+kill-storybook-ports:
+	$(call kill_port,6006)
+
 kill-all-ports:
 	$(call kill_port,3000)
 	$(call kill_port,4000)
+	$(call kill_port,6006)
 	$(call kill_port,8080)
 	$(call kill_port,8100)

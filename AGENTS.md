@@ -55,6 +55,11 @@ Three permanent zones. Files must never cross zone boundaries.
 
 - **Maximum 200 lines per file.**
 - `frontend/_common/services/AuthService.test.ts` may be up to 250 lines.
+- Test files under `ai-agents/app/tests/` are exempt from the 200-line limit.
+  Each file groups related test cases for one source module (mocks, fixtures,
+  parametrized variants), and splitting it would obscure that mapping. The
+  exemption applies **only to files matching `ai-agents/app/tests/test_*.py`**;
+  production code under `ai-agents/app/src/` follows the 200-line rule.
 - Decompose before the limit — extract hooks, utilities, or sub-components.
 - A PR containing a file over its limit is rejected without review.
 
