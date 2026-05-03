@@ -12,26 +12,8 @@ from src.schemas.chat_stream_request_body import ChatStreamHistoryMessage
 
 def build_unconfigured_chat_reply(message_text: str) -> str:
     """Return a safe patient-facing reply when the model is not configured."""
-    lowered_message = message_text.lower()
-
-    if any(marker in lowered_message for marker in ["suicide", "kill myself", "self harm", "end my life"]):
-        return (
-            "I am really sorry it feels this heavy right now. "
-            "If there is any risk of harm, please contact local emergency services "
-            "or someone nearby immediately. You do not have to hold this alone."
-        )
-
-    if any(marker in lowered_message for marker in ["depressed", "hopeless", "no energy", "cannot cope"]):
-        return (
-            "It sounds like you are carrying a lot, and this deserves gentle attention. "
-            "Try one small supportive step today: water, food, rest, or messaging someone trusted. "
-            "If this state continues or gets worse, consider contacting a doctor or therapist."
-        )
-
     return (
-        "I hear that today may feel difficult. "
-        "Try slowing down for a moment and choosing one small next step. "
-        "If your state feels frightening or gets worse quickly, contact a clinician or someone trusted."
+        "Service is unavailable, please contact your doctor."
     )
 
 

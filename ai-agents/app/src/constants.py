@@ -1,4 +1,17 @@
-"""Fallback rules for structured journal analysis."""
+"""Shared application constants."""
+
+DEFAULT_ACTIVITY_TAGS = [
+    "work",
+    "sleep",
+    "stress",
+    "relationships",
+    "fitness",
+    "hobbies",
+    "health",
+    "family",
+    "study",
+    "finances",
+]
 
 ACTIVITY_TAG_TRANSLATIONS = {
     "anxiety": "stress",

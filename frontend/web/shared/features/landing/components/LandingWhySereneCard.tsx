@@ -32,7 +32,7 @@ const supportPillars = [
 const LandingWhySereneCard = React.memo(function LandingWhySereneCard() {
   return (
     <section className="rounded-[32px] p-7 sm:p-8">
-      <h2 className="mt-4 text-3xl font-semibold leading-tight text-calm-text">WHY SERENE</h2>
+      <h2 className="mt-4 text-3xl font-semibold leading-tight text-calm-text">WHY MENTAL HEALTH</h2>
       <div className="mt-6 grid gap-5 md:grid-cols-3">
         {supportPillars.map((supportPillar) => (
           <LandingWhySereneCardItem

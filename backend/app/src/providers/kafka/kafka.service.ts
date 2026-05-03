@@ -1,4 +1,4 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Kafka, logLevel, Producer } from 'kafkajs';
 
@@ -12,6 +12,7 @@ interface JournalChatPublishPayload {
 @Injectable()
 export class KafkaService implements OnModuleInit, OnModuleDestroy {
   private producer: Producer | null = null;
+  private readonly logger = new Logger(KafkaService.name);
 
   private readonly chatTopic: string;
 
@@ -48,6 +49,8 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
 
   async publishJournalChatRequest(payload: JournalChatPublishPayload): Promise<void> {
     if (!this.producer) {
+      this.logger.warn('Kafka producer is not connected; journal message was not published.');
+
       return;
     }
 
@@ -63,5 +66,9 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
       topic: this.chatTopic,
       messages: [{ key: payload.userId, value: messageBody }],
     });
+
+    this.logger.log(
+      `Published Kafka journal message topic=${this.chatTopic} correlationId=${payload.correlationId}`,
+    );
   }
 }

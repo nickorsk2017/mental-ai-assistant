@@ -4,6 +4,7 @@ import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { getActiveSession } from '@common/shared/services';
 import { useAuthenticationStore } from '@common/shared/stores/useAuthStore';
+import { AuthorWelcomeModal } from '@common/shared/ui-kit';
 import { TabsLayout } from './features/patient-panel/TabsLayout';
 import { AuthPage } from './pages/AuthPage';
 
@@ -42,6 +43,7 @@ export function App(): React.JSX.Element {
 
   return (
     <IonApp>
+      <AuthorWelcomeModal userId={currentUser?.id ?? null} />
       <IonReactRouter>
         <IonRouterOutlet>
           <Route

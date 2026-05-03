@@ -15,41 +15,23 @@ export function clampMoodScoreToChartDomain(rawMoodScore: number): number {
   );
 }
 
-/** Prepends (firstTime, mood 1) so the stroke shares the area’s bottom-left corner before the first sample. */
 export function buildMoodLineStrokeSeries(moodTrendDataWithScores: MoodTrendDatum[]): MoodTrendDatum[] {
-  if (moodTrendDataWithScores.length === 0) {
-    return [];
-  }
-
-  const firstDatum = moodTrendDataWithScores[0];
-  const firstMoodScore = clampMoodScoreToChartDomain(firstDatum.averageMoodScore!);
-
-  if (firstMoodScore <= moodTrendScoreDomainMinimum) {
-    return moodTrendDataWithScores;
-  }
-
-  const floorAnchorDatum: MoodTrendDatum = {
-    domainPosition: firstDatum.domainPosition,
-    tickLabel: firstDatum.tickLabel,
-    averageMoodScore: moodTrendScoreDomainMinimum,
-  };
-
-  return [floorAnchorDatum, ...moodTrendDataWithScores];
+  return moodTrendDataWithScores;
 }
 
 /**
- * Five reference levels on the 1–10 score line: endpoints 1 and 10, three equal steps between
- * (same geometry as a 0–10 scale linearly mapped to 1–10).
+ * Mood reference levels for the patient panel.
+ * `5` is treated as the visual midpoint of the scale.
  */
 export const moodTrendVerticalAnnotations = [
   { moodScore: 10, label: 'Mania' },
-  { moodScore: 7.75, label: 'Hypo-Mania' },
-  { moodScore: 5.5, label: '' },
-  { moodScore: 3.25, label: 'Minor Depression' },
+  { moodScore: 7.5, label: 'Hypo-Mania' },
+  { moodScore: 5, label: '' },
+  { moodScore: 3, label: 'Minor Depression' },
   { moodScore: 1, label: 'Major Depression' },
 ] as const;
 
-export const moodTrendNeutralMoodScore = 5.5;
+export const moodTrendNeutralMoodScore = 5;
 
 export function resolveHorizontalDomain(
   rangeKind: MoodTrendChartRangeKind,
@@ -72,6 +54,7 @@ export function resolveHorizontalDomain(
 export function resolveHorizontalTickValues(
   rangeKind: MoodTrendChartRangeKind,
   moodTrendData: MoodTrendDatum[],
+  isCompactChart: boolean = false,
 ): number[] {
   const totalDayCount = moodTrendData.length;
 
@@ -91,6 +74,10 @@ export function resolveHorizontalTickValues(
   }
 
   if (rangeKind === 'year') {
+    if (isCompactChart) {
+      return [0, 3, 6, 9];
+    }
+
     return d3.range(0, 12);
   }
 

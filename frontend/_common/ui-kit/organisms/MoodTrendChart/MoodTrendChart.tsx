@@ -16,7 +16,6 @@ import {
   resolveHorizontalTickValues,
 } from './moodTrendChartHorizontal';
 import type { MoodTrendChartRangeKind } from './moodTrendChartTypes';
-
 export type { MoodTrendChartRangeKind };
 interface MoodTrendChartProperties {
   chartHeightPixels: number;
@@ -36,73 +35,59 @@ export default React.memo(function MoodTrendChart({
 
   useEffect(() => {
     const svgElement = svgReference.current;
-
     if (!svgElement || chartWidthPixels <= 0 || moodTrendData.length === 0) {
       return;
     }
-
-    const margin = { top: 20, right: 28, bottom: 52, left: 96 };
+    const isCompactChart = chartWidthPixels < 640;
+    const margin = isCompactChart
+      ? { top: 16, right: 12, bottom: 52, left: 92 }
+      : { top: 20, right: 28, bottom: 52, left: 156 };
     const innerWidth = chartWidthPixels - margin.left - margin.right;
     const innerHeight = chartHeightPixels - margin.top - margin.bottom;
     const timeAxisReservedHeightPixels = 22;
     const plotAreaBottomCoordinate = innerHeight - timeAxisReservedHeightPixels;
-
     const svgSelection = d3.select(svgElement);
-
     svgSelection.selectAll('*').remove();
-
     const [horizontalDomainMinimum, horizontalDomainMaximum] = resolveHorizontalDomain(
       rangeKind,
       moodTrendData,
     );
-
     const horizontalScale = d3
       .scaleLinear()
       .domain([horizontalDomainMinimum, horizontalDomainMaximum])
       .range([0, innerWidth]);
-
     const verticalScale = d3
       .scaleLinear()
       .domain([moodTrendScoreDomainMinimum, moodTrendScoreDomainMaximum])
       .range([plotAreaBottomCoordinate, 0]);
-
     const moodTrendDataWithScores = moodTrendData.filter(
       (datum) => datum.averageMoodScore !== null,
     );
     const moodLineStrokeSeries = buildMoodLineStrokeSeries(moodTrendDataWithScores);
-
+    const hasMultipleHorizontalPositions =
+      new Set(moodLineStrokeSeries.map((datum) => datum.domainPosition)).size >= 2;
+    const lineCurveFactory =
+      moodLineStrokeSeries.length >= 3 && hasMultipleHorizontalPositions
+        ? d3.curveMonotoneX
+        : d3.curveLinear;
     const moodScoreToPlotY = (rawMoodScore: number) =>
       verticalScale(clampMoodScoreToChartDomain(rawMoodScore));
-
-    const moodScoreFloorYCoordinate = moodScoreToPlotY(moodTrendScoreDomainMinimum);
-
+    const moodScoreFloorY = moodScoreToPlotY(moodTrendScoreDomainMinimum);
     const moodLineBuilder = d3
       .line<MoodTrendDatum>()
-      .curve(d3.curveLinear)
+      .curve(lineCurveFactory)
       .x((datum) => horizontalScale(datum.domainPosition))
       .y((datum) => moodScoreToPlotY(datum.averageMoodScore!));
-
     const moodAreaBuilder = d3
       .area<MoodTrendDatum>()
-      .curve(d3.curveLinear)
+      .curve(lineCurveFactory)
       .x((datum) => horizontalScale(datum.domainPosition))
-      .y0(() => moodScoreFloorYCoordinate)
+      .y0(() => moodScoreFloorY)
       .y1((datum) => moodScoreToPlotY(datum.averageMoodScore!));
 
     const chartGroup = svgSelection
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
-
-    if (moodTrendDataWithScores.length >= 2) {
-      chartGroup
-        .append('path')
-        .datum(moodTrendDataWithScores)
-        .attr('fill', 'currentColor')
-        .attr('fill-opacity', 0.07)
-        .attr('d', moodAreaBuilder)
-        .attr('class', 'text-calm-black');
-    }
-
     chartGroup
       .append('line')
       .attr('x1', 0)
@@ -117,7 +102,6 @@ export default React.memo(function MoodTrendChart({
       if (annotation.moodScore === moodTrendNeutralMoodScore) {
         return;
       }
-
       chartGroup
         .append('line')
         .attr('x1', 0)
@@ -127,32 +111,30 @@ export default React.memo(function MoodTrendChart({
         .attr('stroke', 'currentColor')
         .attr('stroke-dasharray', '4 6')
         .attr('class', 'text-calm-border opacity-70');
-
       chartGroup
         .append('text')
-        .attr('x', -10)
+        .attr('x', isCompactChart ? -8 : -10)
         .attr('y', verticalScale(annotation.moodScore))
         .attr('dy', '0.35em')
         .attr('text-anchor', 'end')
-        .attr('class', 'fill-calm-muted text-[11px]')
+        .attr('class', isCompactChart ? 'fill-calm-muted text-[10px]' : 'fill-calm-muted text-[11px]')
         .text(annotation.label);
     });
-
-    const horizontalTickValues = resolveHorizontalTickValues(rangeKind, moodTrendData);
-
+    const horizontalTickValues = resolveHorizontalTickValues(
+      rangeKind,
+      moodTrendData,
+      isCompactChart,
+    );
     const horizontalAxis = d3
       .axisBottom(horizontalScale)
       .tickValues(horizontalTickValues)
       .tickFormat((value) => {
         const numericValue = Number(value);
-
         if (rangeKind === 'year' || rangeKind === 'hours') {
           return moodTrendData.find((datum) => datum.domainPosition === numericValue)?.tickLabel ?? '';
         }
-
         return String(value);
       });
-
     chartGroup
       .append('g')
       .attr('transform', `translate(0,${innerHeight})`)
@@ -161,21 +143,29 @@ export default React.memo(function MoodTrendChart({
       .selectAll('text')
       .attr('class', 'text-[11px]');
 
-    if (moodLineStrokeSeries.length >= 2) {
+    if (moodLineStrokeSeries.length >= 2 && hasMultipleHorizontalPositions) {
+      chartGroup
+        .append('path')
+        .datum(moodLineStrokeSeries)
+        .attr('fill', 'currentColor')
+        .attr('fill-opacity', 0.025)
+        .attr('d', moodAreaBuilder)
+        .attr('class', 'text-calm-text');
+
       chartGroup
         .append('path')
         .datum(moodLineStrokeSeries)
         .attr('fill', 'none')
+        .attr('stroke', 'currentColor')
         .attr('stroke-width', 2.25)
         .attr('d', moodLineBuilder)
-        .attr('class', 'stroke-calm-black');
+        .attr('class', 'text-calm-mood-normal-deep');
     }
-
     chartGroup
       .selectAll('circle.data-point')
       .data(moodTrendDataWithScores)
       .join('circle')
-      .attr('class', 'data-point fill-calm-black stroke-calm-surface')
+      .attr('class', 'data-point fill-calm-mood-normal-deep stroke-calm-surface')
       .attr('r', 4)
       .attr('cx', (datum) => horizontalScale(datum.domainPosition))
       .attr('cy', (datum) => moodScoreToPlotY(datum.averageMoodScore!))

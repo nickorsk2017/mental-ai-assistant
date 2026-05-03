@@ -49,7 +49,7 @@ export default function AuthPage() {
           href="/"
           className="inline-flex max-w-full flex-col rounded-[28px] border border-calm-border/60 bg-calm-surface/50 px-5 py-3 shadow-subtle backdrop-blur-xl transition-all duration-300 hover:border-calm-border/80 hover:shadow-medium"
         >
-          <span className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Serene</span>
+          <span className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Mental Health</span>
           <span className="text-sm text-calm-muted">AI-powered mental wellness journal</span>
         </Link>
       </header>

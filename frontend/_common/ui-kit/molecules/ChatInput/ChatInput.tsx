@@ -1,3 +1,5 @@
+ 'use client';
+
 import React, { useLayoutEffect } from 'react';
 
 import { cx } from '../../../utils';
@@ -81,7 +83,7 @@ const ChatInput = React.memo(function ChatInput({
             value={composerText}
             onChange={(changeEvent) => setComposerText(changeEvent.target.value)}
             onKeyDown={handleComposerKeyDown}
-            placeholder="Message for Serene…"
+            placeholder="Message for Mental Health…"
             style={{ maxHeight: composerTextAreaMaximumHeightPixels }}
             className="box-border min-h-[44px] w-full resize-none bg-transparent py-2.5 pl-2 pr-[68px] text-sm leading-6 text-calm-text placeholder:text-calm-muted focus:outline-none [scrollbar-gutter:stable]"
           />

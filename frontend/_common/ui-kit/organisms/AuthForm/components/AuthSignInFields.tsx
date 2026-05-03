@@ -39,7 +39,7 @@ export const AuthSignInFields = React.memo(function AuthSignInFields() {
   });
 
   return (
-    <form onSubmit={handleSignInSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSignInSubmit} className="flex min-h-0 flex-1 flex-col gap-4 py-2">
       {authenticationError ? <div className="bg-calm-error-light text-calm-error rounded-xl p-4 text-sm">{authenticationError}</div> : null}
       <TextInput
         value={formValues.emailAddress}
@@ -47,6 +47,7 @@ export const AuthSignInFields = React.memo(function AuthSignInFields() {
         placeholder="Your e-mail"
         autoComplete="email"
         errorMessage={errors.emailAddress?.message as string}
+        autoFocus
       />
       <TextInput
         value={formValues.password}
@@ -56,7 +57,7 @@ export const AuthSignInFields = React.memo(function AuthSignInFields() {
         autoComplete="current-password"
         errorMessage={errors.password?.message as string}
       />
-      <Button type="submit" variant="black" isLoading={isAuthenticating}>
+      <Button type="submit" variant="black" isLoading={isAuthenticating} className="mt-auto">
         {isAuthenticating ? 'Loading...' : 'Login'}
       </Button>
     </form>

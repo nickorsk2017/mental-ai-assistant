@@ -23,7 +23,7 @@ const LandingCompanyFooter = React.memo(function LandingCompanyFooter() {
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">
-              Serene
+              Mental Health
             </p>
             <p className="mt-3 max-w-md text-base leading-7 text-calm-muted">
               A calm space for daily reflection — built to support people living with bipolar disorder
@@ -67,10 +67,10 @@ const LandingCompanyFooter = React.memo(function LandingCompanyFooter() {
         </div>
         <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-calm-muted">
-            © {currentYear} Serene. All rights reserved.
+            © {currentYear} Mental Health. All rights reserved.
           </p>
           <p className="text-xs text-calm-muted">
-            Serene is not a medical device or substitute for professional mental health care.
+            Mental Health is not a medical device or substitute for professional mental health care.
           </p>
         </div>
       </div>

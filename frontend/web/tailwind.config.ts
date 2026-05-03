@@ -19,6 +19,7 @@ const calmColorPalette = {
     depression: softCalmTheme.colors.moodDepression,
     'depression-surface': softCalmTheme.colors.moodDepressionSurface,
     normal: softCalmTheme.colors.moodNormal,
+    'normal-deep': softCalmTheme.colors.moodNormalDeep,
     'normal-surface': softCalmTheme.colors.moodNormalSurface,
     euphoria: softCalmTheme.colors.moodEuphoria,
     'euphoria-surface': softCalmTheme.colors.moodEuphoriaSurface,

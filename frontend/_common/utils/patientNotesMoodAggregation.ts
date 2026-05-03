@@ -149,44 +149,45 @@ export function buildDayHourMoodSeries(
   calendarMonthIndex: number,
   dayOfMonth: number,
 ): MoodTrendDatum[] {
-  const moodScoresByHourOfDay = new Map<number, number[]>();
+  const dayNotesWithScores = patientNotes
+    .filter((patientNote) => {
+      if (patientNote.moodScore === null) {
+        return false;
+      }
 
-  for (const patientNote of patientNotes) {
-    if (patientNote.moodScore === null) {
-      continue;
-    }
+      const createdDate = new Date(patientNote.createdAt);
 
-    const createdDate = new Date(patientNote.createdAt);
+      return (
+        createdDate.getFullYear() === calendarYear &&
+        createdDate.getMonth() === calendarMonthIndex &&
+        createdDate.getDate() === dayOfMonth
+      );
+    })
+    .sort(
+      (firstPatientNote, secondPatientNote) =>
+        new Date(firstPatientNote.createdAt).getTime() -
+        new Date(secondPatientNote.createdAt).getTime(),
+    );
 
-    if (
-      createdDate.getFullYear() !== calendarYear ||
-      createdDate.getMonth() !== calendarMonthIndex ||
-      createdDate.getDate() !== dayOfMonth
-    ) {
-      continue;
-    }
+  const dayHourSeries = Array.from({ length: 24 }, (_, hourOfDay): MoodTrendDatum => ({
+    domainPosition: hourOfDay,
+    tickLabel: `${hourOfDay.toString().padStart(2, '0')}:00`,
+    averageMoodScore: null,
+  }));
 
-    const hourOfDay = createdDate.getHours();
-    const previousScores = moodScoresByHourOfDay.get(hourOfDay) ?? [];
-
-    previousScores.push(patientNote.moodScore);
-    moodScoresByHourOfDay.set(hourOfDay, previousScores);
+  if (dayNotesWithScores.length === 0) {
+    return dayHourSeries;
   }
 
-  const dayHourSeries: MoodTrendDatum[] = [];
+  for (const [noteIndex, patientNote] of dayNotesWithScores.entries()) {
+    const hourOfDay =
+      dayNotesWithScores.length === 1 ? 0 : Math.floor((noteIndex * 23) / (dayNotesWithScores.length - 1));
 
-  for (let hourOfDay = 0; hourOfDay < 24; hourOfDay += 1) {
-    const moodScoresForHour = moodScoresByHourOfDay.get(hourOfDay);
-    const averageMoodScore =
-      moodScoresForHour !== undefined && moodScoresForHour.length > 0
-        ? moodScoresForHour.reduce((sum, value) => sum + value, 0) / moodScoresForHour.length
-        : null;
-
-    dayHourSeries.push({
+    dayHourSeries[hourOfDay] = {
       domainPosition: hourOfDay,
       tickLabel: `${hourOfDay.toString().padStart(2, '0')}:00`,
-      averageMoodScore,
-    });
+      averageMoodScore: patientNote.moodScore,
+    };
   }
 
   return dayHourSeries;

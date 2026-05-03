@@ -55,7 +55,7 @@ const Header = React.memo(function Header() {
       <div className={`mx-auto max-w-7xl rounded-[28px] border px-5 py-3 transition-all duration-300 ${headerClassName}`}>
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Serene</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Mental Health</p>
             <p className="text-sm text-calm-muted">AI-powered mental wellness journal</p>
           </div>
           <nav className="hidden items-center gap-6 lg:flex">

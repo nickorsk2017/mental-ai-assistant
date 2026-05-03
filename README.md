@@ -1,6 +1,6 @@
-# Serene Monorepository
+# Mental Health Monorepository
 
-Monorepo for the Serene web app, Ionic mobile app, NestJS backend API, and shared frontend packages.
+Monorepo for the Mental Health web app, Ionic mobile app, NestJS backend API, and shared frontend packages.
 
 ## Structure
 
@@ -190,3 +190,7 @@ Rules for usage:
    - unauthenticated users -> `/auth`
 
 This keeps business logic in one place and prevents feature divergence between web and mobile.
+
+## Copyright
+
+Copyright © Nikolay Stepanov. All rights reserved.

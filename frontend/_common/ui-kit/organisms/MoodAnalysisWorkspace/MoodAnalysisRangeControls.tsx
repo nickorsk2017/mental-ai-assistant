@@ -30,9 +30,12 @@ export default React.memo(function MoodAnalysisRangeControls({
   selectedCalendarDateInput,
   onSelectedCalendarDateInputChange,
 }: MoodAnalysisRangeControlsProperties) {
+  const compactMobileButtonClassName =
+    'min-h-[24px] px-2.5 py-1 text-[13px] sm:min-h-[34px] sm:px-3.5 sm:py-2 sm:text-label';
+
   return (
     <>
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full md:w-auto justify-center md:justify-start">
         <span className="text-xs font-medium uppercase tracking-wide text-calm-muted">Range</span>
         <Button
           variant={
@@ -43,6 +46,7 @@ export default React.memo(function MoodAnalysisRangeControls({
           rounded
           wide={false}
           size="small"
+          className={compactMobileButtonClassName}
           onClick={() => onAnalysisRangeKindChange('month')}
         >
           Month
@@ -56,6 +60,7 @@ export default React.memo(function MoodAnalysisRangeControls({
           size="small"
           wide={false}
           rounded
+          className={compactMobileButtonClassName}
           onClick={() => onAnalysisRangeKindChange('year')}
         >
           Year
@@ -69,6 +74,7 @@ export default React.memo(function MoodAnalysisRangeControls({
           size="small"
           wide={false}
           rounded
+          className={compactMobileButtonClassName}
           onClick={() => onAnalysisRangeKindChange('hours')}
         >
           Hours

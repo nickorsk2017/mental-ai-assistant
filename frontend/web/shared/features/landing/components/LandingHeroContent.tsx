@@ -12,7 +12,7 @@ const LandingHeroContent = React.memo(function LandingHeroContent() {
         overwhelm, anxiety, and abrupt mood shifts. 
         <br/>
         <br/>
-        Serene gives them a private space to write naturally,
+        Mental Health gives them a private space to write naturally,
         while an AI agent turns those messages into structured notes and gentle support.
       </p>
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">

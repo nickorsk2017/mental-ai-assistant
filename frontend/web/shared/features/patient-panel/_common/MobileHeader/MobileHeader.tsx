@@ -55,7 +55,7 @@ export default function MobileHeader({ user }: { user: ServerUser }) {
       <div className="rounded-[28px] border border-calm-border/70 bg-calm-surface/65 px-5 py-3 shadow-subtle backdrop-blur-xl">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" onClick={() => setIsMenuOpen(false)}>
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Serene</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Mental Health</p>
             <p className="mt-1 text-sm text-calm-muted">Patient panel</p>
           </Link>
           <Button
@@ -81,7 +81,7 @@ export default function MobileHeader({ user }: { user: ServerUser }) {
             <div className="flex h-full flex-col rounded-[28px] border border-calm-border/80 bg-calm-surface/56 px-5 py-3 shadow-medium backdrop-blur-xl">
               <div className="flex items-center justify-between gap-4">
                 <Link href="/" onClick={() => setIsMenuOpen(false)}>
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Serene</p>
+                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Mental Health</p>
                   <p className="mt-1 text-sm text-calm-muted">Patient panel</p>
                 </Link>
                 <Button

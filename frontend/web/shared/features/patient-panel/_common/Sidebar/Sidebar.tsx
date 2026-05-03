@@ -26,7 +26,7 @@ const Sidebar = React.memo(function Sidebar({ user }: { user: ServerUser }) {
   return (
     <aside className="hidden h-[calc(100%-2rem)] w-[272px] shrink-0 flex-col rounded-[28px] border border-calm-border/75 bg-calm-surface/50 px-4 py-6 shadow-subtle backdrop-blur-xl lg:flex">
       <Link href="/" className="mb-8 block px-1">
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Serene</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Mental Health</p>
         <p className="mt-1 text-xs text-calm-muted">Patient panel</p>
       </Link>
 

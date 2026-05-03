@@ -1,3 +1,5 @@
+ 'use client';
+
 import React, { useId, useState } from 'react';
 import { Icon } from '../../atoms/Icon/Icon';
 import { ComponentSize } from '../../../themes/calm-theme';

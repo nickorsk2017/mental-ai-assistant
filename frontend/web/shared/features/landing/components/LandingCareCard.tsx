@@ -12,7 +12,7 @@ const LandingCareCard = React.memo(function LandingCareCard() {
           We care about you
         </h2>
         <p className="mt-6 max-w-3xl text-lg leading-8 text-calm-muted">
-          Serene is designed to feel calm, private, and supportive so people can return to their thoughts,
+          Mental Health is designed to feel calm, private, and supportive so people can return to their thoughts,
           emotions, and patterns with more confidence and less pressure.
         </p>
       </div>

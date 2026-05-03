@@ -2,7 +2,7 @@ import React from 'react';
 
 const journeySteps = [
   'Write naturally in chat about the day, your mood, and what feels important.',
-  'Serene turns the message into a clear journal entry with mood context and tags.',
+  'Mental Health turns the message into a clear journal entry with mood context and tags.',
   'Review patterns over time and return to small signals that matter.',
 ] as const;
 

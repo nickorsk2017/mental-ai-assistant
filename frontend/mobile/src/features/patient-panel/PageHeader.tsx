@@ -8,9 +8,9 @@ interface PageHeaderProperties {
   title: string;
 }
 
-const roundedPageHeaderChromeClassNames = cx(
+const roundedPageHeaderClassNames = cx(
   'mx-auto flex w-full max-w-7xl items-center justify-between gap-4 rounded-[28px]',
-  'border border-calm-border/60 bg-calm-surface/20 px-5 py-3 shadow-subtle backdrop-blur-md',
+  'border border-calm-border/60 bg-transparent px-5 py-3 shadow-none backdrop-blur-xl',
   'transition-all duration-300',
 );
 
@@ -29,11 +29,11 @@ export function PageHeader({
   }, [logout, ionRouter]);
 
   return (
-    <IonHeader translucent className="ion-no-border">
-      <IonToolbar className="mt-[10px] min-h-0 [--background:transparent] [--border-width:0] bg-transparent px-4 pb-3 pt-[calc(1rem+var(--ion-safe-area-top,0px))]">
-        <div className={roundedPageHeaderChromeClassNames}>
+    <IonHeader className="ion-no-border !bg-transparent !shadow-none [--background:transparent] [--border-width:0] [--box-shadow:none]">
+      <IonToolbar className="mt-[10px] min-h-0 !border-none !bg-transparent !shadow-none !backdrop-blur-none [--background:transparent] [--border-width:0] [--box-shadow:none] px-4 pb-3 pt-[calc(1rem+var(--ion-safe-area-top,0px))]">
+        <div className={roundedPageHeaderClassNames}>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Serene</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-calm-primary">Mental Health</p>
             <p className="truncate text-sm text-calm-muted">{title}</p>
           </div>
           <Button
@@ -41,6 +41,7 @@ export function PageHeader({
             aria-busy={isAuthenticating}
             disabled={isAuthenticating}
             variant="primary"
+            size="small"
             onClick={() => void handleSignOut()}
             wide={false}
             rounded

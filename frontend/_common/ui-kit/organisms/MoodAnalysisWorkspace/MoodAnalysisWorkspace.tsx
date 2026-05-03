@@ -14,13 +14,16 @@ import {
 import MoodTrendChart from '../MoodTrendChart/MoodTrendChart';
 
 import MoodAnalysisRangeControls, { type MoodAnalysisRangeKind } from './MoodAnalysisRangeControls';
+import { cx } from '@common/shared/utils';
 
 interface MoodAnalysisWorkspaceProperties {
   showHeading?: boolean;
+  className?: string;
 }
 
 export default React.memo(function MoodAnalysisWorkspace({
   showHeading = true,
+  className,
 }: MoodAnalysisWorkspaceProperties) {
   const mountDateReference = useMemo(() => new Date(), []);
   const [patientNotes, setPatientNotes] = useState<Entity.PatientNote[]>([]);
@@ -117,7 +120,7 @@ export default React.memo(function MoodAnalysisWorkspace({
   const chartHeightPixels = 340;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-6 bg-calm-surface px-4 py-6 sm:px-8">
+    <div className={cx("flex min-h-0 flex-1 flex-col gap-6 bg-calm-surface px-4 py-6 sm:px-8", className)}>
       {showHeading ? (
         <header className="shrink-0 border-b border-calm-border/45 pb-4">
           <h1 className="text-base font-semibold text-calm-text">Analysis</h1>

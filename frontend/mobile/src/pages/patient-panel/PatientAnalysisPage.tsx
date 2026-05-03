@@ -10,7 +10,7 @@ export function PatientAnalysisPage(): React.JSX.Element {
     <IonPage>
       <PageHeader title="Analysis" />
       <IonContent fullscreen className="ion-padding bg-calm-surface">
-        <MoodAnalysisWorkspace showHeading={false} />
+        <MoodAnalysisWorkspace showHeading={false} className="!p-0" />
       </IonContent>
     </IonPage>
   );

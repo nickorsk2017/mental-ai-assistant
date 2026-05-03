@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Serene',
+  title: 'Mental Health',
   description: 'Private AI-powered mental wellness journal with a calm experience for daily reflections.',
 };
 

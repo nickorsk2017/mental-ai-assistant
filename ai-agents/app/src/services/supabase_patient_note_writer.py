@@ -17,6 +17,7 @@ def insert_patient_note_row(
     mood_label: str | None,
     mood_score: int | None,
     activity_tags: list[str],
+    message_text: str,
     summary_text: str,
 ) -> None:
     """Persist a note row when Supabase URL and secret key are configured."""
@@ -34,6 +35,7 @@ def insert_patient_note_row(
         "mood_label": mood_label,
         "mood_score": mood_score,
         "activity_tags": activity_tags,
+        "message_text": message_text,
         "summary_text": summary_text,
     }
     headers = {
@@ -46,6 +48,10 @@ def insert_patient_note_row(
     try:
         with httpx.Client(timeout=30.0) as http_client:
             response = http_client.post(request_url, json=payload, headers=headers)
+            if should_retry_without_message_text(response):
+                payload.pop("message_text", None)
+                response = http_client.post(request_url, json=payload, headers=headers)
+
             response.raise_for_status()
         LOGGER.info("Supabase note inserted correlation=%s", correlation_id)
     except httpx.HTTPStatusError as status_error:
@@ -69,3 +75,16 @@ def insert_patient_note_row(
         )
     except httpx.HTTPError:
         LOGGER.exception("Supabase insert failed correlation=%s", correlation_id)
+
+
+def should_retry_without_message_text(response: httpx.Response) -> bool:
+    """Support environments where `message_text` was already removed from the table."""
+    if response.is_success:
+        return False
+
+    response_text = response.text
+
+    return response.status_code == 400 and (
+        "message_text" in response_text
+        and "Could not find the 'message_text' column" in response_text
+    )

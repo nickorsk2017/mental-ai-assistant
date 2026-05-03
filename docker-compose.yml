@@ -43,6 +43,32 @@ services:
     networks:
       - internal
 
+  ai-agents:
+    build:
+      context: ./ai-agents/app
+      dockerfile: Dockerfile
+    image: claude-arch/ai-agents:local
+    container_name: claude-arch-ai-agents
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./_common/.env
+    environment:
+      - KAFKA_BROKERS=kafka:29092
+      - AI_AGENTS_HOST=0.0.0.0
+      - AI_AGENTS_PORT=8080
+    depends_on:
+      - kafka
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+    networks:
+      - internal
+
   kafka:
     image: apache/kafka:latest
     container_name: kafka
@@ -80,8 +106,12 @@ services:
       - NODE_ENV=production
       # Internal listener (see kafka service); matches PLAINTEXT advertised host `kafka:29092`.
       - KAFKA_BROKERS=kafka:29092
+      - AI_AGENTS_BASE_URL=http://ai-agents:8080
     depends_on:
-      - kafka
+      kafka:
+        condition: service_started
+      ai-agents:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4000/health"]
       interval: 15s

@@ -19,6 +19,7 @@ export type SoftCalmTheme = {
     moodDepression: string;
     moodDepressionSurface: string;
     moodNormal: string;
+    moodNormalDeep: string;
     moodNormalSurface: string;
     moodEuphoria: string;
     moodEuphoriaSurface: string;
@@ -43,6 +44,7 @@ const calmLightTheme: SoftCalmTheme = {
     moodDepression: '#9aa4bf',
     moodDepressionSurface: '#eef1f7',
     moodNormal: '#b5ead7',
+    moodNormalDeep: '#3f8a70',
     moodNormalSurface: '#eefaf5',
     moodEuphoria: '#fac4cf',
     moodEuphoriaSurface: '#fff3f6',
@@ -67,6 +69,7 @@ const calmDarkTheme: SoftCalmTheme = {
     moodDepression: '#8d98b5',
     moodDepressionSurface: '#242b3d',
     moodNormal: '#a8e7d3',
+    moodNormalDeep: '#5fbea0',
     moodNormalSurface: '#18302a',
     moodEuphoria: '#f5bdc9',
     moodEuphoriaSurface: '#34242c',

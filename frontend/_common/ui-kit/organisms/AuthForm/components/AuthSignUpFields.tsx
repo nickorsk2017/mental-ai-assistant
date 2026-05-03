@@ -62,7 +62,7 @@ export const AuthSignUpFields = React.memo(function AuthSignUpFields({ onSignedU
   ];
 
   return (
-    <form onSubmit={handleSignUpSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSignUpSubmit} className="flex min-h-0 flex-1 flex-col gap-4 py-2">
       {fields.map((field) => (
         <div key={field.name} className="flex flex-col gap-1">
           <TextInput
@@ -71,10 +71,11 @@ export const AuthSignUpFields = React.memo(function AuthSignUpFields({ onSignedU
             placeholder={field.placeholder}
             type={field.type ?? 'text'}
             errorMessage={isSubmitted ? (errors[field.name]?.message as string) : undefined}
+            autoFocus={field.name === 'displayName'}
           />
         </div>
       ))}
-      <Button type="submit" variant="black">
+      <Button type="submit" variant="black" className="mt-auto">
         Create Account
       </Button>
     </form>

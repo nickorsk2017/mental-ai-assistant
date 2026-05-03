@@ -41,7 +41,9 @@ export const AuthForm = React.memo(function AuthForm({
           </div>
         </div>
       </div>
-      <div className="px-10 py-8">{currentMode === 'sign-in' ? <AuthSignInFields /> : <AuthSignUpFields onSignedUp={showSignInForm} />}</div>
+      <div className="flex flex-1 flex-col px-10 pb-10 pt-8">
+        {currentMode === 'sign-in' ? <AuthSignInFields /> : <AuthSignUpFields onSignedUp={showSignInForm} />}
+      </div>
     </div>
   );
 });

@@ -85,7 +85,7 @@ const Notes = React.memo(function Notes() {
 
           {!isLoading && groupedNotes.length === 0 && (
             <p className="rounded-lg border border-calm-border/50 bg-calm-surface/70 px-6 py-10 text-center text-sm text-calm-muted shadow-subtle">
-              AI notes will appear here after Serene processes your chat messages.
+              AI notes will appear here after Mental Health processes your chat messages.
             </p>
           )}
 

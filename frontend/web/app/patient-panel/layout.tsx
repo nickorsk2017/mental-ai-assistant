@@ -1,4 +1,5 @@
 import React from 'react';
+import { AuthorWelcomeModal } from '@common/shared/ui-kit';
 import { requireServerUser } from '../../shared/lib/getServerUser';
 import MobileHeader from '@/shared/features/patient-panel/_common/MobileHeader/MobileHeader';
 import Sidebar from '@/shared/features/patient-panel/_common/Sidebar/Sidebar';
@@ -21,6 +22,7 @@ export default async function PatientPanelLayout({
         <MobileHeader user={user} />
         <Sidebar user={user} />
         <main className="flex h-[calc(100%-2rem)] min-h-0 min-w-0 flex-1 flex-col overflow-y-auto rounded-[28px] border border-calm-border/50 shadow-subtle backdrop-blur-md">
+          <AuthorWelcomeModal userId={user.id} />
           {children}
         </main>
       </div>

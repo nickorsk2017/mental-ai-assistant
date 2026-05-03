@@ -1,3 +1,5 @@
+ 'use client';
+
 import React, { useEffect, useId, useRef } from 'react';
 
 import { cx } from '../../../utils';

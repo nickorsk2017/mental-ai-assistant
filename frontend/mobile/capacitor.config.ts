@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const configuration: CapacitorConfig = {
   appId: 'com.serene.app',
-  appName: 'Serene',
+  appName: 'Mental Health',
   webDir: 'dist',
   server: {
     cleartext: true,
