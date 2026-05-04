@@ -14,7 +14,7 @@ PNPM_CMD := env -u PNPM_STORE_DIR -u npm_config_store_dir pnpm
         test-coverage test-backend-coverage test-web-coverage test-common-coverage test-mobile-coverage \
         mobile-build mobile-capacitor-sync mobile-run-android mobile-run-ios \
         fullstack-web fullstack-mobile start-all \
-        docker-restart docker-run-all docker-stop-all \
+        docker-run-all docker-stop-all \
         kill-backend-ports kill-frontend-ports kill-mobile-ports kill-ai-agents-ports kill-storybook-ports kill-all-ports
 
 help:
@@ -55,7 +55,6 @@ help:
 	@echo "Docker:"
 	@echo "  make docker-run-all       - Down existing compose stack, then build and start all services (detached)"
 	@echo "  make docker-stop-all      - Stop, remove containers and compose images"
-	@echo "  make docker-restart       - Stop, rebuild, and start all services"
 	@echo "  make kafka-install        - Pull if needed and start Kafka (apache/kafka, port 9092)"
 	@echo "  make kafka-stop           - Stop the Kafka container only"
 	@echo ""
@@ -225,10 +224,6 @@ docker-run-all:
 
 docker-stop-all:
 	docker compose down --rmi all --remove-orphans
-
-docker-restart:
-	docker compose down
-	docker compose up --build
 
 kafka-install:
 	docker compose up -d kafka

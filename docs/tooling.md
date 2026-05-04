@@ -9,7 +9,7 @@ Commands assume the repository root unless noted. Primary entrypoint: **`Makefil
 | **Node.js 22+** | Web, mobile, backend |
 | **pnpm 10.33.2** | Frontend workspaces + Nest (`packageManager` in package manifests) |
 | **Python 3.12+** and **[uv](https://docs.astral.sh/uv/)** | AI agents (`ai-agents/app/`) |
-| **Docker + Compose** | Kafka (`make kafka-install`), full stack (`make docker-up`) |
+| **Docker + Compose** | Kafka (`make kafka-install`), full stack (`make docker-run-all`) |
 
 Environment: copy **`_common/.env.example`** → **`_common/.env`** (see [`README.md`](../README.md)).
 
@@ -72,10 +72,8 @@ Repeat **`make supabase-migrate`** after pulling migration additions from git (n
 
 | Command | Description |
 |---------|-------------|
-| `make docker-build` | `docker compose build` |
-| `make docker-up` | `docker compose up --build` |
-| `make docker-down` | `docker compose down` |
-| `make docker-restart` | Rebuild and restart |
+| `make docker-run-all` | `docker compose down` (clean), then `up -d --build` (see Makefile for Kafka port cleanup) |
+| `make docker-stop-all` | `docker compose down --rmi all --remove-orphans` |
 
 Services are defined in **`docker-compose.yml`** at the repo root (see [`README.md`](../README.md#docker)).
 

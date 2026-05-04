@@ -134,10 +134,8 @@ make ai-agents  # AI service (:8080 by default)
 `docker-compose.yml` defines **api** (NestJS), **web** (Next.js), **mobile** (Vite shell), **ai-agents** (FastAPI), and **Kafka**. Published ports typically include **4000**, **3000**, **8100**, **8080**, **9092**. For day-to-day UI development you can still run **web** or **mobile** with `make` on the host and only use Compose for Kafka or full integration.
 
 ```bash
-make docker-build    # Build images
-make docker-up       # Build and start
-make docker-down     # Stop
-make docker-restart  # Stop, rebuild, start
+make docker-run-all   # Down stack, free Kafka port if needed, build and start (detached)
+make docker-stop-all  # Stop, remove containers and compose images
 ```
 
 ---
