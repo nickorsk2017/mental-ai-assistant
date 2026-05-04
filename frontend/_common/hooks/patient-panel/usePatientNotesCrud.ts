@@ -61,17 +61,19 @@ export function usePatientNotesCrud() {
         ? await updatePatientNote(editingNote.id, input)
         : await createPatientNote(input);
 
-      if (!response.success) {
+      if (!response.success || response.data === null) {
         setEditorError(response.error ?? 'Unable to save note.');
         setIsSaving(false);
         return;
       }
 
+      const savedNote = response.data;
+
       setNotes((previousNotes) => {
-        if (!editingNote) return [response.data, ...previousNotes];
+        if (!editingNote) return [savedNote, ...previousNotes];
 
         return previousNotes.map((note) => (
-          note.id === response.data.id ? response.data : note
+          note.id === savedNote.id ? savedNote : note
         ));
       });
       setIsSaving(false);

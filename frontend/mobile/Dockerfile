@@ -1,21 +1,30 @@
-FROM node:22-alpine
+# syntax=docker/dockerfile:1
+# Build context: repository root (see docker-compose.yml)
 
+FROM node:22-alpine AS base
 WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@10.33.2 --activate
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY mobile/package.json ./mobile/
-COPY _common/hooks/package.json ./_common/hooks/
-COPY _common/schemas/package.json ./_common/schemas/
-COPY _common/services/package.json ./_common/services/
-COPY _common/stores/package.json ./_common/stores/
-COPY _common/ui-kit/package.json ./_common/ui-kit/
-COPY _common/utils/package.json ./_common/utils/
+FROM base AS dependencies
+WORKDIR /app/frontend
+COPY frontend/package.json frontend/pnpm-lock.yaml frontend/pnpm-workspace.yaml ./
+COPY frontend/mobile/package.json ./mobile/
+COPY frontend/web/package.json ./web/
+COPY frontend/_common/package.json ./_common/package.json
 RUN pnpm install --frozen-lockfile --filter mobile...
 
-COPY mobile ./mobile
-COPY _common ./_common
+FROM dependencies AS builder
+ARG BACKEND_URL=http://localhost:4000
+ENV BACKEND_URL=${BACKEND_URL}
+COPY frontend/tsconfig.json ./tsconfig.json
+COPY frontend/mobile ./mobile
+COPY frontend/_common ./_common/
+COPY _common/types /app/_common/types
+WORKDIR /app/frontend
+RUN pnpm --filter mobile build
 
-WORKDIR /app/mobile
+FROM builder AS runner
+ENV NODE_ENV=production
+WORKDIR /app/frontend/mobile
 EXPOSE 8100
-CMD ["pnpm", "dev", "--", "--host", "0.0.0.0", "--port", "8100"]
+CMD ["pnpm", "exec", "vite", "preview", "--host", "0.0.0.0", "--port", "8100"]

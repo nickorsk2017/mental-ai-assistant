@@ -18,6 +18,11 @@ export default defineConfig(({ mode }) => {
         '@common/shared': resolve(__dirname, '../_common'),
       },
     },
+    server: {
+      host: true,
+      port: 8100,
+      strictPort: true,
+    },
     build: {
       chunkSizeWarningLimit: 1300,
     },

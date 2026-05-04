@@ -14,7 +14,7 @@ PNPM_CMD := env -u PNPM_STORE_DIR -u npm_config_store_dir pnpm
         test-coverage test-backend-coverage test-web-coverage test-common-coverage test-mobile-coverage \
         mobile-build mobile-capacitor-sync mobile-run-android mobile-run-ios \
         fullstack-web fullstack-mobile start-all \
-        docker-build docker-up docker-down docker-restart \
+        docker-restart docker-run-all docker-stop-all \
         kill-backend-ports kill-frontend-ports kill-mobile-ports kill-ai-agents-ports kill-storybook-ports kill-all-ports
 
 help:
@@ -53,9 +53,8 @@ help:
 	@echo "  make test-coverage        - Run test:coverage in all packages above"
 	@echo ""
 	@echo "Docker:"
-	@echo "  make docker-build         - Build all service images"
-	@echo "  make docker-up            - Build and start all services"
-	@echo "  make docker-down          - Stop all services"
+	@echo "  make docker-run-all       - Down existing compose stack, then build and start all services (detached)"
+	@echo "  make docker-stop-all      - Stop, remove containers and compose images"
 	@echo "  make docker-restart       - Stop, rebuild, and start all services"
 	@echo "  make kafka-install        - Pull if needed and start Kafka (apache/kafka, port 9092)"
 	@echo "  make kafka-stop           - Stop the Kafka container only"
@@ -215,16 +214,21 @@ start-all: kill-all-ports
 
 # ─── Docker ───────────────────────────────────────────────────────────────────
 
-docker-build:
-	docker compose build
+docker-run-all:
+	docker compose down --remove-orphans
+	@kafka_container_identifiers=$$(docker ps -aq --filter ancestor=apache/kafka:latest); \
+	if [ -n "$$kafka_container_identifiers" ]; then \
+		echo "Removing other apache/kafka containers (free host port 9092)"; \
+		docker rm -f $$kafka_container_identifiers; \
+	fi
+	docker compose up -d --build
 
-docker-up:
-	docker compose up --build
+docker-stop-all:
+	docker compose down --rmi all --remove-orphans
 
-docker-down:
+docker-restart:
 	docker compose down
-
-docker-restart: docker-down docker-up
+	docker compose up --build
 
 kafka-install:
 	docker compose up -d kafka

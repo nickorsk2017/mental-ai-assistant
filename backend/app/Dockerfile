@@ -13,6 +13,7 @@ RUN pnpm install --frozen-lockfile
 FROM dependencies AS builder
 COPY backend/app/tsconfig.json ./
 COPY backend/app/src ./src
+COPY _common/types /_common/types
 RUN pnpm build
 
 # ─── Runner ───────────────────────────────────────────────────────────────────

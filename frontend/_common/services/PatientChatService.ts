@@ -29,7 +29,7 @@ export async function loadTodayPatientChatMessages(): Promise<Entity.PatientChat
     },
   });
 
-  return response.success ? response.data : [];
+  return response.success && response.data !== null ? response.data : [];
 }
 
 export function openPatientChatStream(

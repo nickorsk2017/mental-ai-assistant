@@ -5,7 +5,7 @@ export async function loadPatientNotes(): Promise<Entity.PatientNote[]> {
     method: 'GET',
   });
 
-  return response.success ? response.data : [];
+  return response.success && response.data !== null ? response.data : [];
 }
 
 export async function createPatientNote(
