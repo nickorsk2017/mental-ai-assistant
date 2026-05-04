@@ -27,7 +27,7 @@ interface ChatInputProperties {
 const defaultClassName =
   'relative mx-auto min-w-0 max-w-[48rem] rounded-[28px] border border-calm-border/55 bg-calm-surface px-3 py-2 shadow-subtle';
 const interactiveClassName =
-  'transform-gpu transition-all duration-200 ease-out focus-within:scale-[1.01] focus-within:border-calm-primary/60';
+  'transform-gpu transition-all duration-200 ease-out focus-within:scale-[1.01] focus-within:border-calm-primary focus-within:ring-2 focus-within:ring-calm-primary/20';
 
 const ChatInput = React.memo(function ChatInput({
   textareaReference,

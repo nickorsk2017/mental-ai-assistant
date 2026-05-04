@@ -5,8 +5,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
 
-import { patientActivityTags } from '../../../constants';
-import { patientNoteFormValidationSchema } from '../../../schemas';
+import { patientActivityTags, patientChatMinimumMessageLength } from '../../../constants';
+import {
+  patientNoteFormCreateValidationSchema,
+  patientNoteFormValidationSchema,
+} from '../../../schemas';
 import MoodScoreSlider from '../../molecules/MoodScoreSlider/MoodScoreSlider';
 import Select from '../../molecules/Select/Select';
 import TextArea from '../../molecules/TextArea/TextArea';
@@ -14,7 +17,7 @@ import TextInput from '../../molecules/TextInput/TextInput';
 
 type PatientNoteFormValues = zod.infer<typeof patientNoteFormValidationSchema>;
 
-type PatientNoteFormProps = {
+type PatientNoteFormProperties = {
   formId: string;
   note: Entity.PatientNote | null;
   externalErrorMessage: string | null;
@@ -39,19 +42,22 @@ function mapFormValuesToInput(values: PatientNoteFormValues): Entity.PatientNote
   };
 }
 
-export default React.memo(function PatientNoteForm({
+function PatientNoteFormBody({
   formId,
   note,
   externalErrorMessage,
   onSubmit,
-}: PatientNoteFormProps) {
+}: PatientNoteFormProperties) {
   const activityTagOptions = useMemo(
     () => patientActivityTags.map((activityTag) => ({ label: activityTag, value: activityTag })),
     [],
   );
+  const validationSchema =
+    note === null ? patientNoteFormCreateValidationSchema : patientNoteFormValidationSchema;
+
   const { control, handleSubmit, reset } = useForm<PatientNoteFormValues>({
     defaultValues: createDefaultValues(note),
-    resolver: zodResolver(patientNoteFormValidationSchema),
+    resolver: zodResolver(validationSchema),
     mode: 'onSubmit',
   });
 
@@ -62,6 +68,11 @@ export default React.memo(function PatientNoteForm({
   const submitForm = handleSubmit(async (values) => {
     await onSubmit(mapFormValuesToInput(values));
   });
+
+  const summaryPlaceholder =
+    note === null
+      ? `Write your reflection (at least ${String(patientChatMinimumMessageLength)} characters for AI analysis).`
+      : 'Short note shown in the card';
 
   return (
     <form id={formId} onSubmit={(event) => void submitForm(event)} className="contents">
@@ -96,7 +107,14 @@ export default React.memo(function PatientNoteForm({
         control={control}
         name="summaryText"
         render={({ field, fieldState }) => (
-          <TextArea value={field.value} onChange={field.onChange} label="Summary" rows={5} placeholder="Short note shown in the card" errorMessage={fieldState.error?.message} />
+          <TextArea
+            value={field.value}
+            onChange={field.onChange}
+            label="Summary"
+            rows={5}
+            placeholder={summaryPlaceholder}
+            errorMessage={fieldState.error?.message}
+          />
         )}
       />
 
@@ -118,4 +136,11 @@ export default React.memo(function PatientNoteForm({
       {externalErrorMessage && <p className="text-sm font-medium text-calm-error">{externalErrorMessage}</p>}
     </form>
   );
+}
+
+export default React.memo(function PatientNoteForm(properties: PatientNoteFormProperties) {
+  const formInstanceKey =
+    properties.note === null ? 'create-note' : `edit-note-${properties.note.id}`;
+
+  return <PatientNoteFormBody key={formInstanceKey} {...properties} />;
 });

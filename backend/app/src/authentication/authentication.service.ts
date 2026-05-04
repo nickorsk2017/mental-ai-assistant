@@ -16,7 +16,7 @@ export class AuthenticationService {
     if (error || !data.session || !data.user) {
       return {
         success: false,
-        data: null as Entity.AuthenticationResponse,
+        data: null,
         error: error?.message ?? 'Sign in failed',
       };
     }
@@ -48,7 +48,7 @@ export class AuthenticationService {
     if (error || !data.user) {
       return {
         success: false,
-        data: null as { userId: string },
+        data: null,
         error: error?.message ?? 'Sign up failed',
       };
     }
@@ -62,7 +62,7 @@ export class AuthenticationService {
     if (error || !data.user) {
       return {
         success: false,
-        data: null as Entity.AuthenticationUserProfile,
+        data: null,
         error: error?.message ?? 'Invalid or expired session',
       };
     }
@@ -89,7 +89,7 @@ export class AuthenticationService {
     if (error || !data.session || !data.user) {
       return {
         success: false,
-        data: null as Entity.AuthenticationResponse,
+        data: null,
         error: error?.message ?? 'Session refresh failed',
       };
     }

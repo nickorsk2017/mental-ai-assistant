@@ -1,1 +1,1 @@
-"""Database clients for Supabase PostgreSQL and Pinecone (placeholders for upcoming persistence)."""
+"""Database and persistence helpers for Supabase (see `src/services/supabase_patient_note_writer.py`)."""

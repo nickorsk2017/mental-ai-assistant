@@ -12,7 +12,6 @@ frontend/_common/
 ├── hooks/      # Business logic hooks (store wiring, derived state, side effects)
 ├── services/   # Raw async API/Supabase functions consumed by hooks and apps
 ├── stores/     # Zustand state stores
-├── types/      # TypeScript declarations (*.d.ts only)
 └── utils/      # Pure helper functions
 ```
 
@@ -96,11 +95,9 @@ Hooks run identically in web and mobile.
 
 ---
 
-## Rule — Types (`types/`)
+## Rule — Shared types (`_common/types/`)
 
-- Only kebab-case `*.d.ts` files allowed — no `.ts` or `.tsx`
-- Every type lives inside `declare global { namespace Entity {} }`
-- No type at the module root or inline in any other file
+Shared `Entity.*` declarations live in **`_common/types/`** at the repository root (not under `frontend/_common/`). See global [`AGENTS.md`](../../AGENTS.md) Rule 4. Web and mobile resolve them via `@common/types/*` path aliases in their `tsconfig.json` files.
 
 ---
 
@@ -118,5 +115,5 @@ Hooks run identically in web and mobile.
 - [ ] Services return `Entity.ApiResponse<T>` and never throw
 - [ ] No hook imports from `next/*` or `@ionic/*`
 - [ ] No Zustand store defined outside `stores/`
-- [ ] All types are `*.d.ts` files inside `namespace Entity {}`
+- [ ] Shared `Entity.*` edits happen only in `_common/types/*.d.ts`
 - [ ] `utils/` functions are pure — no side effects, no React

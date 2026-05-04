@@ -6,7 +6,6 @@
     "dev:web": "pnpm --filter web dev",
     "dev:mobile": "pnpm --filter mobile dev",
     "storybook": "pnpm --filter @common/shared storybook",
-    "build:storybook": "pnpm --filter @common/shared build-storybook",
     "typecheck": "tsc --build"
   },
   "pnpm": {

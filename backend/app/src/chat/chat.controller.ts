@@ -31,7 +31,7 @@ export class ChatController {
 
   /**
    * Streams a plain-text assistant reply from the AI agents service (REST). The same journal payload
-   * is published to Kafka so the consumer can persist Pinecone vectors and Supabase notes asynchronously.
+   * is published to Kafka so the consumer can persist Supabase patient notes asynchronously.
    */
   @Post('messages/stream')
   async streamJournalMessage(

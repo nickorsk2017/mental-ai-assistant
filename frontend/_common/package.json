@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "storybook": "storybook dev -p 6006 -c ui-kit/.storybook",
-    "build-storybook": "storybook build -c ui-kit/.storybook",
     "test": "jest --config ./jest.config.cjs --runInBand",
     "test:coverage": "jest --config ./jest.config.cjs --coverage"
   },

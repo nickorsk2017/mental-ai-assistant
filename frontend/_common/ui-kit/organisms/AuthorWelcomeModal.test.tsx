@@ -19,7 +19,7 @@ describe('AuthorWelcomeModal', () => {
     render(<AuthorWelcomeModal userId={mockUserId} />);
 
     expect(screen.getByRole('heading', { name: 'Welcome' })).toBeTruthy();
-    expect(screen.getByText('Author: Nikolay Stepanov')).toBeTruthy();
+    expect(screen.getByText('Author: Nikolai Stepanov')).toBeTruthy();
   });
 
   it('does not render modal when userId is null', () => {
@@ -31,7 +31,7 @@ describe('AuthorWelcomeModal', () => {
   it('closes modal and stores seen status when Continue button clicked', () => {
     render(<AuthorWelcomeModal userId={mockUserId} />);
 
-    expect(screen.getByText('Author: Nikolay Stepanov')).toBeTruthy();
+    expect(screen.getByText('Author: Nikolai Stepanov')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
     expect(localStorage.getItem(storageKey)).toBe('seen');

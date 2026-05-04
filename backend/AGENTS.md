@@ -21,7 +21,7 @@ Each domain lives in its own directory under `src/` with exactly four files: mod
 | `<domain>.module.ts` | Declares imports, providers, controllers, exports |
 | `<domain>.controller.ts` | HTTP bindings only — no business logic |
 | `<domain>.service.ts` | All business logic and database calls |
-| `<domain>.types.ts` | Local-only types; shared types go to `frontend/_common/types/` |
+| `<domain>.types.ts` | Local-only types; shared `Entity.*` contracts go to `_common/types/` (see `src/shared-entity-types.d.ts`) |
 
 Never put business logic in a controller. Never put HTTP concerns in a service.
 

@@ -1,4 +1,4 @@
-"""LangChain + OpenAI analysis for patient journal text; persists to Pinecone and Supabase."""
+"""LangChain + OpenAI analysis for patient journal text; persists to Supabase."""
 
 import logging
 
@@ -11,7 +11,6 @@ from src.constants import DEFAULT_ACTIVITY_TAGS
 from src.prompts.journal_analysis_system_prompt import build_journal_analysis_system_prompt
 from src.schemas.journal_message import JournalKafkaPayload
 from src.schemas.journal_note_analysis import JournalNoteAnalysis
-from src.services.pinecone_note_store import upsert_journal_note_vector
 from src.services.supabase_patient_note_writer import insert_patient_note_row
 
 LOGGER = logging.getLogger(__name__)
@@ -22,7 +21,7 @@ def process_journal_message_from_kafka(
     payload: JournalKafkaPayload,
     settings: ApplicationSettings,
 ) -> str:
-    """Run analysis, upsert vector metadata, and insert a note row for the journal job."""
+    """Run analysis and insert a patient note row for the journal job."""
     allowed_activity_tags = resolve_allowed_activity_tags(payload.allowed_activity_tags)
     note_analysis = analyze_journal_with_openai(
         payload.message_text,
@@ -40,13 +39,6 @@ def process_journal_message_from_kafka(
 
         return "Skipped non-journal chat reply."
 
-    combined_text = (
-        f"{payload.message_text.strip()}\n\n"
-        f"Mood: {note_analysis.mood_label or note_analysis.mood_key or 'unknown'}\n"
-        f"Tags: {', '.join(note_analysis.activity_tags)}\n"
-        f"Summary:\n{note_analysis.summary_text}"
-    )
-
     insert_patient_note_row(
         settings,
         payload.user_id,
@@ -55,13 +47,6 @@ def process_journal_message_from_kafka(
         note_analysis.mood_label,
         note_analysis.mood_score,
         note_analysis.activity_tags,
-        note_analysis.summary_text,
-    )
-    upsert_journal_note_vector_safely(
-        settings,
-        payload.correlation_id,
-        payload.user_id,
-        combined_text,
         note_analysis.summary_text,
     )
     return note_analysis.summary_text
@@ -125,26 +110,6 @@ def sanitize_note_analysis_tags(
     note_analysis.activity_tags = list(dict.fromkeys(filtered_tags))
 
     return note_analysis
-
-
-def upsert_journal_note_vector_safely(
-    settings: ApplicationSettings,
-    correlation_id: str,
-    user_id: str,
-    combined_text: str,
-    summary_text: str,
-) -> None:
-    """Keep note persistence independent from vector indexing failures."""
-    try:
-        upsert_journal_note_vector(
-            settings,
-            correlation_id,
-            user_id,
-            combined_text,
-            summary_text,
-        )
-    except Exception:
-        LOGGER.exception("Pinecone upsert failed after note insert correlation=%s", correlation_id)
 
 
 def safe_parse_kafka_payload(raw_json: str) -> JournalKafkaPayload | None:

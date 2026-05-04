@@ -12,7 +12,7 @@ const streamFallbackChunks = [
   'Thank you for sharing your day. ',
   'Your note was queued for the Mental Health pipeline. ',
   'When the AI service finishes, structured tags and timestamps ',
-  'will be saved to PostgreSQL and Pinecone.',
+  'will be saved to PostgreSQL.',
 ] as const;
 
 @Injectable()

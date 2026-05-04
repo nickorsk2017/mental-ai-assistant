@@ -16,7 +16,6 @@ node_modules/
 # ─── Backend Build Outputs ────────────────────────────────────────────────────
 backend/dist/
 mcp/dist/
-frontend/_common/ui-kit/storybook-static/
 
 # ─── Cache ────────────────────────────────────────────────────────────────────
 .cache/

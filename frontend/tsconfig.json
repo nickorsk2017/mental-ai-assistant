@@ -10,7 +10,7 @@
     "noEmit": true,
     "paths": {
       "@common/types/*": [
-        "./_common/types/*"
+        "../_common/types/*"
       ],
       "@common/shared/*": [
         "./_common/*"

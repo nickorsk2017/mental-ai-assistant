@@ -20,7 +20,6 @@ from src.services.journal_analysis_pipeline import (
     resolve_allowed_activity_tags,
     safe_parse_kafka_payload,
     sanitize_note_analysis_tags,
-    upsert_journal_note_vector_safely,
 )
 
 
@@ -178,22 +177,6 @@ def test_analyze_journal_validates_dict_response(
     assert result.activity_tags == ["work"]
 
 
-# ─── upsert_journal_note_vector_safely ────────────────────────────────────────
-
-def test_upsert_safely_swallows_exceptions(
-    settings: ApplicationSettings,
-) -> None:
-    with patch(
-        "src.services.journal_analysis_pipeline.upsert_journal_note_vector",
-        side_effect=RuntimeError("pinecone down"),
-    ) as upsert_mock:
-        # Should NOT raise; the pipeline must be resilient to vector-store failures.
-        upsert_journal_note_vector_safely(
-            settings, "corr-1", "user-1", "combined", "summary"
-        )
-    upsert_mock.assert_called_once()
-
-
 # ─── process_journal_message_from_kafka ───────────────────────────────────────
 
 def test_process_journal_message_returns_unavailable_when_analysis_none(
@@ -213,16 +196,14 @@ def test_process_journal_message_skips_when_should_create_note_false(
     with (
         patch.object(pipeline_module, "analyze_journal_with_openai", return_value=analysis),
         patch.object(pipeline_module, "insert_patient_note_row") as insert_mock,
-        patch.object(pipeline_module, "upsert_journal_note_vector_safely") as upsert_mock,
     ):
         result = process_journal_message_from_kafka(payload, settings)
 
     assert "Skipped" in result
     insert_mock.assert_not_called()
-    upsert_mock.assert_not_called()
 
 
-def test_process_journal_message_persists_note_and_vector_on_happy_path(
+def test_process_journal_message_persists_note_on_happy_path(
     settings: ApplicationSettings,
 ) -> None:
     payload = make_payload()
@@ -237,7 +218,6 @@ def test_process_journal_message_persists_note_and_vector_on_happy_path(
     with (
         patch.object(pipeline_module, "analyze_journal_with_openai", return_value=analysis),
         patch.object(pipeline_module, "insert_patient_note_row") as insert_mock,
-        patch.object(pipeline_module, "upsert_journal_note_vector_safely") as upsert_mock,
     ):
         result = process_journal_message_from_kafka(payload, settings)
 
@@ -254,21 +234,8 @@ def test_process_journal_message_persists_note_and_vector_on_happy_path(
         "User exercised and felt energized.",
     )
 
-    upsert_mock.assert_called_once()
-    upsert_args = upsert_mock.call_args.args
-    assert upsert_args[0] is settings
-    assert upsert_args[1] == payload.correlation_id
-    assert upsert_args[2] == payload.user_id
-    combined_text = upsert_args[3]
-    summary_for_vector = upsert_args[4]
-    assert payload.message_text.strip() in combined_text
-    assert "Mood: Calm" in combined_text
-    assert "Tags: fitness" in combined_text
-    assert "Summary:" in combined_text
-    assert summary_for_vector == "User exercised and felt energized."
 
-
-def test_process_journal_message_uses_mood_key_when_label_missing(
+def test_process_journal_message_passes_mood_key_when_label_missing(
     settings: ApplicationSettings,
 ) -> None:
     payload = make_payload()
@@ -276,16 +243,15 @@ def test_process_journal_message_uses_mood_key_when_label_missing(
 
     with (
         patch.object(pipeline_module, "analyze_journal_with_openai", return_value=analysis),
-        patch.object(pipeline_module, "insert_patient_note_row"),
-        patch.object(pipeline_module, "upsert_journal_note_vector_safely") as upsert_mock,
+        patch.object(pipeline_module, "insert_patient_note_row") as insert_mock,
     ):
         process_journal_message_from_kafka(payload, settings)
 
-    combined_text = upsert_mock.call_args.args[3]
-    assert "Mood: calm" in combined_text
+    insert_arguments = insert_mock.call_args.args
+    assert insert_arguments[3] == "calm"
 
 
-def test_process_journal_message_falls_back_to_unknown_mood(
+def test_process_journal_message_passes_none_mood_when_missing(
     settings: ApplicationSettings,
 ) -> None:
     payload = make_payload()
@@ -293,13 +259,12 @@ def test_process_journal_message_falls_back_to_unknown_mood(
 
     with (
         patch.object(pipeline_module, "analyze_journal_with_openai", return_value=analysis),
-        patch.object(pipeline_module, "insert_patient_note_row"),
-        patch.object(pipeline_module, "upsert_journal_note_vector_safely") as upsert_mock,
+        patch.object(pipeline_module, "insert_patient_note_row") as insert_mock,
     ):
         process_journal_message_from_kafka(payload, settings)
 
-    combined_text = upsert_mock.call_args.args[3]
-    assert "Mood: unknown" in combined_text
+    insert_arguments = insert_mock.call_args.args
+    assert insert_arguments[3] is None
 
 
 def test_process_journal_message_uses_default_tags_when_payload_empty(
@@ -317,7 +282,6 @@ def test_process_journal_message_uses_default_tags_when_payload_empty(
     with (
         patch.object(pipeline_module, "analyze_journal_with_openai", side_effect=capture_analyze),
         patch.object(pipeline_module, "insert_patient_note_row"),
-        patch.object(pipeline_module, "upsert_journal_note_vector_safely"),
     ):
         process_journal_message_from_kafka(payload, settings)
 
@@ -339,10 +303,6 @@ def test_process_journal_message_propagates_supabase_failure(
     with (
         patch.object(pipeline_module, "analyze_journal_with_openai", return_value=analysis),
         patch.object(pipeline_module, "insert_patient_note_row", side_effect=raises),
-        patch.object(pipeline_module, "upsert_journal_note_vector_safely") as upsert_mock,
         pytest.raises(RuntimeError),
     ):
         process_journal_message_from_kafka(payload, settings)
-
-    # Vector upsert is only attempted after insert succeeds.
-    upsert_mock.assert_not_called()

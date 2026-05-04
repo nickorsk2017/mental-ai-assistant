@@ -4,7 +4,7 @@ declare global {
   namespace Entity {
     interface ApiResponse<DataType> {
       success: boolean;
-      data: DataType;
+      data: DataType | null;
       error: string | null;
     }
 

@@ -24,7 +24,7 @@ frontend/mobile/
 
 ## Rule — Shared Logic
 
-- Business hooks, stores, services, schemas, types, and ui-kit components live in `frontend/_common/`.
+- Business hooks, stores, services, schemas, and ui-kit components live in `frontend/_common/`. Shared `Entity.*` types live in `_common/types/` at the repository root.
 - Mobile code imports shared functionality through `@common/shared/*`.
 - Mobile pages and feature components may contain Ionic routing and layout concerns only.
 

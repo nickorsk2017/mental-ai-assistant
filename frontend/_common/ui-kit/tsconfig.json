@@ -11,6 +11,6 @@
     "strict": true,
     "noEmit": true
   },
-  "include": ["./**/*.ts", "./**/*.tsx", "../types/**/*.d.ts"],
+  "include": ["./**/*.ts", "./**/*.tsx", "../../../_common/types/**/*.d.ts"],
   "exclude": ["node_modules"]
 }

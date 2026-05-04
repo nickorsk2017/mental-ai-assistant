@@ -27,7 +27,7 @@ These must never exist inside `frontend/web/`:
 | `services/` | Lives in `frontend/_common/services/` |
 | `hooks/` | Lives in `frontend/_common/hooks/` |
 | `stores/` | Lives in `frontend/_common/stores/` |
-| `types/` | Lives in `frontend/_common/types/` |
+| `types/` | Shared declarations live in `_common/types/` at the repository root |
 | `utils/` | Lives in `frontend/_common/utils/` |
 
 ---

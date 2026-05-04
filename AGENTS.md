@@ -22,10 +22,10 @@ Each subdirectory has its own `AGENTS.md` — read both.
 │   ├── tsconfig.json
 │   ├── web/                   # Next.js + React + Tailwind
 │   ├── mobile/               # Ionic (latest) + React
-│   └── _common/               # hooks, services, stores, types, ui-kit, utils
+│   └── _common/               # hooks, services, stores, ui-kit, utils
 ├── backend/                   # NestJS API
 ├── ai-agents/                 # Python AI services
-├── _common/                   # Server-side shared config: migrations/, eslint/, .env*
+├── _common/                   # Shared config + contracts: migrations/, eslint/, types/, .env*
 ├── docker-compose.yml
 ├── .gitignore
 └── .dockerignore
@@ -46,8 +46,8 @@ Three permanent zones. Files must never cross zone boundaries.
 - `backend/` must never import from `frontend/`
 - `frontend/` must never import from `backend/` — only via HTTP calls
 - `ai-agents/` must communicate with frontend/backend via HTTP, Kafka, or database contracts
-- Root `_common/` is server-side shared config: `migrations/`, `eslint/`, and `.env*` only
-- `frontend/_common/` is client-only: `hooks/`, `services/`, `stores/`, `types/`, `ui-kit/`, `utils/`
+- Root `_common/` holds shared server and cross-zone contracts: `migrations/`, `eslint/`, `types/`, and `.env*`
+- `frontend/_common/` is client-only: `hooks/`, `services/`, `stores/`, `ui-kit/`, `utils/`
 
 ---
 
@@ -89,7 +89,7 @@ Three permanent zones. Files must never cross zone boundaries.
 
 ### 4.1 — Where types live
 
-**Shared / global types** → `frontend/_common/types/*.d.ts` (inside `namespace Entity {}`)
+**Shared / global types** → `_common/types/*.d.ts` at the repository root (inside `namespace Entity {}`). The NestJS app pulls them in via `backend/app/src/shared-entity-types.d.ts` (triple-slash references) so `rootDir` stays `./src`.
 
 **Component prop types** → defined inline inside the same file as the component, not exported, not moved to `_common/types/`
 
@@ -113,13 +113,13 @@ export interface ButtonProps { ... }
 Every type lives inside `declare global { namespace Entity {} }`:
 
 ```typescript
-// frontend/_common/types/entities.d.ts
+// _common/types/http.d.ts (example)
 export {};
 declare global {
   namespace Entity {
     interface ApiResponse<DataType> {
       success: boolean;
-      data: DataType;
+      data: DataType | null;
       error: string | null;
     }
     interface User {
@@ -138,7 +138,7 @@ Local declaration files are allowed inside feature/app packages when they are pa
 
 The restriction applies only to shared entity contracts:
 
-- Shared entity types used by both **web** and **mobile** must live in `frontend/_common/types/*.d.ts`
+- Shared entity types used by **web**, **mobile**, and **backend** must live in `_common/types/*.d.ts`
 - Shared entity types must remain inside `declare global { namespace Entity {} }`
 - Do not duplicate shared entity contracts in app-local `*.d.ts` files
 
@@ -237,7 +237,7 @@ CI/CD files are allowed when they validate the template without hardcoding proje
 
 - [ ] No file exceeds its line limit
 - [ ] No abbreviations in any identifier or file name
-- [ ] All shared types are in `frontend/_common/types/*.d.ts` inside `namespace Entity {}`
+- [ ] All shared types are in `_common/types/*.d.ts` inside `namespace Entity {}`
 - [ ] Frontend clickable button controls use `frontend/_common/ui-kit/Button`
 - [ ] Frontend text-like input controls use `frontend/_common/ui-kit/TextInput`
 - [ ] Frontend multi-line form fields use `frontend/_common/ui-kit/TextArea`
@@ -245,7 +245,7 @@ CI/CD files are allowed when they validate the template without hardcoding proje
 - [ ] Frontend modal dialogs use `frontend/_common/ui-kit/Modal`
 - [ ] `_common/.env` is not committed; `_common/.env.example` is updated if needed
 - [ ] No `frontend/` code imports directly from `backend/`
-- [ ] Root `_common/` contains only `migrations/`, `eslint/`, and `.env*`
+- [ ] Root `_common/` contains only `migrations/`, `eslint/`, `types/`, and `.env*`
 - [ ] Dockerfiles use multi-stage builds with `pnpm install --frozen-lockfile`
 - [ ] Workspace deps use `"workspace:*"` protocol
 - [ ] `pnpm-lock.yaml` is committed and up to date

@@ -59,7 +59,7 @@ const AuthorWelcomeModal = React.memo(function AuthorWelcomeModal({
     >
       <div className="space-y-4 text-sm leading-7 text-calm-text">
         <div>
-          <p className="font-semibold">Author: Nikolay Stepanov</p>
+          <p className="font-semibold">Author: Nikolai Stepanov</p>
           <a
             href={linkedInUrl}
             target="_blank"

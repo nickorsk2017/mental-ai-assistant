@@ -6,7 +6,7 @@ PNPM_CMD := env -u PNPM_STORE_DIR -u npm_config_store_dir pnpm
         supabase-migrate \
         backend api frontend web mobile \
         ai-agents ai \
-        storybook storybook-build \
+        storybook \
         lint lint-fix \
         ci \
         pre-commit-check \
@@ -36,7 +36,6 @@ help:
 	@echo "  make start-all            - Kafka (docker) + backend + web + mobile + ai-agents"
 	@echo "  make ai-agents / ai       - Run AI agents FastAPI (uv), port from AI_AGENTS_PORT (:8080)"
 	@echo "  make storybook            - Run Storybook for @common/shared ui-kit (:6006)"
-	@echo "  make storybook-build      - Build static Storybook into frontend/_common/storybook-static"
 	@echo "  make mobile-build         - Build mobile web bundle"
 	@echo "  make mobile-capacitor-sync - Sync mobile bundle to native platforms"
 	@echo "  make mobile-run-android   - Build, sync, and run on Android"
@@ -117,9 +116,6 @@ ai: ai-agents
 
 storybook: kill-storybook-ports
 	$(PNPM_CMD) --dir frontend storybook
-
-storybook-build:
-	$(PNPM_CMD) --dir frontend run build:storybook
 
 mobile-build:
 	$(PNPM_CMD) --dir frontend/mobile build
@@ -206,6 +202,7 @@ fullstack-mobile: kill-all-ports
 	  wait
 
 start-all: kill-all-ports
+	@$(MAKE) kafka-install
 	@set -a; source $(ENV_FILE); set +a; \
 	  $(PNPM_CMD) --dir backend/app dev & \
 	  $(PNPM_CMD) --dir frontend dev:web & \

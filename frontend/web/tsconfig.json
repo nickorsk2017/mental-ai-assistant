@@ -17,7 +17,7 @@
     ],
     "paths": {
       "@common/types/*": [
-        "../_common/types/*"
+        "../../_common/types/*"
       ],
       "@common/shared/*": [
         "../_common/*"
@@ -41,7 +41,7 @@
     "jest.setup.ts",
     "**/*.ts",
     "**/*.tsx",
-    "../_common/types/**/*.d.ts",
+    "../../_common/types/**/*.d.ts",
     "../_common/schemas/**/*.ts",
     "../_common/themes/calm-theme.ts",
     ".next/types/**/*.ts"

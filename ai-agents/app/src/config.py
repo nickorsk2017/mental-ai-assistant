@@ -43,14 +43,10 @@ class ApplicationSettings(BaseSettings):
 
     openai_api_key: str = ""
     openai_chat_model: str = "gpt-4o-mini"
-    openai_embedding_model: str = "text-embedding-3-small"
 
     supabase_url: str = ""
     supabase_secret_key: str = ""
     supabase_patient_notes_table: str = "patient_notes"
-
-    pinecone_api_key: str = ""
-    pinecone_index_name: str = ""
 
 
 @lru_cache
