@@ -12,8 +12,10 @@ from src.config import ApplicationSettings
 from src.constants import DEFAULT_ACTIVITY_TAGS
 from src.schemas.journal_message import JournalKafkaPayload
 from src.schemas.journal_note_analysis import JournalNoteAnalysis
+from src.schemas.topic_relevance_signal import TopicRelevanceSignal
 from src.services import journal_analysis_pipeline as pipeline_module
 from src.services.journal_analysis_pipeline import (
+    OFF_TOPIC_SKIP_MESSAGE,
     SERVICE_UNAVAILABLE_MESSAGE,
     analyze_journal_with_openai,
     process_journal_message_from_kafka,
@@ -21,6 +23,27 @@ from src.services.journal_analysis_pipeline import (
     safe_parse_kafka_payload,
     sanitize_note_analysis_tags,
 )
+
+
+def patch_topic_classifier_on_topic():
+    """Patch the relevance classifier used by the journal pipeline to pass-through."""
+    return patch.object(
+        pipeline_module,
+        "classify_chat_message_relevance",
+        return_value=TopicRelevanceSignal(is_on_topic=True, off_topic_reply_text=""),
+    )
+
+
+def patch_topic_classifier_off_topic():
+    """Patch the relevance classifier to mark the message as off-topic."""
+    return patch.object(
+        pipeline_module,
+        "classify_chat_message_relevance",
+        return_value=TopicRelevanceSignal(
+            is_on_topic=False,
+            off_topic_reply_text="Off-topic.",
+        ),
+    )
 
 
 def make_payload(**overrides: Any) -> JournalKafkaPayload:
@@ -183,7 +206,10 @@ def test_process_journal_message_returns_unavailable_when_analysis_none(
     settings: ApplicationSettings,
 ) -> None:
     payload = make_payload()
-    with patch.object(pipeline_module, "analyze_journal_with_openai", return_value=None):
+    with (
+        patch_topic_classifier_on_topic(),
+        patch.object(pipeline_module, "analyze_journal_with_openai", return_value=None),
+    ):
         result = process_journal_message_from_kafka(payload, settings)
     assert result == SERVICE_UNAVAILABLE_MESSAGE
 
@@ -194,12 +220,31 @@ def test_process_journal_message_skips_when_should_create_note_false(
     payload = make_payload()
     analysis = make_analysis(should_create_note=False)
     with (
+        patch_topic_classifier_on_topic(),
         patch.object(pipeline_module, "analyze_journal_with_openai", return_value=analysis),
         patch.object(pipeline_module, "insert_patient_note_row") as insert_mock,
     ):
         result = process_journal_message_from_kafka(payload, settings)
 
     assert "Skipped" in result
+    insert_mock.assert_not_called()
+
+
+def test_process_journal_message_short_circuits_when_off_topic(
+    settings: ApplicationSettings,
+) -> None:
+    """Off-topic Kafka messages must skip both analysis AND the Supabase insert."""
+    payload = make_payload(message_text="asdfghjkl 1234")
+
+    with (
+        patch_topic_classifier_off_topic(),
+        patch.object(pipeline_module, "analyze_journal_with_openai") as analyze_mock,
+        patch.object(pipeline_module, "insert_patient_note_row") as insert_mock,
+    ):
+        result = process_journal_message_from_kafka(payload, settings)
+
+    assert result == OFF_TOPIC_SKIP_MESSAGE
+    analyze_mock.assert_not_called()
     insert_mock.assert_not_called()
 
 
@@ -216,6 +261,7 @@ def test_process_journal_message_persists_note_on_happy_path(
     )
 
     with (
+        patch_topic_classifier_on_topic(),
         patch.object(pipeline_module, "analyze_journal_with_openai", return_value=analysis),
         patch.object(pipeline_module, "insert_patient_note_row") as insert_mock,
     ):
@@ -242,6 +288,7 @@ def test_process_journal_message_passes_mood_key_when_label_missing(
     analysis = make_analysis(mood_label=None, mood_key="calm")
 
     with (
+        patch_topic_classifier_on_topic(),
         patch.object(pipeline_module, "analyze_journal_with_openai", return_value=analysis),
         patch.object(pipeline_module, "insert_patient_note_row") as insert_mock,
     ):
@@ -258,6 +305,7 @@ def test_process_journal_message_passes_none_mood_when_missing(
     analysis = make_analysis(mood_label=None, mood_key=None)
 
     with (
+        patch_topic_classifier_on_topic(),
         patch.object(pipeline_module, "analyze_journal_with_openai", return_value=analysis),
         patch.object(pipeline_module, "insert_patient_note_row") as insert_mock,
     ):
@@ -280,6 +328,7 @@ def test_process_journal_message_uses_default_tags_when_payload_empty(
         return analysis
 
     with (
+        patch_topic_classifier_on_topic(),
         patch.object(pipeline_module, "analyze_journal_with_openai", side_effect=capture_analyze),
         patch.object(pipeline_module, "insert_patient_note_row"),
     ):
@@ -301,6 +350,7 @@ def test_process_journal_message_propagates_supabase_failure(
     analysis = make_analysis()
 
     with (
+        patch_topic_classifier_on_topic(),
         patch.object(pipeline_module, "analyze_journal_with_openai", return_value=analysis),
         patch.object(pipeline_module, "insert_patient_note_row", side_effect=raises),
         pytest.raises(RuntimeError),

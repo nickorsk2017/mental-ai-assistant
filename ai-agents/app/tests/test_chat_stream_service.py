@@ -11,10 +11,12 @@ import pytest
 
 from src.config import ApplicationSettings
 from src.schemas.chat_stream_request_body import ChatStreamHistoryMessage
+from src.schemas.topic_relevance_signal import TopicRelevanceSignal
 from src.services.chat_stream_service import (
     build_unconfigured_chat_reply,
     stream_serene_chat_tokens,
 )
+from src.services.topic_relevance_classifier import DEFAULT_OFF_TOPIC_REPLY_TEXT
 
 
 def make_async_chunks(*payloads: Any):
@@ -32,6 +34,25 @@ def make_async_chunks(*payloads: Any):
 
 async def collect_async_iter(async_iterator) -> list[str]:
     return [token async for token in async_iterator]
+
+
+def patch_topic_classifier_on_topic():
+    """Patch the classifier used inside chat_stream_service to always return on-topic."""
+    return patch(
+        "src.services.chat_stream_service.classify_chat_message_relevance",
+        return_value=TopicRelevanceSignal(is_on_topic=True, off_topic_reply_text=""),
+    )
+
+
+def patch_topic_classifier_off_topic(reply_text: str = ""):
+    """Patch the classifier to return an off-topic verdict with optional reply text."""
+    return patch(
+        "src.services.chat_stream_service.classify_chat_message_relevance",
+        return_value=TopicRelevanceSignal(
+            is_on_topic=False,
+            off_topic_reply_text=reply_text,
+        ),
+    )
 
 
 def test_build_unconfigured_chat_reply_returns_safe_message() -> None:
@@ -61,7 +82,7 @@ async def test_stream_yields_string_tokens_from_model(
     fake_model = MagicMock()
     fake_model.astream = make_async_chunks("Hello", " ", "world")
 
-    with patch(
+    with patch_topic_classifier_on_topic(), patch(
         "src.services.chat_stream_service.ChatOpenAI",
         return_value=fake_model,
     ) as chat_openai_class:
@@ -90,7 +111,7 @@ async def test_stream_filters_non_string_and_empty_chunks(
         "there",
     )
 
-    with patch(
+    with patch_topic_classifier_on_topic(), patch(
         "src.services.chat_stream_service.ChatOpenAI",
         return_value=fake_model,
     ):
@@ -114,7 +135,7 @@ async def test_stream_uses_daily_messages_when_provided(
     fake_model = MagicMock()
     fake_model.astream = capture_astream
 
-    with patch(
+    with patch_topic_classifier_on_topic(), patch(
         "src.services.chat_stream_service.ChatOpenAI",
         return_value=fake_model,
     ):
@@ -152,7 +173,7 @@ async def test_stream_appends_local_date_system_message(
     fake_model = MagicMock()
     fake_model.astream = capture_astream
 
-    with patch(
+    with patch_topic_classifier_on_topic(), patch(
         "src.services.chat_stream_service.ChatOpenAI",
         return_value=fake_model,
     ):
@@ -184,7 +205,7 @@ async def test_stream_strips_message_text_for_default_history(
     fake_model = MagicMock()
     fake_model.astream = capture_astream
 
-    with patch(
+    with patch_topic_classifier_on_topic(), patch(
         "src.services.chat_stream_service.ChatOpenAI",
         return_value=fake_model,
     ):
@@ -194,3 +215,45 @@ async def test_stream_strips_message_text_for_default_history(
 
     human_messages = [m for m in captured_messages if type(m).__name__ == "HumanMessage"]
     assert human_messages[0].content == "hello world"
+
+
+@pytest.mark.asyncio
+async def test_stream_short_circuits_with_localized_off_topic_reply(
+    settings: ApplicationSettings,
+) -> None:
+    """Off-topic messages must skip the main LLM call and emit the canned reply."""
+    fake_model = MagicMock()
+    fake_model.astream = make_async_chunks("THIS SHOULD NOT BE STREAMED")
+
+    localized_reply = "Кажется, вы пишете не по теме. Расскажите, как ваше настроение?"
+
+    with patch_topic_classifier_off_topic(localized_reply), patch(
+        "src.services.chat_stream_service.ChatOpenAI",
+        return_value=fake_model,
+    ) as chat_openai_class:
+        tokens = await collect_async_iter(
+            stream_serene_chat_tokens("asdfghjkl 1234", settings)
+        )
+
+    assert tokens == [localized_reply]
+    chat_openai_class.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_stream_uses_default_off_topic_reply_when_classifier_returns_empty(
+    settings: ApplicationSettings,
+) -> None:
+    """If the classifier marks off-topic but produces no localized text, fall back to the default."""
+    fake_model = MagicMock()
+    fake_model.astream = make_async_chunks("nope")
+
+    with patch_topic_classifier_off_topic(""), patch(
+        "src.services.chat_stream_service.ChatOpenAI",
+        return_value=fake_model,
+    ) as chat_openai_class:
+        tokens = await collect_async_iter(
+            stream_serene_chat_tokens("write me python code", settings)
+        )
+
+    assert tokens == [DEFAULT_OFF_TOPIC_REPLY_TEXT]
+    chat_openai_class.assert_not_called()

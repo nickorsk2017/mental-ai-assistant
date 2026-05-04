@@ -12,9 +12,11 @@ from src.prompts.journal_analysis_system_prompt import build_journal_analysis_sy
 from src.schemas.journal_message import JournalKafkaPayload
 from src.schemas.journal_note_analysis import JournalNoteAnalysis
 from src.services.supabase_patient_note_writer import insert_patient_note_row
+from src.services.topic_relevance_classifier import classify_chat_message_relevance
 
 LOGGER = logging.getLogger(__name__)
 SERVICE_UNAVAILABLE_MESSAGE = "Service is unavailable, please contact your doctor."
+OFF_TOPIC_SKIP_MESSAGE = "Skipped off-topic chat message."
 
 
 def process_journal_message_from_kafka(
@@ -22,6 +24,17 @@ def process_journal_message_from_kafka(
     settings: ApplicationSettings,
 ) -> str:
     """Run analysis and insert a patient note row for the journal job."""
+    # Defense in depth: even if the chat endpoint's topic gate was bypassed,
+    # do not persist an off-topic note. We classify here too so Supabase
+    # never receives gibberish / unrelated rows from any Kafka source.
+    relevance_signal = classify_chat_message_relevance(payload.message_text, settings)
+    if not relevance_signal.is_on_topic:
+        LOGGER.info(
+            "Skipped off-topic Kafka journal message correlation=%s",
+            payload.correlation_id,
+        )
+        return OFF_TOPIC_SKIP_MESSAGE
+
     allowed_activity_tags = resolve_allowed_activity_tags(payload.allowed_activity_tags)
     note_analysis = analyze_journal_with_openai(
         payload.message_text,

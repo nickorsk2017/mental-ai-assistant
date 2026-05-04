@@ -8,6 +8,10 @@ from langchain_openai import ChatOpenAI
 from src.config import ApplicationSettings
 from src.prompts.serene_chat_system_prompt import SERENE_CHAT_SYSTEM_PROMPT
 from src.schemas.chat_stream_request_body import ChatStreamHistoryMessage
+from src.services.topic_relevance_classifier import (
+    DEFAULT_OFF_TOPIC_REPLY_TEXT,
+    classify_chat_message_relevance,
+)
 
 
 def build_unconfigured_chat_reply(message_text: str) -> str:
@@ -29,6 +33,16 @@ async def stream_serene_chat_tokens(
 
     if not settings.openai_api_key:
         yield build_unconfigured_chat_reply(stripped)
+        return
+
+    # Topic-relevance gate. If the user's message is off-topic (gibberish,
+    # unrelated question, prompt-injection attempt, spam), short-circuit:
+    # stream the localized canned reply and skip the main Serene call.
+    # Downstream note creation / Kafka publishing also respects this gate
+    # via the same classifier inside the journal analysis pipeline.
+    relevance_signal = classify_chat_message_relevance(stripped, settings)
+    if not relevance_signal.is_on_topic:
+        yield (relevance_signal.off_topic_reply_text or DEFAULT_OFF_TOPIC_REPLY_TEXT)
         return
 
     model = ChatOpenAI(
