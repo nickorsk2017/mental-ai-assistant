@@ -1,5 +1,6 @@
 SHELL := /bin/bash
 ENV_FILE := ./_common/.env
+DOCKER_COMPOSE := docker compose --env-file $(ENV_FILE)
 PNPM_CMD := env -u PNPM_STORE_DIR -u npm_config_store_dir pnpm
 
 .PHONY: help install backend-install frontend-install mobile-install ui-kit-install ai-agents-install kafka-install kafka-stop \
@@ -14,7 +15,7 @@ PNPM_CMD := env -u PNPM_STORE_DIR -u npm_config_store_dir pnpm
         test-coverage test-backend-coverage test-web-coverage test-common-coverage test-mobile-coverage \
         mobile-build mobile-capacitor-sync mobile-run-android mobile-run-ios \
         fullstack-web fullstack-mobile start-all \
-        docker-run-all docker-stop-all \
+        docker-run-all docker-stop-all kill-compose-published-ports \
         kill-backend-ports kill-frontend-ports kill-mobile-ports kill-ai-agents-ports kill-storybook-ports kill-all-ports
 
 help:
@@ -53,7 +54,7 @@ help:
 	@echo "  make test-coverage        - Run test:coverage in all packages above"
 	@echo ""
 	@echo "Docker:"
-	@echo "  make docker-run-all       - Down existing compose stack, then build and start all services (detached)"
+	@echo "  make docker-run-all       - Down stack, free Kafka + compose host ports, then build/start (detached)"
 	@echo "  make docker-stop-all      - Stop, remove containers and compose images"
 	@echo "  make kafka-install        - Pull if needed and start Kafka (apache/kafka, port 9092)"
 	@echo "  make kafka-stop           - Stop the Kafka container only"
@@ -214,27 +215,35 @@ start-all: kill-all-ports
 # ─── Docker ───────────────────────────────────────────────────────────────────
 
 docker-run-all:
-	docker compose down --remove-orphans
+	$(DOCKER_COMPOSE) down --remove-orphans
 	@kafka_container_identifiers=$$(docker ps -aq --filter ancestor=apache/kafka:latest); \
 	if [ -n "$$kafka_container_identifiers" ]; then \
 		echo "Removing other apache/kafka containers (free host port 9092)"; \
 		docker rm -f $$kafka_container_identifiers; \
 	fi
-	docker compose up -d --build
+	@$(MAKE) kill-compose-published-ports
+	$(DOCKER_COMPOSE) up -d --build
 
 docker-stop-all:
-	docker compose down --rmi all --remove-orphans
+	$(DOCKER_COMPOSE) down --rmi all --remove-orphans
 
 kafka-install:
-	docker compose up -d kafka
+	$(DOCKER_COMPOSE) up -d kafka
 
 kafka-stop:
-	docker compose stop kafka
+	$(DOCKER_COMPOSE) stop kafka
 
 supabase-migrate:
 	$(PNPM_CMD) --dir backend/app run migrate:supabase
 
 # ─── Ports ────────────────────────────────────────────────────────────────────
+
+# Published ports for web, api, ai-agents, mobile (see docker-compose.yml / BACKEND_PORT, WEB_PORT, …).
+kill-compose-published-ports:
+	$(call kill_port,3000)
+	$(call kill_port,4000)
+	$(call kill_port,8080)
+	$(call kill_port,8100)
 
 define kill_port
 	@process_id=$$(lsof -ti tcp:$(1)); \

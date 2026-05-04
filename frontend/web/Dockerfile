@@ -19,7 +19,7 @@ COPY frontend/tsconfig.json ./tsconfig.json
 COPY frontend/_common ./_common/
 COPY frontend/web ./web/
 COPY _common/types /app/_common/types
-ARG NEXT_PUBLIC_BACKEND_URL=http://localhost:4000
+ARG NEXT_PUBLIC_BACKEND_URL
 ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm --filter web build
