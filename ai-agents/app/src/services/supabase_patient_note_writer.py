@@ -4,7 +4,7 @@ import logging
 
 import httpx
 
-from src.config import ApplicationSettings
+from src.config import PATIENT_NOTES_TABLE_NAME, ApplicationSettings
 
 LOGGER = logging.getLogger(__name__)
 
@@ -25,8 +25,7 @@ def insert_patient_note_row(
         return
 
     base_url = settings.supabase_url.rstrip("/")
-    table_name = settings.supabase_patient_notes_table
-    request_url = f"{base_url}/rest/v1/{table_name}"
+    request_url = f"{base_url}/rest/v1/{PATIENT_NOTES_TABLE_NAME}"
     payload = {
         "user_id": user_id,
         "correlation_id": correlation_id,
@@ -54,9 +53,9 @@ def insert_patient_note_row(
         if status_code == 404:
             LOGGER.warning(
                 "Supabase table missing or wrong name (404 for %r). "
-                "Create `public.%s` per docs/chat-journaling.md or set SUPABASE_PATIENT_NOTES_TABLE.",
+                "Create `public.%s` per docs/chat-journaling.md.",
                 request_url,
-                table_name,
+                PATIENT_NOTES_TABLE_NAME,
             )
 
             return

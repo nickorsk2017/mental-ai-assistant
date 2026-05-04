@@ -25,6 +25,9 @@ def resolve_environment_file_paths() -> tuple[Path, ...]:
     return tuple(paths)
 
 
+PATIENT_NOTES_TABLE_NAME = "patient_notes"
+
+
 class ApplicationSettings(BaseSettings):
     """Runtime settings for the AI agent HTTP service and Kafka consumer."""
 
@@ -46,7 +49,6 @@ class ApplicationSettings(BaseSettings):
 
     supabase_url: str = ""
     supabase_secret_key: str = ""
-    supabase_patient_notes_table: str = "patient_notes"
 
 
 @lru_cache

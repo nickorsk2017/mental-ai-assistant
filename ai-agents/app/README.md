@@ -4,7 +4,7 @@ Python service: **FastAPI** exposes **`POST /chat/messages/stream`** (Serene cha
 
 ## Configuration
 
-**Single source of truth:** `_common/.env` (see `_common/.env.example`). Relevant keys include `AI_AGENTS_BASE_URL` (used by the API client only), `KAFKA_*`, `OPENAI_*`, `SUPABASE_*`, `SUPABASE_PATIENT_NOTES_TABLE`.
+**Single source of truth:** `_common/.env` (see `_common/.env.example`). Relevant keys include `AI_AGENTS_BASE_URL` (used by the API client only), `KAFKA_*`, `OPENAI_*`, `SUPABASE_*`. Patient notes are persisted to table **`patient_notes`** (constant in `src/config.py`).
 
 `src/config.py` loads, in order:
 

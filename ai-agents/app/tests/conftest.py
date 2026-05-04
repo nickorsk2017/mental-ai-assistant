@@ -28,7 +28,6 @@ def make_settings() -> Callable[..., ApplicationSettings]:
             "kafka_consumer_group": "serene-ai-agents-test",
             "supabase_url": "https://example.supabase.co",
             "supabase_secret_key": "test-supabase-secret",
-            "supabase_patient_notes_table": "patient_notes",
         }
         defaults.update(overrides)
         return ApplicationSettings(**defaults)

@@ -20,7 +20,7 @@ Configure brokers and URLs in **`_common/.env`** (see **`_common/.env.example`**
 | `KAFKA_CHAT_TOPIC` | Topic for journal/chat payloads consumed by Python |
 | `KAFKA_CONSUMER_GROUP` | Consumer group id for the ai-agents consumer |
 | `SUPABASE_*` | Database and service role access for patient notes and related tables |
-| `SUPABASE_PATIENT_NOTES_TABLE` | Target table for async note writes |
+| *(fixed in code)* | Async writes use table **`patient_notes`** (`ai-agents/app/src/config.py`) |
 | `OPENAI_*` | Chat model for streaming and structured journal analysis |
 
 ## Local Kafka
