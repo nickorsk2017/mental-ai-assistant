@@ -1,4 +1,5 @@
 import type { StorybookConfig } from '@storybook/react-vite';
+import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
@@ -21,6 +22,9 @@ const storybookConfig: StorybookConfig = {
       ...(configuration.resolve.alias ?? {}),
       '@common/shared': path.resolve(storybookDirectoryPath, '../..'),
     };
+
+    configuration.plugins ??= [];
+    configuration.plugins.push(tailwindcss());
 
     return configuration;
   },

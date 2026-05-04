@@ -1,4 +1,5 @@
 import type { Preview } from '@storybook/react';
+import './tailwind.css';
 
 const storybookPreview: Preview = {
   parameters: {
@@ -8,6 +9,13 @@ const storybookPreview: Preview = {
         color: /(background|color)$/i,
         date: /Date$/i,
       },
+    },
+    backgrounds: {
+      default: 'calm',
+      values: [
+        { name: 'calm', value: '#f4f7ff' },
+        { name: 'surface', value: '#ffffff' },
+      ],
     },
     viewport: {
       viewports: {

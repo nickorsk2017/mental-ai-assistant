@@ -1,4 +1,4 @@
- 'use client';
+'use client';
 
 import React, { useId, useState } from 'react';
 import { Icon } from '../../atoms/Icon/Icon';
@@ -48,6 +48,7 @@ export default React.memo(function TextInput({
       {label ? <label className="text-label text-calm-muted" htmlFor={id}>{label}</label> : null}
       <div className="inline-flex w-full items-center gap- relative">
         <input
+          id={id}
           type={currentType}
           value={value}
           placeholder={placeholder}

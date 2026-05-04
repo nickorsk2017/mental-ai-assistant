@@ -1,0 +1,19 @@
+/*
+ * Tailwind entry for Storybook. Loaded by `preview.ts` so every story renders
+ * with the same utility classes that the host apps (web, mobile) compile.
+ *
+ * Tailwind v4 picks up the legacy-style `tailwind.config.ts` via `@config`
+ * and scans the content globs declared there. The Storybook Vite plugin
+ * (`@tailwindcss/vite`) wires the compilation step.
+ */
+@config "../../tailwind.config.ts";
+@import "tailwindcss";
+
+/* Background that matches the host apps' calm-theme surface. */
+html,
+body,
+#storybook-root {
+  background-color: var(--color-calm-background, #f4f7ff);
+  color: var(--color-calm-text, #313a54);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
