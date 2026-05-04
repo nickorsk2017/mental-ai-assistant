@@ -66,7 +66,7 @@ export function AssistantPage(): React.JSX.Element {
         </div>
       </IonContent>
       <IonFooter className="ion-no-border overflow-visible">
-        <IonToolbar className="min-h-0 bg-transparent  py-2 [--background:transparent] overflow-visible">
+        <IonToolbar className="min-h-0 py-4 [--background:transparent] overflow-visible">
           <ChatInput
             textareaReference={textareaReference}
             inputElementId="patient-chat-composer-mobile"

@@ -6,7 +6,7 @@ export function AuthPage(): React.JSX.Element {
   return (
     <IonPage>
       <IonContent fullscreen className="ion-padding">
-        <AuthForm />
+        <AuthForm className="pt-8" />
       </IonContent>
     </IonPage>
   );

@@ -7,7 +7,7 @@ import { getActiveSession } from '@common/shared/services';
 import { useAuthenticationStore } from '@common/shared/stores/useAuthStore';
 import { AuthorWelcomeModal } from '@common/shared/ui-kit';
 import { registerMobileBackendClient } from '@common/shared/utils';
-import { createCapacitorMobileBackendClient } from './features/CapacitorMobileBackendClient';
+import { createCapacitorMobileBackendClient } from './libs/CapacitorMobileBackendClient';
 import { TabsLayout } from './features/patient-panel/TabsLayout';
 import { AuthPage } from './pages/AuthPage';
 

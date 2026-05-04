@@ -73,9 +73,16 @@ export default React.memo(function Modal({
     return null;
   }
 
+  const usesMobileRuntimeLayout = process.env.NEXT_PUBLIC_RUNTIME_PLATFORM === 'mobile';
+
   return createPortal(
     <div
-      className="fixed inset-0 z-[1000] flex h-dvh w-screen items-center justify-center bg-calm-text/25 px-4 py-6 backdrop-blur-sm"
+      className={cx(
+        'fixed inset-0 z-[1000] flex h-dvh w-screen bg-calm-text/25 backdrop-blur-sm',
+        usesMobileRuntimeLayout
+          ? 'min-h-0 flex-col p-0'
+          : 'items-center justify-center px-4 py-6',
+      )}
       onClick={(pointerEvent) => {
         if (pointerEvent.target === pointerEvent.currentTarget) {
           onClose();
@@ -87,7 +94,10 @@ export default React.memo(function Modal({
         role="dialog"
         aria-labelledby={formId ? `${formId}-title` : undefined}
         className={cx(
-          'flex max-h-full w-full max-w-[42rem] flex-col overflow-hidden rounded-lg border border-calm-border bg-calm-surface shadow-medium',
+          'flex min-h-0 flex-col overflow-hidden border border-calm-border bg-calm-surface shadow-medium',
+          usesMobileRuntimeLayout
+            ? 'min-h-0 w-full max-w-none flex-1 rounded-none'
+            : 'max-h-full w-full max-w-[42rem] rounded-lg',
           className,
         )}
       >

@@ -20,16 +20,14 @@ const REFRESH_TOKEN_COOKIE_KEY = 'refreshToken';
 let activeAccessToken: string | null = null;
 let activeRefreshToken: string | null = null;
 
-function resolveRuntimePlatform(): 'web' | 'mobile' {
-  return process.env.NEXT_PUBLIC_RUNTIME_PLATFORM === 'mobile' ? 'mobile' : 'web';
-}
-
 function shouldManageClientCookies(): boolean {
-  return typeof document !== 'undefined' && resolveRuntimePlatform() === 'mobile';
+  return typeof document !== 'undefined' && process.env.NEXT_PUBLIC_RUNTIME_PLATFORM === 'mobile';
 }
 
 function buildClientPlatformHeaders(): Record<string, string> {
-  return { 'x-client-platform': resolveRuntimePlatform() };
+  return {
+    'x-client-platform': process.env.NEXT_PUBLIC_RUNTIME_PLATFORM === 'mobile' ? 'mobile' : 'web',
+  };
 }
 
 function extractMobileSession(

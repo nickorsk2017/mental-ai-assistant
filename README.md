@@ -34,6 +34,65 @@ Monorepo for the Mental Health web app, Ionic mobile app, NestJS backend API, an
 
 ---
 
+## Getting started with Docker
+
+This is the minimal path to run the full stack in Docker and open the web application in your browser.
+
+### 1. Configure `_common/.env`
+
+1. Copy the environment template:
+
+   ```bash
+   cp _common/.env.example _common/.env
+   ```
+
+2. Open **`_common/.env`** in an editor. You only need to fill in **Supabase** credentials and **OpenAI**; leave the rest of the file **unchanged** from the template unless you know you need different ports or URLs.
+
+   **You must set:**
+
+   | Variable | Purpose |
+   |----------|---------|
+   | `SUPABASE_URL` | Your Supabase project URL |
+   | `SUPABASE_PUBLISHABLE_KEY` | Publishable (anon) key from the Supabase dashboard |
+   | `SUPABASE_SECRET_KEY` | Secret (service role) key — keep private |
+   | `SUPABASE_DB_URL` | Direct Postgres connection string (from Supabase) |
+   | `SUPABASE_MIGRATE_DB_URL` | Prefer the **Session pooler** URI for migrations when direct `db.*` access is awkward (see comments in `.env.example`) |
+   | `OPENAI_API_KEY` | API key for OpenAI (used by the AI agents service) |
+
+   All other variables in `.env.example` (ports, `BACKEND_CORS_ORIGIN`, Kafka, compose overrides, etc.) can stay as provided for a standard local Docker run.
+
+### 2. Start all services
+
+From the **repository root**:
+
+```bash
+make docker-run-all
+```
+
+This runs `docker compose` with **`_common/.env`**, rebuilds images if needed, and starts **Kafka**, **api** (NestJS), **web** (Next.js), **mobile** (Vite shell), and **ai-agents** (FastAPI). The first run may take several minutes while images build.
+
+### 3. Open the web app
+
+In your browser, open:
+
+**http://localhost:3000**
+
+(`WEB_PORT` in `_common/.env` defaults to `3000`; change the URL if you changed that port.)
+
+### Optional: database migrations
+
+If you see errors about missing tables when using auth, notes, or chat journaling, apply Supabase SQL migrations **once** per database (with the same `_common/.env`):
+
+```bash
+make supabase-migrate
+```
+
+### Troubleshooting
+
+If Docker is running, ports are not blocked by another process, and you have set Supabase + OpenAI as above, but something still fails, you can reach the author on Telegram: **[@niclstepdev](https://t.me/niclstepdev)**.
+
+---
+
 ## Quick start
 
 ### 1. Environment

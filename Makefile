@@ -119,6 +119,16 @@ ai: ai-agents
 storybook: kill-storybook-ports
 	$(PNPM_CMD) --dir frontend storybook
 
+mobile-build:
+	@set -a; source $(ENV_FILE); set +a; \
+	  $(PNPM_CMD) --dir frontend/mobile build
+
+mobile-capacitor-sync: mobile-build
+	$(PNPM_CMD) --dir frontend/mobile capacitor:sync
+
+mobile-run-android: mobile-capacitor-sync
+	$(PNPM_CMD) --dir frontend/mobile capacitor:run:android
+
 # Debug APK: frontend/mobile/android/app/build/outputs/apk/debug/app-debug.apk
 android-build-apk: mobile-capacitor-sync
 	cd frontend/mobile/android && ./gradlew assembleDebug

@@ -3,6 +3,7 @@ import { softCalmTheme, tailwindBoxShadowTokens } from '../_common/themes/calm-t
 
 const calmColorPalette = {
   primary: softCalmTheme.colors.primary,
+  "primary/18": `rgb(228 138 58 / 0.18)`,
   black: softCalmTheme.colors.black,
   'black-soft': softCalmTheme.colors.blackSoft,
   'black-soft-deep': softCalmTheme.colors.blackSoftDeep,

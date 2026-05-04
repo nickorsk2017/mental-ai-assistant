@@ -29,7 +29,7 @@ export function PageHeader({
   }, [logout, ionRouter]);
 
   return (
-    <IonHeader className="ion-no-border !bg-transparent !shadow-none [--background:transparent] [--border-width:0] [--box-shadow:none]">
+    <IonHeader className="ion-no-border  !shadow-none bg-surface [--border-width:0] [--box-shadow:none]">
       <IonToolbar className="mt-[10px] min-h-0 !border-none !bg-transparent !shadow-none !backdrop-blur-none [--background:transparent] [--border-width:0] [--box-shadow:none] px-4 pb-3 pt-[calc(1rem+var(--ion-safe-area-top,0px))]">
         <div className={roundedPageHeaderClassNames}>
           <div className="min-w-0 flex-1">
