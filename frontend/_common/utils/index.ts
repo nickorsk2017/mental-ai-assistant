@@ -16,7 +16,12 @@ export {
   parseCalendarMonthInputOrThisMonth,
 } from './calendarMonthInputSafeParse';
 export {default as cx} from './cx';
-export { requestBackend } from './requestBackend';
+export {
+  registerMobileBackendClient,
+  requestBackend,
+  type BackendRequestOptions,
+  type MobileBackendClient,
+} from './requestBackend';
 export {
   buildDayHourMoodSeries,
   buildMonthDayMoodSeries,

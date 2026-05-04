@@ -14,6 +14,7 @@ PNPM_CMD := env -u PNPM_STORE_DIR -u npm_config_store_dir pnpm
         test test-backend test-web test-common test-mobile test-ai \
         test-coverage test-backend-coverage test-web-coverage test-common-coverage test-mobile-coverage \
         mobile-build mobile-capacitor-sync mobile-run-android mobile-run-ios \
+        android-build-apk android-studio \
         fullstack-web fullstack-mobile start-all \
         docker-run-all docker-stop-all kill-compose-published-ports \
         kill-backend-ports kill-frontend-ports kill-mobile-ports kill-ai-agents-ports kill-storybook-ports kill-all-ports
@@ -40,6 +41,8 @@ help:
 	@echo "  make mobile-build         - Build mobile web bundle"
 	@echo "  make mobile-capacitor-sync - Sync mobile bundle to native platforms"
 	@echo "  make mobile-run-android   - Build, sync, and run on Android"
+	@echo "  make android-build-apk    - Build, sync Android, then Gradle assembleDebug (APK path printed)"
+	@echo "  make android-studio       - Open Android Studio on frontend/mobile/android (macOS)"
 	@echo "  make mobile-run-ios       - Build, sync, and run on iOS"
 	@echo "  make lint                 - Run backend + web + mobile linters"
 	@echo "  make lint-fix             - Run backend + web + mobile linters with --fix"
@@ -116,14 +119,14 @@ ai: ai-agents
 storybook: kill-storybook-ports
 	$(PNPM_CMD) --dir frontend storybook
 
-mobile-build:
-	$(PNPM_CMD) --dir frontend/mobile build
+# Debug APK: frontend/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+android-build-apk: mobile-capacitor-sync
+	cd frontend/mobile/android && ./gradlew assembleDebug
+	@echo "APK: frontend/mobile/android/app/build/outputs/apk/debug/app-debug.apk"
 
-mobile-capacitor-sync: mobile-build
-	$(PNPM_CMD) --dir frontend/mobile capacitor:sync
-
-mobile-run-android: mobile-capacitor-sync
-	$(PNPM_CMD) --dir frontend/mobile capacitor:run:android
+# macOS: opens the Capacitor Android project; run or debug the app from the IDE after syncing (make mobile-capacitor-sync).
+android-studio:
+	open -a "Android Studio" "$(CURDIR)/frontend/mobile/android"
 
 mobile-run-ios: mobile-capacitor-sync
 	$(PNPM_CMD) --dir frontend/mobile capacitor:run:ios
@@ -233,10 +236,10 @@ kafka-install:
 kafka-stop:
 	$(DOCKER_COMPOSE) stop kafka
 
+# ─── Ports ────────────────────────────────────────────────────────────────────
+
 supabase-migrate:
 	$(PNPM_CMD) --dir backend/app run migrate:supabase
-
-# ─── Ports ────────────────────────────────────────────────────────────────────
 
 # Published ports for web, api, ai-agents, mobile (see docker-compose.yml / BACKEND_PORT, WEB_PORT, …).
 kill-compose-published-ports:

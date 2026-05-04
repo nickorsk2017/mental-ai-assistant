@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { requestBackend } from './requestBackend';
+import { registerMobileBackendClient, requestBackend } from './requestBackend';
+import type { MobileBackendClient } from './requestBackendTypes';
 
 const fetchMock = jest.fn();
 
@@ -9,12 +10,14 @@ describe('requestBackend', () => {
   beforeEach(() => {
     global.fetch = fetchMock as unknown as typeof fetch;
     fetchMock.mockReset();
+    registerMobileBackendClient(undefined);
     delete process.env.NEXT_PUBLIC_BACKEND_URL;
     delete process.env.BACKEND_URL;
   });
 
   afterEach(() => {
     global.fetch = originalFetch;
+    registerMobileBackendClient(undefined);
   });
 
   it('calls fetch with default base URL when env is unset', async () => {
@@ -130,5 +133,54 @@ describe('requestBackend', () => {
 
     expect(result.success).toBe(false);
     expect(result.error).toBe('Network down');
+  });
+
+  it('uses mobileClient when registered instead of fetch', async () => {
+    const mobileClient: MobileBackendClient = {
+      requestJson: jest.fn(async () => ({
+        status: 200,
+        body: { success: true, data: { id: 'user-1' }, error: null },
+      })),
+    };
+
+    registerMobileBackendClient(mobileClient);
+
+    const result = await requestBackend<{ id: string }>('/notes', { method: 'GET' });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(mobileClient.requestJson).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: 'http://localhost:4000/notes',
+        method: 'GET',
+      }),
+    );
+    expect(result.success).toBe(true);
+    expect(result.data).toEqual({ id: 'user-1' });
+  });
+
+  it('prefers options.mobileClient over registered client', async () => {
+    const registeredClient: MobileBackendClient = {
+      requestJson: jest.fn(async () => ({
+        status: 200,
+        body: { success: true, data: null, error: null },
+      })),
+    };
+    const overrideClient: MobileBackendClient = {
+      requestJson: jest.fn(async () => ({
+        status: 200,
+        body: { success: true, data: { source: 'override' }, error: null },
+      })),
+    };
+
+    registerMobileBackendClient(registeredClient);
+
+    const result = await requestBackend<{ source: string }>('/x', {
+      method: 'GET',
+      mobileClient: overrideClient,
+    });
+
+    expect(registeredClient.requestJson).not.toHaveBeenCalled();
+    expect(overrideClient.requestJson).toHaveBeenCalled();
+    expect(result.data).toEqual({ source: 'override' });
   });
 });

@@ -1,10 +1,13 @@
-type BackendRequestOptions = {
-  method: string;
-  body?: unknown;
-  accessToken?: string;
-  credentials?: RequestCredentials;
-  headers?: Record<string, string>;
-};
+import { requestBackendThroughMobileClient } from './requestBackendMobileDispatch';
+import type { BackendRequestOptions, MobileBackendClient } from './requestBackendTypes';
+
+export type { BackendRequestOptions, MobileBackendClient } from './requestBackendTypes';
+
+let registeredMobileBackendClient: MobileBackendClient | undefined;
+
+export function registerMobileBackendClient(client?: MobileBackendClient | undefined): void {
+  registeredMobileBackendClient = client;
+}
 
 function resolveBackendUrl(): string | undefined {
   return (
@@ -24,6 +27,11 @@ export async function requestBackend<DataType>(
 ): Promise<Entity.ApiResponse<DataType>> {
   const backendUrl = resolveBackendUrl();
   if (!backendUrl) return createErrorResponse<DataType>('Missing backend configuration.');
+
+  const mobileClient = options.mobileClient ?? registeredMobileBackendClient;
+  if (mobileClient) {
+    return requestBackendThroughMobileClient<DataType>(backendUrl, pathname, options, mobileClient);
+  }
 
   try {
     const response = await fetch(`${backendUrl}${pathname}`, {

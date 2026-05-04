@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fallback for API 23; API 24+ uses drawable-v24/ic_launcher_foreground.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#C4956A"
+        android:pathData="M92,54A38,38 0 1,1 16,54A38,38 0 1,1 92,54" />
+    <path
+        android:fillAlpha="0.35"
+        android:fillColor="#F2E0D0"
+        android:pathData="M72,42A22,22 0 1,1 28,42A22,22 0 1,1 72,42" />
+    <path
+        android:fillAlpha="0.95"
+        android:fillColor="#FFFFFF"
+        android:pathData="M38,38m-10,0a10,10 0 1,0 20,0a10,10 0 1,0 -20,0" />
+</vector>

@@ -1,3 +1,4 @@
+import { Capacitor } from '@capacitor/core';
 import { useEffect } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
@@ -5,6 +6,8 @@ import { IonReactRouter } from '@ionic/react-router';
 import { getActiveSession } from '@common/shared/services';
 import { useAuthenticationStore } from '@common/shared/stores/useAuthStore';
 import { AuthorWelcomeModal } from '@common/shared/ui-kit';
+import { registerMobileBackendClient } from '@common/shared/utils';
+import { createCapacitorMobileBackendClient } from './features/CapacitorMobileBackendClient';
 import { TabsLayout } from './features/patient-panel/TabsLayout';
 import { AuthPage } from './pages/AuthPage';
 
@@ -16,6 +19,18 @@ export function App(): React.JSX.Element {
   const setCurrentUser = useAuthenticationStore((state) => state.setCurrentUser);
   const clearCurrentUser = useAuthenticationStore((state) => state.clearCurrentUser);
   const markSessionInitialized = useAuthenticationStore((state) => state.markSessionInitialized);
+
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      registerMobileBackendClient(createCapacitorMobileBackendClient());
+    } else {
+      registerMobileBackendClient();
+    }
+
+    return () => {
+      registerMobileBackendClient();
+    };
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
