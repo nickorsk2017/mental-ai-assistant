@@ -28,11 +28,24 @@ jobs:
             backend/app/pnpm-lock.yaml
             frontend/pnpm-lock.yaml
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
       - name: Install backend dependencies
         run: pnpm --dir backend/app install --frozen-lockfile
 
       - name: Install frontend workspace dependencies
         run: pnpm --dir frontend install --frozen-lockfile
+
+      - name: Install AI agents dependencies (incl. dev)
+        run: uv sync --directory ai-agents/app --group dev
 
       - name: Run CI checks
         run: make ci
