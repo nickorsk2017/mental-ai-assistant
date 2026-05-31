@@ -5,7 +5,7 @@ from fastapi.responses import StreamingResponse
 
 from src.config import load_application_settings
 from src.schemas.chat_stream_request_body import ChatStreamRequestBody
-from src.services.chat_stream_service import stream_serene_chat_tokens
+from src.services.chat_stream_service import stream_assistant_chat_tokens
 
 MINIMUM_JOURNAL_MESSAGE_LENGTH = 50
 
@@ -32,7 +32,7 @@ async def stream_journal_chat_response(
     settings = load_application_settings()
 
     async def token_iterator():
-        async for chunk in stream_serene_chat_tokens(
+        async for chunk in stream_assistant_chat_tokens(
             trimmed,
             settings,
             body.daily_messages,

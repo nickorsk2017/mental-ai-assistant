@@ -12,6 +12,7 @@ from src.services.kafka_journal_consumer import (
     start_kafka_consumer_background,
     stop_kafka_consumer_background,
 )
+from src.services.langsmith_tracing_service import configure_langsmith_tracing
 
 logging.basicConfig(level=logging.INFO)
 
@@ -28,6 +29,7 @@ configure_third_party_logging_levels()
 async def lifespan(fastapi_application: FastAPI):
     """Start background workers when the process boots; stop them on shutdown."""
     settings = load_application_settings()
+    configure_langsmith_tracing(settings)
     shutdown_event = start_kafka_consumer_background(settings)
     fastapi_application.state.kafka_shutdown_event = shutdown_event
     yield
@@ -35,7 +37,7 @@ async def lifespan(fastapi_application: FastAPI):
 
 
 application = FastAPI(
-    title="Serene AI Agents",
+    title="Assistant AI Agents",
     description="FastAPI service for LangChain, OpenAI, and Kafka-driven journal processing.",
     lifespan=lifespan,
 )

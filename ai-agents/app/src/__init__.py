@@ -1,1 +1,1 @@
-"""Serene AI agents FastAPI application package."""
+"""Assistant AI agents FastAPI application package."""

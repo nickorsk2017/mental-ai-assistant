@@ -46,7 +46,7 @@ export function AssistantPage(): React.JSX.Element {
                 Today
               </div>
               <div className="flex flex-col items-center px-4 pt-6 text-center">
-                <div className="serene-chat-sphere" aria-hidden />
+                <div className="assistant-chat-sphere" aria-hidden />
                 <h2 className="mt-4 text-lg font-semibold text-calm-text">How can I help today?</h2>
                 <p className="mt-2 max-w-md text-sm leading-6 text-calm-muted">
                   Describe your mood or something from your day — replies will stream here. Enter sends; Shift+Enter

@@ -1,10 +1,10 @@
 # AI agents (Python / FastAPI)
 
-Python service: **FastAPI** exposes **`POST /chat/messages/stream`** (Serene chat, streamed to the NestJS API), runs a **Kafka** consumer for async journaling, and persists **patient notes** to **Supabase** (`patient_notes`).
+Python service: **FastAPI** exposes **`POST /chat/messages/stream`** (Assistant chat, streamed to the NestJS API), runs a **Kafka** consumer for async journaling, and persists **patient notes** to **Supabase** (`patient_notes`).
 
 ## Configuration
 
-**Single source of truth:** `_common/.env` (see `_common/.env.example`). Relevant keys include `AI_AGENTS_BASE_URL` (used by the API client only), `KAFKA_*`, `OPENAI_*`, `SUPABASE_*`. Patient notes are persisted to table **`patient_notes`** (constant in `src/config.py`).
+**Single source of truth:** `_common/.env` (see `_common/.env.example`). Relevant keys include `AI_AGENTS_BASE_URL` (used by the API client only), `KAFKA_*`, `OPENAI_*`, `LANGSMITH_*`, `SUPABASE_*`. Patient notes are persisted to table **`patient_notes`** (constant in `src/config.py`).
 
 `src/config.py` loads, in order:
 
@@ -19,7 +19,7 @@ Process environment variables still override file values.
 |------|------|
 | `src/main.py` | FastAPI app and lifespan (Kafka consumer thread) |
 | `src/config.py` | Pydantic settings |
-| `src/prompts/` | Serene system prompt for REST chat |
+| `src/prompts/` | Assistant system prompt for REST chat |
 | `src/routers/` | HTTP routes (`GET /health`, `POST /chat/messages/stream`) |
 | `src/schemas/` | Pydantic models for Kafka/API payloads |
 | `src/services/` | Chat stream, Kafka pipeline, Supabase note writer |
@@ -38,6 +38,20 @@ uv run uvicorn src.main:application --reload --host 0.0.0.0 --port 8080
 Or from the repository root: `make ai-agents`.
 
 Bind address and port follow `AI_AGENTS_HOST` and `AI_AGENTS_PORT` from the environment (see `_common/.env`).
+
+## LangSmith tracing
+
+Set these values in `_common/.env` to send LangChain traces to LangSmith:
+
+```bash
+LANGSMITH_TRACING=true
+LANGSMITH_API_KEY=...
+LANGSMITH_ENDPOINT=https://api.smith.langchain.com
+LANGSMITH_PROJECT=assistant-ai-agents
+LANGSMITH_WORKSPACE_ID=
+```
+
+`LANGSMITH_WORKSPACE_ID` is only needed when the API key can access multiple workspaces. Non-US LangSmith accounts should set the regional `LANGSMITH_ENDPOINT`.
 
 ## Pipeline
 

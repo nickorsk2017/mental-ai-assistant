@@ -14,7 +14,7 @@ from src.schemas.chat_stream_request_body import ChatStreamHistoryMessage
 from src.schemas.topic_relevance_signal import TopicRelevanceSignal
 from src.services.chat_stream_service import (
     build_unconfigured_chat_reply,
-    stream_serene_chat_tokens,
+    stream_assistant_chat_tokens,
 )
 from src.services.topic_relevance_classifier import DEFAULT_OFF_TOPIC_REPLY_TEXT
 
@@ -22,7 +22,7 @@ from src.services.topic_relevance_classifier import DEFAULT_OFF_TOPIC_REPLY_TEXT
 def make_async_chunks(*payloads: Any):
     """Return an async-generator factory that yields chunk-shaped objects."""
 
-    async def _astream(_messages):
+    async def _astream(_messages, **_keyword_arguments):
         for payload in payloads:
             if isinstance(payload, str):
                 yield SimpleNamespace(content=payload)
@@ -69,7 +69,7 @@ async def test_stream_returns_safe_reply_when_openai_key_missing(
     settings = make_settings(openai_api_key="")
 
     tokens = await collect_async_iter(
-        stream_serene_chat_tokens("I had a long day", settings)
+        stream_assistant_chat_tokens("I had a long day", settings)
     )
 
     assert tokens == [build_unconfigured_chat_reply("I had a long day")]
@@ -87,7 +87,7 @@ async def test_stream_yields_string_tokens_from_model(
         return_value=fake_model,
     ) as chat_openai_class:
         tokens = await collect_async_iter(
-            stream_serene_chat_tokens("How are you doing today?", settings)
+            stream_assistant_chat_tokens("How are you doing today?", settings)
         )
 
     assert tokens == ["Hello", " ", "world"]
@@ -116,7 +116,7 @@ async def test_stream_filters_non_string_and_empty_chunks(
         return_value=fake_model,
     ):
         tokens = await collect_async_iter(
-            stream_serene_chat_tokens("Tell me a joke please.", settings)
+            stream_assistant_chat_tokens("Tell me a joke please.", settings)
         )
 
     assert tokens == ["Hi", "there"]
@@ -128,7 +128,7 @@ async def test_stream_uses_daily_messages_when_provided(
 ) -> None:
     captured_messages: list[Any] = []
 
-    async def capture_astream(messages):
+    async def capture_astream(messages, **_keyword_arguments):
         captured_messages.extend(messages)
         yield SimpleNamespace(content="ok")
 
@@ -140,7 +140,7 @@ async def test_stream_uses_daily_messages_when_provided(
         return_value=fake_model,
     ):
         await collect_async_iter(
-            stream_serene_chat_tokens(
+            stream_assistant_chat_tokens(
                 "Latest message",
                 settings,
                 daily_messages=[
@@ -166,7 +166,7 @@ async def test_stream_appends_local_date_system_message(
 ) -> None:
     captured_messages: list[Any] = []
 
-    async def capture_astream(messages):
+    async def capture_astream(messages, **_keyword_arguments):
         captured_messages.extend(messages)
         yield SimpleNamespace(content="ok")
 
@@ -178,7 +178,7 @@ async def test_stream_appends_local_date_system_message(
         return_value=fake_model,
     ):
         await collect_async_iter(
-            stream_serene_chat_tokens(
+            stream_assistant_chat_tokens(
                 "I felt tired this morning",
                 settings,
                 client_local_date="2026-05-03",
@@ -198,7 +198,7 @@ async def test_stream_strips_message_text_for_default_history(
 ) -> None:
     captured_messages: list[Any] = []
 
-    async def capture_astream(messages):
+    async def capture_astream(messages, **_keyword_arguments):
         captured_messages.extend(messages)
         yield SimpleNamespace(content="ok")
 
@@ -210,7 +210,7 @@ async def test_stream_strips_message_text_for_default_history(
         return_value=fake_model,
     ):
         await collect_async_iter(
-            stream_serene_chat_tokens("   hello world   ", settings)
+            stream_assistant_chat_tokens("   hello world   ", settings)
         )
 
     human_messages = [m for m in captured_messages if type(m).__name__ == "HumanMessage"]
@@ -225,14 +225,14 @@ async def test_stream_short_circuits_with_localized_off_topic_reply(
     fake_model = MagicMock()
     fake_model.astream = make_async_chunks("THIS SHOULD NOT BE STREAMED")
 
-    localized_reply = "Кажется, вы пишете не по теме. Расскажите, как ваше настроение?"
+    localized_reply = "This chat is for your mood. Please share how you feel today."
 
     with patch_topic_classifier_off_topic(localized_reply), patch(
         "src.services.chat_stream_service.ChatOpenAI",
         return_value=fake_model,
     ) as chat_openai_class:
         tokens = await collect_async_iter(
-            stream_serene_chat_tokens("asdfghjkl 1234", settings)
+            stream_assistant_chat_tokens("asdfghjkl 1234", settings)
         )
 
     assert tokens == [localized_reply]
@@ -252,7 +252,7 @@ async def test_stream_uses_default_off_topic_reply_when_classifier_returns_empty
         return_value=fake_model,
     ) as chat_openai_class:
         tokens = await collect_async_iter(
-            stream_serene_chat_tokens("write me python code", settings)
+            stream_assistant_chat_tokens("write me python code", settings)
         )
 
     assert tokens == [DEFAULT_OFF_TOPIC_REPLY_TEXT]

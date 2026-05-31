@@ -41,11 +41,17 @@ class ApplicationSettings(BaseSettings):
     ai_agents_port: int = 8080
 
     kafka_brokers: str = ""
-    kafka_chat_topic: str = "serene.chat.requests"
-    kafka_consumer_group: str = "serene-ai-agents"
+    kafka_chat_topic: str = "assistant.chat.requests"
+    kafka_consumer_group: str = "assistant-ai-agents"
 
     openai_api_key: str = ""
     openai_chat_model: str = "gpt-4o-mini"
+
+    langsmith_tracing: bool = False
+    langsmith_api_key: str = ""
+    langsmith_endpoint: str = "https://api.smith.langchain.com"
+    langsmith_project: str = "assistant-ai-agents"
+    langsmith_workspace_id: str = ""
 
     supabase_url: str = ""
     supabase_secret_key: str = ""

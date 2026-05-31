@@ -8,7 +8,7 @@ import {
   openPatientChatStream,
 } from '@common/shared/services';
 
-const patientChatFirstMessageStorageKey = 'serenePatientChatHasSentFirstMessage';
+const patientChatFirstMessageStorageKey = 'assistantPatientChatHasSentFirstMessage';
 
 function replaceLastAssistantMessage(
   previousMessages: Entity.PatientChatMessage[],

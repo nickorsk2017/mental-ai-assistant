@@ -56,7 +56,7 @@ const PatientChatWorkspace = React.memo(function PatientChatWorkspace() {
               </div>
 
               <div className="mx-auto flex max-w-[48rem] flex-col items-center px-4 pt-8 text-center sm:px-8">
-                <div className="serene-chat-sphere" aria-hidden />
+                <div className="assistant-chat-sphere" aria-hidden />
               </div>
 
               <div className="sticky top-0 z-20 my-6 bg-white/20 px-4 text-center text-lg font-semibold text-calm-text backdrop-blur-xl sm:px-8">

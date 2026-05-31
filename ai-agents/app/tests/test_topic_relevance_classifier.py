@@ -44,7 +44,7 @@ def test_returns_off_topic_when_model_signals_off_topic(
     fake_model = _build_fake_model(
         TopicRelevanceSignal(
             is_on_topic=False,
-            off_topic_reply_text="Кажется, вы пишете не по теме. Расскажите, как ваше настроение?",
+            off_topic_reply_text="This chat is for your mood. Please share how you feel today.",
         )
     )
 
@@ -55,7 +55,7 @@ def test_returns_off_topic_when_model_signals_off_topic(
         signal = classify_chat_message_relevance("asdfghjkl 1234", settings)
 
     assert signal.is_on_topic is False
-    assert "не по теме" in signal.off_topic_reply_text
+    assert "mood" in signal.off_topic_reply_text
     chat_openai_class.assert_called_once_with(
         api_key=settings.openai_api_key,
         model=settings.openai_chat_model,
@@ -75,7 +75,7 @@ def test_returns_on_topic_for_wellness_message(
         return_value=fake_model,
     ):
         signal = classify_chat_message_relevance(
-            "Сегодня очень тревожно, плохо спал, оценка настроения 4.",
+            "I feel very anxious today, slept badly, and my mood score is 4.",
             settings,
         )
 
@@ -124,7 +124,7 @@ def test_strips_whitespace_from_input(
 ) -> None:
     captured: dict[str, list] = {}
 
-    def capture(messages):
+    def capture(messages, **_keyword_arguments):
         captured["messages"] = messages
         return TopicRelevanceSignal(is_on_topic=True, off_topic_reply_text="")
 

@@ -21,7 +21,7 @@ export default function AuthPage() {
   useEffect(() => {
     if (currentUser) {
       router.replace(dashboardUrl);
-      
+
       if (canUseFullPageNavigation()) {
         window.location.assign(dashboardUrl);
       }
@@ -32,7 +32,7 @@ export default function AuthPage() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-calm-background px-6 text-center">
         <div>
-          <div className="serene-chat-sphere mx-auto mb-6" aria-hidden />
+          <div className="assistant-chat-sphere mx-auto mb-6" aria-hidden />
           <p className="text-lg font-semibold text-calm-text">Signing you in...</p>
         </div>
       </div>

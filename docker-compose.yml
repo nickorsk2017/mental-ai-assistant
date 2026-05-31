@@ -2,12 +2,12 @@
 # All tunables come from `./_common/.env` — run `make docker-run-all` or:
 #   docker compose --env-file ./_common/.env up -d --build
 
-name: serene-ai-assistant
+name: assistant-ai-assistant
 
 services:
   kafka:
     image: apache/kafka:latest
-    container_name: serene-kafka
+    container_name: assistant-kafka
     ports:
       - "${DOCKER_KAFKA_PUBLISH_PORT:-9092}:9092"
     environment:
@@ -31,8 +31,8 @@ services:
     build:
       context: ./ai-agents/app
       dockerfile: Dockerfile
-    image: serene-ai-agents:local
-    container_name: serene-ai-agents
+    image: assistant-ai-agents:local
+    container_name: assistant-ai-agents
     ports:
       - "${AI_AGENTS_PORT:-8080}:8080"
     env_file:
@@ -63,8 +63,8 @@ services:
     build:
       context: .
       dockerfile: backend/app/Dockerfile
-    image: serene-api:local
-    container_name: serene-api
+    image: assistant-api:local
+    container_name: assistant-api
     ports:
       - "${BACKEND_PORT:-4000}:4000"
     env_file:
@@ -102,8 +102,8 @@ services:
       dockerfile: frontend/web/Dockerfile
       args:
         NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
-    image: serene-web:local
-    container_name: serene-web
+    image: assistant-web:local
+    container_name: assistant-web
     ports:
       - "${WEB_PORT:-3000}:3000"
     env_file:
@@ -124,8 +124,8 @@ services:
       dockerfile: frontend/mobile/Dockerfile
       args:
         BACKEND_URL: ${BACKEND_URL}
-    image: serene-mobile:local
-    container_name: serene-mobile
+    image: assistant-mobile:local
+    container_name: assistant-mobile
     ports:
       - "${MOBILE_PORT:-8100}:8100"
     env_file:

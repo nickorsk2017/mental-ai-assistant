@@ -7,6 +7,7 @@ from langchain_openai import ChatOpenAI
 
 from src.config import ApplicationSettings
 from src.schemas.elevated_mood_signal import ElevatedMoodSignal
+from src.services.langsmith_tracing_service import build_langsmith_run_config
 
 LOGGER = logging.getLogger(__name__)
 
@@ -37,7 +38,8 @@ def has_elevated_mood_signal(
             [
                 SystemMessage(content=ELEVATED_MOOD_SIGNAL_PROMPT),
                 HumanMessage(content=message_text.strip()),
-            ]
+            ],
+            config=build_langsmith_run_config("elevated_mood_classification"),
         )
     except Exception:
         LOGGER.exception("OpenAI elevated mood classification failed.")

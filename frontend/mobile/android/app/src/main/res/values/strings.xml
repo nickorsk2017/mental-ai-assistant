@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">Mental Health</string>
     <string name="title_activity_main">Mental Health</string>
-    <string name="package_name">com.serene.app</string>
-    <string name="custom_url_scheme">com.serene.app</string>
+    <string name="package_name">com.assistant.app</string>
+    <string name="custom_url_scheme">com.assistant.app</string>
 </resources>

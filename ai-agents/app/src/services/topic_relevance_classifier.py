@@ -1,6 +1,6 @@
 """AI classifier that decides whether an inbound chat message is on-topic.
 
-This is the gate in front of the Serene chat reply and the journal-note
+This is the gate in front of the Assistant chat reply and the journal-note
 pipeline. If the message is off-topic (gibberish, unrelated questions,
 prompt-injection attempts, spam, jokes), the classifier returns
 `is_on_topic=False` together with a short polite reply written in the
@@ -16,6 +16,7 @@ from langchain_openai import ChatOpenAI
 from src.config import ApplicationSettings
 from src.prompts.topic_relevance_filter_prompt import TOPIC_RELEVANCE_FILTER_PROMPT
 from src.schemas.topic_relevance_signal import TopicRelevanceSignal
+from src.services.langsmith_tracing_service import build_langsmith_run_config
 
 LOGGER = logging.getLogger(__name__)
 
@@ -23,8 +24,8 @@ LOGGER = logging.getLogger(__name__)
 # service is allowed to override with a localized reply produced by the
 # classifier when one is available.
 DEFAULT_OFF_TOPIC_REPLY_TEXT = (
-    "Кажется, вы пишете не по теме. Этот чат — про ваше настроение, "
-    "самочувствие и день. Расскажите, как вы себя сегодня чувствуете?"
+    "This chat is for your mood, wellbeing, and day. "
+    "Please share how you are feeling today."
 )
 
 
@@ -57,7 +58,8 @@ def classify_chat_message_relevance(
             [
                 SystemMessage(content=TOPIC_RELEVANCE_FILTER_PROMPT),
                 HumanMessage(content=stripped),
-            ]
+            ],
+            config=build_langsmith_run_config("topic_relevance_classification"),
         )
     except Exception:
         LOGGER.exception("OpenAI topic relevance classification failed.")

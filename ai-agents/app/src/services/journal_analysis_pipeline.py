@@ -11,6 +11,7 @@ from src.constants import DEFAULT_ACTIVITY_TAGS
 from src.prompts.journal_analysis_system_prompt import build_journal_analysis_system_prompt
 from src.schemas.journal_message import JournalKafkaPayload
 from src.schemas.journal_note_analysis import JournalNoteAnalysis
+from src.services.langsmith_tracing_service import build_langsmith_run_config
 from src.services.supabase_patient_note_writer import insert_patient_note_row
 from src.services.topic_relevance_classifier import classify_chat_message_relevance
 
@@ -86,7 +87,8 @@ def analyze_journal_with_openai(
             [
                 SystemMessage(content=build_journal_analysis_system_prompt(allowed_activity_tags)),
                 HumanMessage(content=message_text.strip()),
-            ]
+            ],
+            config=build_langsmith_run_config("journal_analysis"),
         )
     except Exception:
         LOGGER.exception("OpenAI structured journal analysis failed.")

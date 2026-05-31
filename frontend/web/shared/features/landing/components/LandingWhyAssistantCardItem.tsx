@@ -5,7 +5,7 @@ import { useParallaxRise } from '../hooks/useParallaxRise';
 
 type SupportIconName = 'user' | 'lock' | 'check';
 
-interface LandingWhySereneCardItemProps {
+interface LandingWhyAssistantCardItemProps {
   icon: SupportIconName;
   title: string;
   textBefore: string;
@@ -26,14 +26,14 @@ const iconStrokeColorMap: Record<SupportIconName, string> = {
   check: '#a78bfa',
 };
 
-const LandingWhySereneCardItem = React.memo(function LandingWhySereneCardItem({
+const LandingWhyAssistantCardItem = React.memo(function LandingWhyAssistantCardItem({
   icon,
   title,
   textBefore,
   accent,
   textAfter,
   parallaxRangePixels,
-}: LandingWhySereneCardItemProps) {
+}: LandingWhyAssistantCardItemProps) {
   const articleElementRef = useParallaxRise<HTMLElement>(
     parallaxRangePixels,
     '(min-width: 768px)'
@@ -67,4 +67,4 @@ const LandingWhySereneCardItem = React.memo(function LandingWhySereneCardItem({
   );
 });
 
-export default LandingWhySereneCardItem;
+export default LandingWhyAssistantCardItem;

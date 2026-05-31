@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@keyframes sereneSphereGlow {
+@keyframes assistantSphereGlow {
   0%, 100% {
     transform: translate3d(0, 0, 0) scale(1);
     box-shadow:
@@ -17,14 +17,14 @@
   }
 }
 
-.serene-chat-sphere {
+.assistant-chat-sphere {
   width: 74px;
   height: 74px;
   border-radius: 9999px;
   background:
     radial-gradient(circle at 32% 26%, rgba(255, 244, 228, 0.98) 0 13%, transparent 14%),
     radial-gradient(circle at 36% 30%, #f8bd72 0 18%, #e48a3a 46%, #b95f20 100%);
-  animation: sereneSphereGlow 4.8s ease-in-out infinite;
+  animation: assistantSphereGlow 4.8s ease-in-out infinite;
 }
 
 html,

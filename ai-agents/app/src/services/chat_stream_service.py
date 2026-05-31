@@ -6,8 +6,9 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 
 from src.config import ApplicationSettings
-from src.prompts.serene_chat_system_prompt import SERENE_CHAT_SYSTEM_PROMPT
+from src.prompts.assistant_chat_system_prompt import ASSISTANT_CHAT_SYSTEM_PROMPT
 from src.schemas.chat_stream_request_body import ChatStreamHistoryMessage
+from src.services.langsmith_tracing_service import build_langsmith_run_config
 from src.services.topic_relevance_classifier import (
     DEFAULT_OFF_TOPIC_REPLY_TEXT,
     classify_chat_message_relevance,
@@ -21,7 +22,7 @@ def build_unconfigured_chat_reply(message_text: str) -> str:
     )
 
 
-async def stream_serene_chat_tokens(
+async def stream_assistant_chat_tokens(
     message_text: str,
     settings: ApplicationSettings,
     daily_messages: list[ChatStreamHistoryMessage] | None = None,
@@ -37,7 +38,7 @@ async def stream_serene_chat_tokens(
 
     # Topic-relevance gate. If the user's message is off-topic (gibberish,
     # unrelated question, prompt-injection attempt, spam), short-circuit:
-    # stream the localized canned reply and skip the main Serene call.
+    # stream the localized canned reply and skip the main Assistant call.
     # Downstream note creation / Kafka publishing also respects this gate
     # via the same classifier inside the journal analysis pipeline.
     relevance_signal = classify_chat_message_relevance(stripped, settings)
@@ -50,7 +51,7 @@ async def stream_serene_chat_tokens(
         model=settings.openai_chat_model,
         streaming=True,
     )
-    messages = [SystemMessage(content=SERENE_CHAT_SYSTEM_PROMPT)]
+    messages = [SystemMessage(content=ASSISTANT_CHAT_SYSTEM_PROMPT)]
     if client_local_date and client_time_zone:
         messages.append(
             SystemMessage(
@@ -70,7 +71,10 @@ async def stream_serene_chat_tokens(
         else:
             messages.append(HumanMessage(content=history_message.content))
 
-    async for chunk in model.astream(messages):
+    async for chunk in model.astream(
+        messages,
+        config=build_langsmith_run_config("assistant_chat_stream"),
+    ):
         token = chunk.content
         if isinstance(token, str) and token:
             yield token

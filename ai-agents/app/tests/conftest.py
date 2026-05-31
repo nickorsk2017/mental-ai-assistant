@@ -24,8 +24,8 @@ def make_settings() -> Callable[..., ApplicationSettings]:
             "openai_api_key": "test-openai-key",
             "openai_chat_model": "gpt-4o-mini",
             "kafka_brokers": "localhost:9092",
-            "kafka_chat_topic": "serene.chat.requests",
-            "kafka_consumer_group": "serene-ai-agents-test",
+            "kafka_chat_topic": "assistant.chat.requests",
+            "kafka_consumer_group": "assistant-ai-agents-test",
             "supabase_url": "https://example.supabase.co",
             "supabase_secret_key": "test-supabase-secret",
         }

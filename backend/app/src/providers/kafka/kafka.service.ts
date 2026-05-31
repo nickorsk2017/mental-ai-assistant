@@ -17,7 +17,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   private readonly chatTopic: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.chatTopic = this.configService.get<string>('KAFKA_CHAT_TOPIC') ?? 'serene.chat.requests';
+    this.chatTopic = this.configService.get<string>('KAFKA_CHAT_TOPIC') ?? 'assistant.chat.requests';
   }
 
   async onModuleInit(): Promise<void> {
@@ -32,7 +32,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     }
 
     const kafka = new Kafka({
-      clientId: 'serene-api',
+      clientId: 'assistant-api',
       brokers,
       logLevel: logLevel.NOTHING,
     });

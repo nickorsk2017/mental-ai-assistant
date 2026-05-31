@@ -1,6 +1,6 @@
 import React from 'react';
 
-import LandingWhySereneCardItem from './LandingWhySereneCardItem';
+import LandingWhyAssistantCardItem from './LandingWhyAssistantCardItem';
 
 const supportPillars = [
   {
@@ -29,13 +29,13 @@ const supportPillars = [
   },
 ] as const;
 
-const LandingWhySereneCard = React.memo(function LandingWhySereneCard() {
+const LandingWhyAssistantCard = React.memo(function LandingWhyAssistantCard() {
   return (
     <section className="rounded-[32px] p-7 sm:p-8">
       <h2 className="mt-4 text-3xl font-semibold leading-tight text-calm-text">WHY MENTAL HEALTH</h2>
       <div className="mt-6 grid gap-5 md:grid-cols-3">
         {supportPillars.map((supportPillar) => (
-          <LandingWhySereneCardItem
+          <LandingWhyAssistantCardItem
             key={supportPillar.accent}
             icon={supportPillar.icon}
             title={supportPillar.title}
@@ -55,4 +55,4 @@ const LandingWhySereneCard = React.memo(function LandingWhySereneCard() {
   );
 });
 
-export default LandingWhySereneCard;
+export default LandingWhyAssistantCard;

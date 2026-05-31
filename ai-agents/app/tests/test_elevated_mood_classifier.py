@@ -89,7 +89,7 @@ def test_strips_whitespace_from_input(
 ) -> None:
     captured: dict[str, list] = {}
 
-    def capture(messages):
+    def capture(messages, **_keyword_arguments):
         captured["messages"] = messages
         return ElevatedMoodSignal(has_elevated_mood_signal=False)
 

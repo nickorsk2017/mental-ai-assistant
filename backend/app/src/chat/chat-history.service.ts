@@ -155,7 +155,7 @@ export class ChatHistoryService {
     const hasPreviousMessages = (count ?? 0) > 0;
 
     return {
-      id: 'serene-empty-today-message',
+      id: 'assistant-empty-today-message',
       role: 'assistant',
       content: hasPreviousMessages ? returningChatMessageContent : firstChatMessageContent,
       createdAt: new Date().toISOString(),

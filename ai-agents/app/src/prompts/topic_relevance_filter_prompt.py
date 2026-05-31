@@ -1,6 +1,6 @@
 """System prompt for the topic-relevance pre-filter classifier.
 
-This classifier runs BEFORE the main Serene chat reply and BEFORE the journal
+This classifier runs BEFORE the main Assistant chat reply and BEFORE the journal
 note analysis. Its only job is to decide whether the user's message belongs
 in a mental wellness journaling app at all.
 

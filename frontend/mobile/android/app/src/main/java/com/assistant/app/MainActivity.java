@@ -1,4 +1,4 @@
-package com.serene.app;
+package com.assistant.app;
 
 import com.getcapacitor.BridgeActivity;
 

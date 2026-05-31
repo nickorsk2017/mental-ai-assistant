@@ -2,7 +2,7 @@ import React from 'react';
 
 import FloatingQuestionFigure from './FloatingQuestionFigure';
 import LandingTopSupportCard from './LandingTopSupportCard';
-import LandingWhySereneCard from './LandingWhySereneCard';
+import LandingWhyAssistantCard from './LandingWhyAssistantCard';
 
 const LandingSupportSection = React.memo(function LandingSupportSection() {
   return (
@@ -11,7 +11,7 @@ const LandingSupportSection = React.memo(function LandingSupportSection() {
         <FloatingQuestionFigure />
         <LandingTopSupportCard />
       </div>
-      <LandingWhySereneCard />
+      <LandingWhyAssistantCard />
     </div>
   );
 });
